@@ -554,15 +554,11 @@ function finish() {
   if (quadKey === "belong" && !results.deep) {
     quadCopy = "You're building toward belonging — and belonging isn't yours yet. It's earned at 7.5 on both axes: reception proven enough to trust, offer full enough to be known. Being somewhat open in a place that isn't hostile is not the same as belonging; it's the work in progress. What carries you the rest of the way is consistency — the honest offer repeated until it's simply who you are here, and reception tested enough times that you stop bracing for it.";
   } else if (quadKey === "fitin") {
-    const strongReception = results.overall >= STRONG;
-    const strongOffer = scores.vuln >= STRONG;
-    if (strongOffer && !strongReception) {
-      quadCopy = "You're offering the real thing — your voice, your feelings, your view — and the reception here hasn't risen to meet it. This isn't hostility; it's ambiguity, and ambiguity carries costs of its own. Belonging isn't yours to build alone. The next move belongs to your environment — and to naming what you need from it out loud.";
-    } else if (strongReception && !strongOffer) {
-      quadCopy = "The reception is here — but the offer isn't. Your environment shows every sign it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?";
-    } else {
-      quadCopy = "Neither the offer nor the reception is at full strength — you're holding some of yourself back, and the environment hasn't fully proven it would receive you. This is ambiguity: not exclusion, not belonging, and over time it costs like exclusion. The loop completes one honest offer, one safe reception at a time — and both sides have a move to make.";
-    }
+    // Landing here means authenticity is below the midline, so the offer is never at full strength.
+    // The only open question is whether the reception is.
+    quadCopy = results.overall >= STRONG
+      ? "The reception is here — but the offer isn't. Your environment shows every sign it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?"
+      : "Neither the offer nor the reception is at full strength — you're holding some of yourself back, and the environment hasn't fully proven it would receive you. This is ambiguity: not exclusion, not belonging, and over time it costs like exclusion. The loop completes one honest offer, one safe reception at a time — and both sides have a move to make.";
   }
 
   // Depth read: settled pattern vs. near a line
@@ -654,7 +650,6 @@ function drawMatrix(x, y, quadKey, deep) {
     <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('survival', '#c2543a')}">Survival</text>
     <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('survival', '#c2543a')}">EXCLUSION</text>
     <text x="${pad + (xPix(dLo) - pad) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="16" font-weight="600" fill="${lblColor('survival', '#993c1d')}">Casualty</text>
-    <text x="${mx + (right - mx) / 2}" y="${top + 30}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="1" fill="none"> </text>
     <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('belong', '#1f8a7d')}">Building</text>
     <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('belong', '#1f8a7d')}">AMBIGUITY</text>
     <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="17" font-weight="600" fill="${lblColor('belong', '#0f6e56')}">Belong</text>
