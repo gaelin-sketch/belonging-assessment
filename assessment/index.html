@@ -192,6 +192,17 @@
   .gap-read p { font-size: 15px; color: var(--ink-soft); }
   .gap-read p + p { margin-top: 8px; }
 
+  /* live session result code */
+  .code-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .code-row { display: flex; gap: 10px; align-items: stretch; margin-top: 14px; }
+  .code-box {
+    flex: 1; min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px; line-height: 1.5; color: var(--ink); background: var(--paper);
+    border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px;
+    overflow-wrap: anywhere; max-height: 108px; overflow-y: auto;
+  }
+  .code-row .btn { flex: 0 0 auto; align-self: flex-start; padding: 12px 22px; font-size: 15px; }
+
   /* form */
   .form-card { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 26px; margin-top: 30px; }
   .form-card h2 { color: #fff; }
@@ -257,9 +268,31 @@
         <option>More than 15 years</option>
       </select>
     </div>
+    <div class="field">
+      <label for="essentialSelf">How essential is belonging at work to you thriving at what you do?</label>
+      <select id="essentialSelf" required>
+        <option value="">Select one</option>
+        <option value="1">1 &ndash; Not at all essential</option>
+        <option value="2">2 &ndash; Slightly essential</option>
+        <option value="3">3 &ndash; Moderately essential</option>
+        <option value="4">4 &ndash; Very essential</option>
+        <option value="5">5 &ndash; Absolutely essential</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="essentialClients">How essential is belonging for your clients' ability to thrive?</label>
+      <select id="essentialClients" required>
+        <option value="">Select one</option>
+        <option value="1">1 &ndash; Not at all essential</option>
+        <option value="2">2 &ndash; Slightly essential</option>
+        <option value="3">3 &ndash; Moderately essential</option>
+        <option value="4">4 &ndash; Very essential</option>
+        <option value="5">5 &ndash; Absolutely essential</option>
+      </select>
+    </div>
     <div class="nav-row">
       <button class="btn btn-ghost" onclick="go('s-intro')">Back</button>
-      <button class="btn" id="intakeNext" onclick="startQuestions()">Continue</button>
+      <button class="btn" id="intakeNext" onclick="startQuestions()" disabled>Continue</button>
     </div>
   </section>
 
@@ -294,6 +327,15 @@
       <div class="cards-sub">The same two variables, scored separately at each level. Belonging is rarely even — this is where yours holds and where it breaks.</div>
       <div id="levelList"></div>
       <div id="gapRead"></div>
+    </div>
+
+    <div class="code-card section-gap" id="liveCard">
+      <h2>In a live session?</h2>
+      <div class="sub">Share this result code with your facilitator. It carries your scores — never your name, your email, or anything you typed.</div>
+      <div class="code-row">
+        <code class="code-box" id="resultCode"></code>
+        <button class="btn btn-ghost" id="copyCodeBtn" onclick="copyResultCode()">Copy</button>
+      </div>
     </div>
 
     <div class="form-card" id="formCard">
@@ -531,6 +573,26 @@ function startQuestions() {
   go("s-q0");
 }
 
+/* Belief items — collected for context, deliberately kept out of scoring */
+const REQUIRED_INTAKE = ["essentialSelf", "essentialClients"];
+
+function checkIntakeComplete() {
+  const done = REQUIRED_INTAKE.every(id => document.getElementById(id).value !== "");
+  document.getElementById("intakeNext").disabled = !done;
+}
+
+function beliefValue(id) {
+  const raw = document.getElementById(id).value;
+  return raw === "" ? null : parseInt(raw, 10);
+}
+
+function beliefsBlock() {
+  return {
+    belongingEssentialToSelf: beliefValue("essentialSelf"),
+    belongingEssentialToClients: beliefValue("essentialClients")
+  };
+}
+
 function checkLevelComplete() {
   LEVELS.forEach((lvl, li) => {
     const done = lvl.items.every((_, qi) => answers[lvl.key + "-" + qi]);
@@ -730,6 +792,7 @@ function finish() {
 
   renderIndicatorReads(scores);
   renderLevels(results);
+  renderLiveSession(results);
 
   drawMatrix(overall, scores.vuln, quadKey, results.deep);
   go("s-results");
@@ -938,6 +1001,7 @@ function submissionPayload() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    beliefs: beliefsBlock(),
     results: resultsBlock(),
     rawAnswers: Object.assign({}, answers)
   };
@@ -981,6 +1045,7 @@ async function sendResults() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    beliefs: beliefsBlock(),
     results: resultsBlock(),
     // True when stage 1 already landed. When false, this payload is the only
     // copy of the record, so the scenario should create the row rather than join.
@@ -1004,8 +1069,72 @@ async function sendResults() {
   }
 }
 
+/* =====================================================
+   LIVE SESSION — portable result code
+   ===================================================== */
+const d1 = n => +n.toFixed(1);
+
+/* Per-level construct scores, already normalized by computeScores, packed into
+   a short shape and base64'd so it survives being read aloud or pasted. */
+function buildResultCode(r) {
+  const L = {};
+  for (const [key, lvl] of Object.entries(r.levels)) {
+    L[key] = {
+      ps: d1(lvl.indicators.psych),
+      sc: d1(lvl.indicators.conn),
+      cc: d1(lvl.indicators.cocre),
+      au: d1(lvl.authenticity)
+    };
+  }
+  const obj = {
+    v: 1,
+    o: d1(r.overall),
+    a: d1(r.scores.vuln),
+    q: r.quadKey,
+    d: r.deep,
+    e1: beliefValue("essentialSelf"),
+    e2: beliefValue("essentialClients"),
+    L
+  };
+  return btoa(JSON.stringify(obj));
+}
+
+function renderLiveSession(r) {
+  document.getElementById("resultCode").textContent = buildResultCode(r);
+}
+
+function copyResultCode() {
+  const code = document.getElementById("resultCode").textContent;
+  const btn = document.getElementById("copyCodeBtn");
+  const confirm = () => {
+    btn.textContent = "Copied";
+    setTimeout(() => { btn.textContent = "Copy"; }, 1800);
+  };
+  // navigator.clipboard needs a secure context; fall back for plain http
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(code).then(confirm, () => legacyCopy(code, confirm));
+  } else {
+    legacyCopy(code, confirm);
+  }
+}
+
+function legacyCopy(text, onDone) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); onDone(); }
+  catch (e) { /* leave the code visible for manual selection */ }
+  document.body.removeChild(ta);
+}
+
 /* init */
 buildQuestionScreens();
+REQUIRED_INTAKE.forEach(id => document.getElementById(id).addEventListener("change", checkIntakeComplete));
+checkIntakeComplete();
 </script>
 </body>
 </html>
