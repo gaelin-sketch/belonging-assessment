@@ -403,6 +403,7 @@ const LEVELS = [
     key: "imm", tagClass: "level-imm", tag: "Level 1 · Immediate",
     head: "Your team",
     sub: "The team you work with every day.",
+    closer: "Overall, I feel like I belong on this team.",
     items: [
       { rev: false, weights: { conn: 0.6, vuln: 0.4 },  text: "If work got heavy, I would talk to someone on my team about it." },
       { rev: false, weights: { psych: 1 },              text: "I can raise a concern with my team without worrying it will be held against me." },
@@ -417,6 +418,7 @@ const LEVELS = [
     key: "lead", tagClass: "level-lead", tag: "Level 2 · Leadership",
     head: "Your leadership",
     sub: "Your supervisor and the leaders above them.",
+    closer: "Overall, I feel like I belong with my direct leader.",
     items: [
       { rev: false, weights: { conn: 1 },               text: "At least one leader here knows me beyond my job duties." },
       { rev: false, weights: { psych: 1 },              text: "I can respectfully disagree with my leader openly without fearing consequences." },
@@ -431,6 +433,7 @@ const LEVELS = [
     key: "ext", tagClass: "level-ext", tag: "Level 3 · Extended",
     head: "Your organization",
     sub: "The wider organization beyond your team — other divisions, other buildings, the whole.",
+    closer: "Overall, I feel like I belong in this organization.",
     items: [
       { rev: false, weights: { conn: 1 },               text: "My relationships with my extended team are as satisfactory as I'd like for them to be." },
       { rev: false, weights: { psych: 1 },              text: "I could speak candidly in a room of people from across this organization." },
@@ -512,6 +515,9 @@ const WEAK_LEVEL_READS = {
    STATE + FLOW
    ===================================================== */
 const answers = {};   // "levelKey-idx" -> 1..5
+/* Global self-report, one per level. Held apart from `answers` so it is
+   structurally impossible for computeScores to pick it up. */
+const perceivedBelonging = {};   // "imm" | "lead" | "ext" -> 1..5
 let results = null;
 
 // Ties the anonymous submission (stage 1) to the report request (stage 2)
@@ -544,6 +550,13 @@ function buildQuestionScreens() {
         ).join("") +
         `</div></div>`;
     });
+    // Closing self-report for this level — same styling, scored nowhere
+    qHtml += `<div class="q"><p>${lvl.closer}</p>
+      <div class="likert" role="group" aria-label="${lvl.closer}">` +
+      LIKERT.map((_, v) =>
+        `<button type="button" data-pkey="${lvl.key}" data-val="${v+1}">${LIKERT[v]}</button>`
+      ).join("") +
+      `</div></div>`;
     const backTarget = li === 0 ? "s-intake" : "s-q" + (li - 1);
     const nextLabel = li === LEVELS.length - 1 ? "See my results" : "Continue";
     sec.innerHTML = `
@@ -561,8 +574,9 @@ function buildQuestionScreens() {
   holder.addEventListener("click", e => {
     const btn = e.target.closest(".likert button");
     if (!btn) return;
-    const key = btn.dataset.key;
-    answers[key] = parseInt(btn.dataset.val, 10);
+    const val = parseInt(btn.dataset.val, 10);
+    if (btn.dataset.pkey) perceivedBelonging[btn.dataset.pkey] = val;
+    else answers[btn.dataset.key] = val;
     btn.parentElement.querySelectorAll("button").forEach(b => b.classList.toggle("sel", b === btn));
     updateProgress();
     checkLevelComplete();
@@ -595,16 +609,16 @@ function beliefsBlock() {
 
 function checkLevelComplete() {
   LEVELS.forEach((lvl, li) => {
-    const done = lvl.items.every((_, qi) => answers[lvl.key + "-" + qi]);
+    const done = lvl.items.every((_, qi) => answers[lvl.key + "-" + qi]) && perceivedBelonging[lvl.key];
     const nb = document.getElementById("next-" + li);
     if (nb) nb.disabled = !done;
   });
 }
 
 function updateProgress() {
-  const total = LEVELS.reduce((n, l) => n + l.items.length, 0);
-  const pct = Object.keys(answers).length / total * 100;
-  document.getElementById("progressFill").style.width = pct + "%";
+  const total = LEVELS.reduce((n, l) => n + l.items.length + 1, 0);
+  const done = Object.keys(answers).length + Object.keys(perceivedBelonging).length;
+  document.getElementById("progressFill").style.width = (done / total * 100) + "%";
 }
 
 /* =====================================================
@@ -1002,6 +1016,7 @@ function submissionPayload() {
       profession: document.getElementById("profTenure").value
     },
     beliefs: beliefsBlock(),
+    perceivedBelonging: Object.assign({}, perceivedBelonging),
     results: resultsBlock(),
     rawAnswers: Object.assign({}, answers)
   };
@@ -1046,6 +1061,7 @@ async function sendResults() {
       profession: document.getElementById("profTenure").value
     },
     beliefs: beliefsBlock(),
+    perceivedBelonging: Object.assign({}, perceivedBelonging),
     results: resultsBlock(),
     // True when stage 1 already landed. When false, this payload is the only
     // copy of the record, so the scenario should create the row rather than join.
@@ -1094,6 +1110,9 @@ function buildResultCode(r) {
     d: r.deep,
     e1: beliefValue("essentialSelf"),
     e2: beliefValue("essentialClients"),
+    p1: perceivedBelonging.imm ?? null,
+    p2: perceivedBelonging.lead ?? null,
+    p3: perceivedBelonging.ext ?? null,
     L
   };
   return btoa(JSON.stringify(obj));
