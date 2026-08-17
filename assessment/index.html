@@ -229,14 +229,14 @@
 
   <!-- ============ INTRO ============ -->
   <section class="screen active intro" id="s-intro">
-    <div class="eyebrow">Individual Belonging Assessment</div>
-    <h1>Do you belong here — or do you just <em>fit in</em>?</h1>
-    <p>Belonging isn't a soft extra. It's essential to your thriving — your success at what you do, and at where you do it. Fitting in is performing what a place wants. Belonging is being known and supported as you actually are. Most people can't tell you which one they're experiencing — this assessment can.</p>
-    <p>Twenty-one statements, about four minutes. You'll get a Belonging Score from 0.1&ndash;10 and see exactly where you land on the Belonging Matrix. The assessment measures belonging at three levels:</p>
+    <div class="eyebrow">Gaelin Elmore's Individual Belonging Assessment</div>
+    <h1>Do you BELONG at work?</h1>
+    <p>In a world where belonging matters more than ever, it's becoming increasingly rare to belong at work. One of the biggest obstacles, beyond direct opposition to belonging, is a simple reality: belonging is hard to measure.</p>
+    <p>Most surveys ask whether you feel like you belong. Both you and I know it's more complicated than that. Fitting in can feel like belonging if you've never experienced what it's like to truly belong at work. Brené Brown says "the opposite of belonging is fitting in." This assessment measures what belonging is actually made of: the authenticity you bring, how your environment receives it, and three research-grounded conditions: psychological safety, social connection, and co-creation. And to make sure it's as accurate as possible, we apply these elements across the different levels of your organization: your immediate team, your direct leader, and your extended team members.</p>
     <div class="levels-def">
-      <div class="def-row"><span class="def-tag level-imm">Immediate</span><span>The team you work with every day — where belonging is felt first and lost fastest.</span></div>
-      <div class="def-row"><span class="def-tag level-lead">Leadership</span><span>Your supervisor and the leaders above them — the relationship that shapes what feels possible.</span></div>
-      <div class="def-row"><span class="def-tag level-ext">Extended</span><span>The wider organization beyond your team — other divisions, other buildings, the whole.</span></div>
+      <div class="def-row"><span class="def-tag level-imm">Immediate</span><span>The team you work with every day, where belonging is felt first and lost fastest.</span></div>
+      <div class="def-row"><span class="def-tag level-lead">Leadership</span><span>Your supervisor and the leaders above them, the relationship that shapes what feels possible.</span></div>
+      <div class="def-row"><span class="def-tag level-ext">Extended</span><span>The wider organization beyond your team: other divisions, other buildings, the whole.</span></div>
     </div>
     <button class="btn" onclick="go('s-intake')">Start the assessment</button>
     <div class="meta-line">Your answers are recorded anonymously so patterns across respondents can be studied. Your results are shown to you first, and your name and email are attached to them only if you ask for your report at the end.</div>
@@ -317,21 +317,21 @@
 
     <div class="section-gap">
       <div class="cards-head">What's driving your score</div>
-      <div class="cards-sub">Belonging has two variables. Authenticity is your action; the three indicators are the reception — each measured across your team, your leadership, and your organization.</div>
+      <div class="cards-sub">Belonging has two variables. Authenticity is your action; the three indicators are the reception, each measured across your team, your leadership, and your organization.</div>
       <div class="ind-grid" id="indGrid"></div>
       <div id="indReads"></div>
     </div>
 
     <div class="section-gap">
       <div class="cards-head">Level by level</div>
-      <div class="cards-sub">The same two variables, scored separately at each level. Belonging is rarely even — this is where yours holds and where it breaks.</div>
+      <div class="cards-sub">The same two variables, scored separately at each level. Belonging is rarely even. This is where yours holds and where it breaks.</div>
       <div id="levelList"></div>
       <div id="gapRead"></div>
     </div>
 
     <div class="code-card section-gap" id="liveCard">
       <h2>In a live session?</h2>
-      <div class="sub">Share this result code with your facilitator. It carries your scores — never your name, your email, or anything you typed.</div>
+      <div class="sub">Share this result code with your facilitator. It carries your scores, never your name, your email, or anything you typed.</div>
       <div class="code-row">
         <code class="code-box" id="resultCode"></code>
         <button class="btn btn-ghost" id="copyCodeBtn" onclick="copyResultCode()">Copy</button>
@@ -340,7 +340,7 @@
 
     <div class="form-card" id="formCard">
       <h2>Send me my full results</h2>
-      <div class="sub">Get your complete breakdown — your score, your matrix placement, and what each level is telling you — delivered to your inbox.</div>
+      <div class="sub">Get your complete breakdown, including your score, your matrix placement, and what each level is telling you, delivered to your inbox.</div>
       <div id="formFields">
         <label for="fName">Name</label>
         <input id="fName" type="text" placeholder="Your name" autocomplete="name">
@@ -352,11 +352,11 @@
         <input id="fRole" type="text" placeholder="What you do there" autocomplete="organization-title">
         <button class="btn" id="sendBtn" onclick="sendResults()">Email my results</button>
         <div class="err" id="formErr" hidden></div>
-        <div class="form-note">Optional. Your report goes to you — adding your email links it to the answers you just gave. We'll never share your score without your permission.</div>
+        <div class="form-note">Optional. Your report goes to you. Adding your email links it to the answers you just gave. We'll never share your score without your permission.</div>
       </div>
       <div class="sent" id="sentMsg" hidden>
         <div class="display">Results on the way.</div>
-        <p>Check your inbox — and if belonging is a conversation your organization needs to have, you'll know where to find me.</p>
+        <p>Check your inbox. And if belonging is a conversation your organization needs to have, you'll know where to find me.</p>
       </div>
     </div>
   </section>
@@ -365,13 +365,13 @@
 
 <script>
 /* =====================================================
-   CONFIGURATION — edit these, nothing below needs touching
+   CONFIGURATION: edit these, nothing below needs touching
    ===================================================== */
 
 // Paste your Make.com webhook URL here to activate delivery + Pipedrive capture.
 // Both stages post to this one URL and are told apart by the payload's `event` field:
-//   event: "submission"     — fires for EVERY completed assessment, anonymous, no contact details
-//   event: "report_request" — fires only if the respondent opts in, carries name/email
+//   event: "submission"     fires for EVERY completed assessment, anonymous, no contact details
+//   event: "report_request" fires only if the respondent opts in, carries name/email
 // Both carry the same `submissionId`, which is what links the two rows together.
 const WEBHOOK_URL = "https://hook.us1.make.com/YOUR-WEBHOOK-ID";
 
@@ -392,10 +392,10 @@ const TIERS = [
 // Matrix geometry
 const MID = 5.5;    // quadrant crosshairs (aligned to tier lines)
 const DEEP = 2.0;   // deep-zone margin: past MID+DEEP (7.5) / below MID-DEEP (3.5) on both axes.
-                    // Belonging is only ESTABLISHED in the Belong quadrant's deep zone — territory ≠ arrival.
+                    // Belonging is only ESTABLISHED in the Belong quadrant's deep zone. Territory ≠ arrival.
 
 /* =====================================================
-   INSTRUMENT — 6 items per level: 4 indicator + 2 vulnerability
+   INSTRUMENT: 6 items per level: 4 indicator + 2 vulnerability
    ===================================================== */
 
 const LEVELS = [
@@ -408,10 +408,10 @@ const LEVELS = [
       { rev: false, weights: { conn: 0.6, vuln: 0.4 },  text: "If work got heavy, I would talk to someone on my team about it." },
       { rev: false, weights: { psych: 1 },              text: "I can raise a concern with my team without worrying it will be held against me." },
       { rev: false, weights: { cocre: 1 },              text: "My input is valued and can influence how my team does its work." },
-      { rev: true,  weights: { conn: 1 },               text: "My relationships on my team feel transactional — we work together, but we aren't connected." },
+      { rev: true,  weights: { conn: 1 },               text: "My relationships on my team feel transactional; we work together, but we aren't connected." },
       { rev: false, weights: { vuln: 1 },               text: "My team knows the real me, not a work version of me." },
       { rev: true,  weights: { vuln: 0.7, psych: 0.3 }, text: "I edit what I really want to say before I speak to my team." },
-      { rev: false, weights: { vuln: 0.6, conn: 0.4 },  text: "When I'm having a hard day, my team knows it — I don't have to hide it." }
+      { rev: false, weights: { vuln: 0.6, conn: 0.4 },  text: "When I'm having a hard day, my team knows it; I don't have to hide it." }
     ]
   },
   {
@@ -432,7 +432,7 @@ const LEVELS = [
   {
     key: "ext", tagClass: "level-ext", tag: "Level 3 · Extended",
     head: "Your organization",
-    sub: "The wider organization beyond your team — other divisions, other buildings, the whole.",
+    sub: "The wider organization beyond your team: other divisions, other buildings, the whole.",
     closer: "Overall, I feel like I belong in this organization.",
     items: [
       { rev: false, weights: { conn: 1 },               text: "My relationships with my extended team are as satisfactory as I'd like for them to be." },
@@ -459,19 +459,19 @@ const INDICATOR_META = {
 const QUADRANTS = {
   belong: {
     name: "Belong", bucket: "Belonging", color: "var(--teal)",
-    copy: "You offer the real thing — your voice, your feelings, your view — and this environment receives it. Your candor lands without consequence, your openness deepens connection, and your view shapes thinking and decisions, present and future. This is belonging: the loop completing. Protect it, and notice who around you doesn't have it yet."
+    copy: "You offer the real thing: your voice, your feelings, your view. And this environment receives it. Your candor lands without consequence, your openness deepens connection, and your view shapes thinking and decisions, present and future. This is belonging: the loop completing. Protect it, and notice who around you doesn't have it yet."
   },
   fitin: {
     name: "Fit In", bucket: "Ambiguity", color: "var(--gold)",
-    copy: "The reception is here — but the offer isn't. Your environment shows signs it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?"
+    copy: "The reception is here, but the offer isn't. Your environment shows signs it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?"
   },
   survival: {
     name: "Survival", bucket: "Exclusion", color: "var(--clay)",
-    copy: "You're offering the real thing to an environment that isn't receiving it. You say the thing and it's held against you. You show the self and it distances people instead of drawing them closer. That takes courage — and it isn't sustainable. This is survival, not thriving: an offer without reception builds burnout, not belonging."
+    copy: "You're offering the real thing to an environment that isn't receiving it. You say the thing and it's held against you. You show the self and it distances people instead of drawing them closer. That takes courage, and it isn't sustainable. This is survival, not thriving: an offer without reception builds burnout, not belonging."
   },
   guarded: {
     name: "Guarded", bucket: "Exclusion", color: "var(--navy)",
-    copy: "You've stopped offering because this environment has shown you what happens when you do. That guard is wisdom, not weakness — but no one should have to work this way. This is exclusion, whether or not anyone has named it."
+    copy: "You've stopped offering because this environment has shown you what happens when you do. That guard is wisdom, not weakness, but no one should have to work this way. This is exclusion, whether or not anyone has named it."
   }
 };
 
@@ -480,34 +480,34 @@ const QUADRANTS = {
 const INDICATOR_READS = {
   psych: {
     Strong:     "You can say the hard thing here and survive it. That's the floor belonging is built on, and you have it.",
-    Building:   "You'll speak up, but you calculate first. The safety here is real and it isn't automatic — you're still reading the room before you trust it.",
+    Building:   "You'll speak up, but you calculate first. The safety here is real and it isn't automatic. You're still reading the room before you trust it.",
     Emerging:   "Speaking up costs you something here. You do it anyway sometimes, and you pay for it in energy you don't get back.",
     Developing: "It isn't safe to be honest here, and you already know it. Treat that as accurate information about the environment, not a flaw in you."
   },
   conn: {
     Strong:     "People here know you, and you know them. These are relationships, not working arrangements.",
-    Building:   "There's real connection here and it's uneven — some people know you, and it may not be the ones you spend the most hours beside.",
+    Building:   "There's real connection here and it's uneven. Some people know you, and it may not be the ones you spend the most hours beside.",
     Emerging:   "The relationships are functional more than personal. If you left, the gap you'd leave would be logistical.",
     Developing: "You're working alongside people who don't know you. That's isolation with company, and it's more tiring than being alone."
   },
   cocre: {
-    Strong:     "Your input changes outcomes here. You're not being consulted for form — you're shaping the thing.",
+    Strong:     "Your input changes outcomes here. You're not being consulted for form. You're shaping the thing.",
     Building:   "You're asked sometimes, and it matters sometimes. Whether that's real participation or decoration is a question your next few months will answer.",
     Emerging:   "You're informed more than involved. Being told early is not the same as being asked.",
-    Developing: "Decisions about your work get made without you. Over time that teaches you your view isn't worth offering — which is how good people go quiet."
+    Developing: "Decisions about your work get made without you. Over time that teaches you your view isn't worth offering, which is how good people go quiet."
   },
   vuln: {
-    Strong:     "You bring the real thing here — your voice, your feelings, your view. That's the offer belonging requires, and you're making it.",
-    Building:   "You show up mostly as yourself, with edits. The parts you hold back are the ones worth naming — to yourself first.",
+    Strong:     "You bring the real thing here: your voice, your feelings, your view. That's the offer belonging requires, and you're making it.",
+    Building:   "You show up mostly as yourself, with edits. The parts you hold back are the ones worth naming, to yourself first.",
     Emerging:   "There's a version of you that comes to work, and it isn't quite you. Maintaining it costs more than it looks like from the outside.",
-    Developing: "You're not bringing yourself here at all. Whether that's protection or habit is worth knowing — because one of the two you can choose to stop."
+    Developing: "You're not bringing yourself here at all. Whether that's protection or habit is worth knowing, because one of the two you can choose to stop."
   }
 };
 
 /* What it means when a given level is the weakest of the three */
 const WEAK_LEVEL_READS = {
   imm:  "When your immediate team is the weakest level, you feel it daily. This is the one that wears on you fastest, and the one closest to your reach.",
-  lead: "When leadership is the weakest level, it caps what feels possible everywhere else — however good your team is, the ceiling is set above them.",
+  lead: "When leadership is the weakest level, it caps what feels possible everywhere else. However good your team is, the ceiling is set above them.",
   ext:  "When the wider organization is the weakest level, you have a home but not a place. Your team holds you; the institution doesn't know you're there."
 };
 
@@ -550,7 +550,7 @@ function buildQuestionScreens() {
         ).join("") +
         `</div></div>`;
     });
-    // Closing self-report for this level — same styling, scored nowhere
+    // Closing self-report for this level, same styling, scored nowhere
     qHtml += `<div class="q"><p>${lvl.closer}</p>
       <div class="likert" role="group" aria-label="${lvl.closer}">` +
       LIKERT.map((_, v) =>
@@ -587,7 +587,7 @@ function startQuestions() {
   go("s-q0");
 }
 
-/* Belief items — collected for context, deliberately kept out of scoring */
+/* Belief items, collected for context, deliberately kept out of scoring */
 const REQUIRED_INTAKE = ["essentialSelf", "essentialClients"];
 
 function checkIntakeComplete() {
@@ -713,7 +713,7 @@ function computeScores() {
     };
   });
 
-  // Strongest and weakest level by reception — the spread is the story
+  // Strongest and weakest level by reception. The spread is the story
   const ranked = Object.values(levels).slice().sort((a, b) => b.reception - a.reception);
   const strongestLevel = ranked[0], weakestLevel = ranked[ranked.length - 1];
   const levelSpread = strongestLevel.reception - weakestLevel.reception;
@@ -754,36 +754,36 @@ function finish() {
   let quadCopy = quad.copy;
   const STRONG = MID + DEEP;
   if (quadKey === "belong" && !results.deep) {
-    quadCopy = "You're building toward belonging — and belonging isn't yours yet. It's earned at 7.5 on both axes: reception proven enough to trust, offer full enough to be known. Being somewhat open in a place that isn't hostile is not the same as belonging; it's the work in progress. What carries you the rest of the way is consistency — the honest offer repeated until it's simply who you are here, and reception tested enough times that you stop bracing for it.";
+    quadCopy = "You're building toward belonging, and belonging isn't yours yet. It's earned at 7.5 on both axes: reception proven enough to trust, offer full enough to be known. Being somewhat open in a place that isn't hostile is not the same as belonging; it's the work in progress. What carries you the rest of the way is consistency: the honest offer repeated until it's simply who you are here, and reception tested enough times that you stop bracing for it.";
   } else if (quadKey === "fitin") {
     // Landing here means authenticity is below the midline, so the offer is never at full strength.
     // The only open question is whether the reception is.
     quadCopy = results.overall >= STRONG
-      ? "The reception is here — but the offer isn't. Your environment shows every sign it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?"
-      : "Neither the offer nor the reception is at full strength — you're holding some of yourself back, and the environment hasn't fully proven it would receive you. This is ambiguity: not exclusion, not belonging, and over time it costs like exclusion. The loop completes one honest offer, one safe reception at a time — and both sides have a move to make.";
+      ? "The reception is here, but the offer isn't. Your environment shows every sign it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?"
+      : "Neither the offer nor the reception is at full strength. You're holding some of yourself back, and the environment hasn't fully proven it would receive you. This is ambiguity: not exclusion, not belonging, and over time it costs like exclusion. The loop completes one honest offer, one safe reception at a time, and both sides have a move to make.";
   }
 
   // Depth read: settled pattern vs. near a line
-  const AXIS_MEANING = { x: "reception — how your environment receives you", y: "action — how authentically you show up" };
+  const AXIS_MEANING = { x: "reception, how your environment receives you", y: "action, how authentically you show up" };
   const DEEP_ZONES = { survival: "Casualty", guarded: "Absent", fitin: "Unknown" };
   let depthLine;
   if (quadKey === "belong" && results.deep) {
-    depthLine = `<p><strong>Depth read:</strong> you're in the Belong zone — both your action and its reception clear 7.5. This is belonging that has been earned and proven, not a borderline result.</p>`;
+    depthLine = `<p><strong>Depth read:</strong> you're in the Belong zone. Both your action and its reception clear 7.5. This is belonging that has been earned and proven, not a borderline result.</p>`;
   } else if (quadKey === "belong") {
     depthLine = "";
   } else if (results.deep) {
-    depthLine = `<p><strong>Depth read:</strong> you've reached the ${DEEP_ZONES[quadKey]} zone — the settled end of ${QUADRANTS[quadKey].name}. This is not a borderline result, and settled patterns don't shift on their own. Whatever happens next needs to be deliberate.</p>`;
+    depthLine = `<p><strong>Depth read:</strong> you've reached the ${DEEP_ZONES[quadKey]} zone, the settled end of ${QUADRANTS[quadKey].name}. This is not a borderline result, and settled patterns don't shift on their own. Whatever happens next needs to be deliberate.</p>`;
   } else {
-    depthLine = `<p><strong>Depth read:</strong> you're near the ${QUADRANTS[results.adjacentKey].name} line. A shift in ${AXIS_MEANING[results.nearAxis]} is what moves you across — in either direction.</p>`;
+    depthLine = `<p><strong>Depth read:</strong> you're near the ${QUADRANTS[results.adjacentKey].name} line. A shift in ${AXIS_MEANING[results.nearAxis]} is what moves you across, in either direction.</p>`;
   }
 
   const orgTenure = document.getElementById("orgTenure").value;
   let tenureLine = "";
   if (quadKey === "fitin" && (orgTenure === "8–15 years" || orgTenure === "More than 15 years")) {
-    tenureLine = `<p><strong>Worth naming:</strong> you've been here a long time. Fitting in for this many years isn't a phase — it's a pattern, and patterns this old usually feel normal. It isn't.</p>`;
+    tenureLine = `<p><strong>Worth naming:</strong> you've been here a long time. Fitting in for this many years isn't a phase. It's a pattern, and patterns this old usually feel normal. It isn't.</p>`;
   }
   if (quadKey === "guarded" && orgTenure === "Less than 1 year") {
-    tenureLine = `<p><strong>Worth naming:</strong> you're new here, and guardedness early on can be pace, not permanence. Watch whether the environment earns your openness over the next few months — or confirms your instinct.</p>`;
+    tenureLine = `<p><strong>Worth naming:</strong> you're new here, and guardedness early on can be pace, not permanence. Watch whether the environment earns your openness over the next few months, or confirms your instinct.</p>`;
   }
   const bucketColor = quadKey === "belong" && !results.deep ? "#9c711f" : quad.color;
   document.getElementById("quadrantCallout").innerHTML = `
@@ -869,9 +869,9 @@ function renderLevels(r) {
   const { strongestLevel: hi, weakestLevel: lo, levelSpread: spread } = r;
   let gap;
   if (spread < 1.0) {
-    gap = `<p><strong>The spread:</strong> your experience is consistent across all three levels — within ${spread.toFixed(1)} of a point. Whatever is happening here isn't one bad team or one bad manager; it's the culture, and it's the same wherever you stand in it.</p>`;
+    gap = `<p><strong>The spread:</strong> your experience is consistent across all three levels, within ${spread.toFixed(1)} of a point. Whatever is happening here isn't one bad team or one bad manager; it's the culture, and it's the same wherever you stand in it.</p>`;
   } else {
-    gap = `<p><strong>The spread:</strong> ${hi.head.toLowerCase()} is where this works best (${hi.reception.toFixed(1)}) and ${lo.head.toLowerCase()} is where it works least (${lo.reception.toFixed(1)}) — a gap of ${spread.toFixed(1)} points. Your belonging is uneven, and the average hides that.</p>
+    gap = `<p><strong>The spread:</strong> ${hi.head.toLowerCase()} is where this works best (${hi.reception.toFixed(1)}) and ${lo.head.toLowerCase()} is where it works least (${lo.reception.toFixed(1)}), a gap of ${spread.toFixed(1)} points. Your belonging is uneven, and the average hides that.</p>
       <p>${WEAK_LEVEL_READS[lo.key]}</p>`;
   }
   document.getElementById("gapRead").innerHTML = `<div class="gap-read">${gap}</div>`;
@@ -952,13 +952,13 @@ function drawMatrix(x, y, quadKey, deep) {
 }
 
 /* =====================================================
-   DELIVERY — Make.com webhook, two stages sharing one submissionId
+   DELIVERY: Make.com webhook, two stages sharing one submissionId
    ===================================================== */
 const WEBHOOK_READY = !WEBHOOK_URL.includes("YOUR-WEBHOOK-ID");
 
 async function postToWebhook(payload) {
   if (!WEBHOOK_READY) {
-    console.warn("WEBHOOK_URL is still the placeholder — payload below was not sent:", payload);
+    console.warn("WEBHOOK_URL is still the placeholder. Payload below was not sent:", payload);
     return;
   }
   const res = await fetch(WEBHOOK_URL, {
@@ -1022,7 +1022,7 @@ function submissionPayload() {
   };
 }
 
-/* Stage 1 — fires on completion for everyone. Anonymous: no contact fields.
+/* Stage 1: fires on completion for everyone. Anonymous: no contact fields.
    Failure is silent by design; a lost log must never cost the respondent
    their results screen. If it did fail, stage 2 carries the record instead. */
 async function logSubmission() {
@@ -1035,7 +1035,7 @@ async function logSubmission() {
   }
 }
 
-/* Stage 2 — optional. Links a name and email to the stage 1 row via submissionId. */
+/* Stage 2: optional. Links a name and email to the stage 1 row via submissionId. */
 async function sendResults() {
   const err = document.getElementById("formErr");
   err.hidden = true;
@@ -1086,7 +1086,7 @@ async function sendResults() {
 }
 
 /* =====================================================
-   LIVE SESSION — portable result code
+   LIVE SESSION: portable result code
    ===================================================== */
 const d1 = n => +n.toFixed(1);
 
