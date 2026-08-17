@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Individual Belonging Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #16263f;
+    --navy-soft: #24385c;
+    --teal: #1f8a7d;
+    --teal-soft: #e3f2f0;
+    --gold: #d9a441;
+    --gold-soft: #faf1de;
+    --clay: #c2543a;
+    --clay-soft: #f8e8e3;
+    --paper: #f7f5f0;
+    --card: #ffffff;
+    --ink: #1c2430;
+    --ink-soft: #5a6472;
+    --line: #e4e0d7;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  body {
+    font-family: "Public Sans", system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
+  .display { font-family: "Fraunces", Georgia, serif; }
+
+  /* ---------- shared ---------- */
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 10px;
+  }
+  .btn {
+    font-family: inherit; font-size: 16px; font-weight: 600;
+    background: var(--navy); color: #fff; border: none;
+    border-radius: 999px; padding: 14px 32px; cursor: pointer;
+    transition: background .15s ease, transform .1s ease;
+  }
+  .btn:hover { background: var(--navy-soft); }
+  .btn:active { transform: scale(.98); }
+  .btn:focus-visible, .likert button:focus-visible, select:focus-visible, input:focus-visible {
+    outline: 3px solid var(--gold); outline-offset: 2px;
+  }
+  .btn[disabled] { opacity: .35; cursor: not-allowed; }
+  .screen { display: none; }
+  .screen.active { display: block; animation: rise .35s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- progress ---------- */
+  .progress { height: 5px; background: var(--line); border-radius: 999px; overflow: hidden; margin-bottom: 36px; }
+  .progress-fill { height: 100%; width: 0%; background: var(--teal); border-radius: 999px; transition: width .3s ease; }
+
+  /* ---------- intro ---------- */
+  .intro h1 { font-size: clamp(34px, 6vw, 46px); font-weight: 600; line-height: 1.12; margin-bottom: 16px; }
+  .intro h1 em { font-style: italic; color: var(--teal); }
+  .intro p { font-size: 17px; color: var(--ink-soft); max-width: 54ch; margin-bottom: 14px; }
+  .intro .btn { margin-top: 18px; }
+  .meta-line { font-size: 14px; color: var(--ink-soft); margin-top: 14px; }
+
+  /* ---------- intake ---------- */
+  .field { margin-bottom: 22px; }
+  .field label { display: block; font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+  .field select, .field input {
+    width: 100%; font-family: inherit; font-size: 16px; color: var(--ink);
+    padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card);
+  }
+
+  /* ---------- question sections ---------- */
+  .level-tag {
+    display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; padding: 6px 12px; border-radius: 999px; margin-bottom: 8px;
+  }
+  .level-imm  { background: var(--teal-soft); color: var(--teal); }
+  .level-lead { background: #e6ebf5; color: var(--navy-soft); }
+  .level-ext  { background: var(--gold-soft); color: #9c711f; }
+  .level-head { font-size: 26px; font-weight: 600; margin-bottom: 4px; }
+  .level-sub { color: var(--ink-soft); font-size: 15px; margin-bottom: 26px; }
+
+  .q { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; }
+  .q p { font-size: 16px; font-weight: 500; margin-bottom: 14px; }
+  .likert { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .likert button {
+    font-family: inherit; font-size: 12px; font-weight: 600; color: var(--ink-soft);
+    background: var(--paper); border: 1.5px solid var(--line); border-radius: 9px;
+    padding: 10px 4px; cursor: pointer; transition: all .12s ease; line-height: 1.25;
+    min-height: 52px;
+  }
+  @media (max-width: 460px) {
+    .likert button { font-size: 10.5px; padding: 8px 2px; }
+  }
+  .levels-def { margin-top: 6px; }
+  .def-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; font-size: 15px; color: var(--ink-soft); }
+  .def-row span:last-child { flex: 1; }
+  .def-tag {
+    flex: 0 0 92px; text-align: center; font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase; padding: 5px 0; border-radius: 999px;
+  }
+  .likert button:hover { border-color: var(--teal); color: var(--teal); }
+  .likert button.sel { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .likert-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-soft); margin-top: 6px; }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 26px; }
+  .btn-ghost { background: transparent; color: var(--ink-soft); border: 1.5px solid var(--line); }
+  .btn-ghost:hover { background: var(--card); color: var(--ink); }
+
+  /* ---------- results ---------- */
+  .score-hero { text-align: center; padding: 12px 0 8px; }
+  .score-num {
+    font-family: "Fraunces", Georgia, serif; font-weight: 700;
+    font-size: clamp(72px, 16vw, 104px); line-height: 1; color: var(--navy); letter-spacing: -0.02em;
+  }
+  .score-denom { font-size: .38em; color: var(--ink-soft); font-weight: 500; }
+  .tier-chip {
+    display: inline-block; margin-top: 10px; font-size: 13px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; padding: 7px 16px; border-radius: 999px;
+  }
+  .quadrant-callout {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; margin: 26px 0;
+  }
+  .quadrant-callout h3 { font-family: "Fraunces", Georgia, serif; font-size: 22px; margin-bottom: 6px; }
+  .quadrant-callout .bucket { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 10px; }
+  .quadrant-callout p { color: var(--ink-soft); font-size: 15px; }
+  .quadrant-callout p + p { margin-top: 8px; }
+
+  /* matrix */
+  .matrix-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
+  .matrix-card h2, .cards-head, .form-card h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .matrix-card .sub, .cards-sub, .form-card .sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+  .matrix-svg { width: 100%; height: auto; display: block; }
+
+  .ind-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 16px; }
+  .ind-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; border-top: 4px solid var(--teal); }
+  .ind-card.psych { border-top-color: var(--navy); }
+  .ind-card.cocre { border-top-color: var(--gold); }
+  .ind-card.vuln  { border-top-color: var(--clay); }
+  .ind-card .lbl { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .ind-card .val { font-family: "Fraunces", Georgia, serif; font-size: 32px; font-weight: 700; color: var(--ink); margin: 4px 0 2px; }
+  .ind-card .tier { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+  .bar { height: 5px; background: var(--paper); border-radius: 999px; margin-top: 10px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 999px; background: var(--teal); }
+  .ind-card.psych .bar i { background: var(--navy); }
+  .ind-card.cocre .bar i { background: var(--gold); }
+  .ind-card.vuln  .bar i { background: var(--clay); }
+
+  .section-gap { margin-top: 26px; }
+
+  /* form */
+  .form-card { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 26px; margin-top: 30px; }
+  .form-card h2 { color: #fff; }
+  .form-card .sub { color: #b9c3d6; }
+  .form-card label { display: block; font-size: 13px; font-weight: 600; margin: 14px 0 6px; color: #dfe5f0; }
+  .form-card input {
+    width: 100%; font-family: inherit; font-size: 16px; padding: 12px 14px;
+    border-radius: 10px; border: 1.5px solid #3a4d73; background: #1e3050; color: #fff;
+  }
+  .form-card input::placeholder { color: #7a89a6; }
+  .form-card .btn { background: var(--gold); color: var(--navy); width: 100%; margin-top: 20px; }
+  .form-card .btn:hover { background: #e5b45a; }
+  .form-note { font-size: 12px; color: #93a1bc; margin-top: 12px; text-align: center; }
+  .sent { text-align: center; padding: 18px 0 6px; }
+  .sent .display { font-size: 24px; margin-bottom: 6px; color: #fff; }
+  .sent p { color: #b9c3d6; font-size: 15px; }
+  .err { color: #ffb4a2; font-size: 14px; margin-top: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="progress" id="progress" hidden><div class="progress-fill" id="progressFill"></div></div>
+
+  <!-- ============ INTRO ============ -->
+  <section class="screen active intro" id="s-intro">
+    <div class="eyebrow">Individual Belonging Assessment</div>
+    <h1>Do you belong here — or do you just <em>fit in</em>?</h1>
+    <p>Belonging isn't a soft extra. It's essential to your thriving — your success at what you do, and at where you do it. Fitting in is performing what a place wants. Belonging is being known and supported as you actually are. Most people can't tell you which one they're experiencing — this assessment can.</p>
+    <p>Twenty-one statements, about four minutes. You'll get a Belonging Score from 0.1&ndash;10 and see exactly where you land on the Belonging Matrix. The assessment measures belonging at three levels:</p>
+    <div class="levels-def">
+      <div class="def-row"><span class="def-tag level-imm">Immediate</span><span>The team you work with every day — where belonging is felt first and lost fastest.</span></div>
+      <div class="def-row"><span class="def-tag level-lead">Leadership</span><span>Your supervisor and the leaders above them — the relationship that shapes what feels possible.</span></div>
+      <div class="def-row"><span class="def-tag level-ext">Extended</span><span>The wider organization beyond your team — other divisions, other buildings, the whole.</span></div>
+    </div>
+    <button class="btn" onclick="go('s-intake')">Start the assessment</button>
+    <div class="meta-line">Your responses are yours — results are shown to you first, and shared only if you choose to send them.</div>
+  </section>
+
+  <!-- ============ INTAKE ============ -->
+  <section class="screen" id="s-intake">
+    <div class="eyebrow">Before we start</div>
+    <h2 class="level-head" style="margin-bottom:20px;">A little context</h2>
+    <div class="field">
+      <label for="orgTenure">How long have you been at your organization?</label>
+      <select id="orgTenure">
+        <option value="">Select one</option>
+        <option>Less than 1 year</option>
+        <option>1–3 years</option>
+        <option>4–7 years</option>
+        <option>8–15 years</option>
+        <option>More than 15 years</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="profTenure">How long have you been in this profession?</label>
+      <select id="profTenure">
+        <option value="">Select one</option>
+        <option>Less than 1 year</option>
+        <option>1–3 years</option>
+        <option>4–7 years</option>
+        <option>8–15 years</option>
+        <option>More than 15 years</option>
+      </select>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="go('s-intro')">Back</button>
+      <button class="btn" id="intakeNext" onclick="startQuestions()">Continue</button>
+    </div>
+  </section>
+
+  <!-- Question screens injected here -->
+  <div id="qScreens"></div>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="screen" id="s-results">
+    <div class="score-hero">
+      <div class="eyebrow">Your Belonging Score</div>
+      <div class="score-num"><span id="scoreVal">0.0</span><span class="score-denom">/10</span></div>
+      <span class="tier-chip" id="tierChip"></span>
+    </div>
+
+    <div class="quadrant-callout" id="quadrantCallout"></div>
+
+    <div class="matrix-card">
+      <h2>The Belonging Matrix</h2>
+      <div class="sub">Your action, meeting your environment's reception.</div>
+      <div id="matrixHolder"></div>
+    </div>
+
+    <div class="section-gap">
+      <div class="cards-head">What's driving your score</div>
+      <div class="cards-sub">Belonging has two variables. Authenticity is your action; the three indicators are the reception — each measured across your team, your leadership, and your organization.</div>
+      <div class="ind-grid" id="indGrid"></div>
+    </div>
+
+    <div class="form-card" id="formCard">
+      <h2>Send me my full results</h2>
+      <div class="sub">Get your complete breakdown — your score, your matrix placement, and what each level is telling you — delivered to your inbox.</div>
+      <div id="formFields">
+        <label for="fName">Name</label>
+        <input id="fName" type="text" placeholder="Your name" autocomplete="name">
+        <label for="fEmail">Email</label>
+        <input id="fEmail" type="email" placeholder="you@organization.gov" autocomplete="email">
+        <label for="fOrg">Organization</label>
+        <input id="fOrg" type="text" placeholder="Where you work" autocomplete="organization">
+        <label for="fRole">Role</label>
+        <input id="fRole" type="text" placeholder="What you do there" autocomplete="organization-title">
+        <button class="btn" id="sendBtn" onclick="sendResults()">Email my results</button>
+        <div class="err" id="formErr" hidden></div>
+        <div class="form-note">Your results go to you. We'll never share your score without your permission.</div>
+      </div>
+      <div class="sent" id="sentMsg" hidden>
+        <div class="display">Results on the way.</div>
+        <p>Check your inbox — and if belonging is a conversation your organization needs to have, you'll know where to find me.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =====================================================
+   CONFIGURATION — edit these, nothing below needs touching
+   ===================================================== */
+
+// Paste your Make.com webhook URL here to activate delivery + Pipedrive capture
+const WEBHOOK_URL = "https://hook.us1.make.com/YOUR-WEBHOOK-ID";
+
+// Level weights: how much each level of belonging counts (must sum to 1)
+const LEVEL_WEIGHTS = { imm: 0.45, lead: 0.35, ext: 0.20 };
+
+// Indicator weights for the overall Belonging Score (must sum to 1)
+const INDICATOR_WEIGHTS = { psych: 0.40, conn: 0.35, cocre: 0.25 };
+
+// Tier thresholds on the 0.1–10 scale
+const TIERS = [
+  { min: 7.5, label: "Strong" },
+  { min: 5.5, label: "Building" },
+  { min: 3.5, label: "Emerging" },
+  { min: 0,   label: "Developing" }
+];
+
+// Matrix geometry
+const MID = 5.5;    // quadrant crosshairs (aligned to tier lines)
+const DEEP = 2.0;   // deep-zone margin: past MID+DEEP (7.5) / below MID-DEEP (3.5) on both axes.
+                    // Belonging is only ESTABLISHED in the Belong quadrant's deep zone — territory ≠ arrival.
+
+/* =====================================================
+   INSTRUMENT — 6 items per level: 4 indicator + 2 vulnerability
+   ===================================================== */
+
+const LEVELS = [
+  {
+    key: "imm", tagClass: "level-imm", tag: "Level 1 · Immediate",
+    head: "Your team",
+    sub: "The team you work with every day.",
+    items: [
+      { rev: false, weights: { conn: 0.6, vuln: 0.4 },  text: "If work got heavy, I would talk to someone on my team about it." },
+      { rev: false, weights: { psych: 1 },              text: "I can raise a concern with my team without worrying it will be held against me." },
+      { rev: false, weights: { cocre: 1 },              text: "My input is valued and can influence how my team does its work." },
+      { rev: true,  weights: { conn: 1 },               text: "My relationships on my team feel transactional — we work together, but we aren't connected." },
+      { rev: false, weights: { vuln: 1 },               text: "My team knows the real me, not a work version of me." },
+      { rev: true,  weights: { vuln: 0.7, psych: 0.3 }, text: "I edit what I really want to say before I speak to my team." },
+      { rev: false, weights: { vuln: 0.6, conn: 0.4 },  text: "When I'm having a hard day, my team knows it — I don't have to hide it." }
+    ]
+  },
+  {
+    key: "lead", tagClass: "level-lead", tag: "Level 2 · Leadership",
+    head: "Your leadership",
+    sub: "Your supervisor and the leaders above them.",
+    items: [
+      { rev: false, weights: { conn: 1 },               text: "At least one leader here knows me beyond my job duties." },
+      { rev: false, weights: { psych: 1 },              text: "I can respectfully disagree with my leader openly without fearing consequences." },
+      { rev: false, weights: { cocre: 1 },              text: "Leadership cares about my perspective regarding decisions that affect my work." },
+      { rev: true,  weights: { psych: 0.6, vuln: 0.4 }, text: "I keep concerns to myself because raising them with leadership isn't worth the risk." },
+      { rev: false, weights: { vuln: 0.7, conn: 0.3 },  text: "I can be honest with my leader about what I'm struggling with." },
+      { rev: true,  weights: { vuln: 1 },               text: "Around leadership, I perform a confidence I don't always feel." },
+      { rev: false, weights: { vuln: 0.7, psych: 0.3 }, text: "I can admit a mistake to my leader without fear of it defining me." }
+    ]
+  },
+  {
+    key: "ext", tagClass: "level-ext", tag: "Level 3 · Extended",
+    head: "Your organization",
+    sub: "The wider organization beyond your team — other divisions, other buildings, the whole.",
+    items: [
+      { rev: false, weights: { conn: 1 },               text: "My relationships with my extended team are as satisfactory as I'd like for them to be." },
+      { rev: false, weights: { psych: 1 },              text: "I could speak candidly in a room of people from across this organization." },
+      { rev: false, weights: { cocre: 1 },              text: "The perspective of the people in my role is valued regarding where the organization is headed." },
+      { rev: true,  weights: { cocre: 1 },              text: "Decisions that affect my work get made without anyone asking people like me." },
+      { rev: false, weights: { vuln: 1 },               text: "I don't change how I speak, dress, or carry myself to be accepted across this organization." },
+      { rev: true,  weights: { vuln: 0.6, psych: 0.4 }, text: "Outside my team, it's necessary I keep my guard up." },
+      { rev: false, weights: { vuln: 0.7, psych: 0.3 }, text: "In organization-wide settings, I say what I actually think." }
+    ]
+  }
+];
+
+const LIKERT = ["Strongly disagree", "Disagree", "Neither", "Agree", "Strongly agree"];
+
+const INDICATOR_META = {
+  conn:  { label: "Social Connection",     cls: "" },
+  psych: { label: "Psychological Safety",  cls: "psych" },
+  cocre: { label: "Co-Creation",           cls: "cocre" },
+  vuln:  { label: "Authenticity",          cls: "vuln" }
+};
+
+/* Quadrants: X = environment (indicator composite), Y = vulnerability */
+const QUADRANTS = {
+  belong: {
+    name: "Belong", bucket: "Belonging", color: "var(--teal)",
+    copy: "You offer the real thing — your voice, your feelings, your view — and this environment receives it. Your candor lands without consequence, your openness deepens connection, and your view shapes thinking and decisions, present and future. This is belonging: the loop completing. Protect it, and notice who around you doesn't have it yet."
+  },
+  fitin: {
+    name: "Fit In", bucket: "Ambiguity", color: "var(--gold)",
+    copy: "The reception is here — but the offer isn't. Your environment shows signs it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?"
+  },
+  survival: {
+    name: "Survival", bucket: "Exclusion", color: "var(--clay)",
+    copy: "You're offering the real thing to an environment that isn't receiving it. You say the thing and it's held against you. You show the self and it distances people instead of drawing them closer. That takes courage — and it isn't sustainable. This is survival, not thriving: an offer without reception builds burnout, not belonging."
+  },
+  guarded: {
+    name: "Guarded", bucket: "Exclusion", color: "var(--navy)",
+    copy: "You've stopped offering because this environment has shown you what happens when you do. That guard is wisdom, not weakness — but no one should have to work this way. This is exclusion, whether or not anyone has named it."
+  }
+};
+
+/* =====================================================
+   STATE + FLOW
+   ===================================================== */
+const answers = {};   // "levelKey-idx" -> 1..5
+let results = null;
+
+function go(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({ top: 0 });
+  const onQuestions = id.startsWith("s-q");
+  document.getElementById("progress").hidden = !onQuestions;
+}
+
+function buildQuestionScreens() {
+  const holder = document.getElementById("qScreens");
+  LEVELS.forEach((lvl, li) => {
+    const sec = document.createElement("section");
+    sec.className = "screen";
+    sec.id = "s-q" + li;
+    let qHtml = "";
+    lvl.items.forEach((item, qi) => {
+      const key = lvl.key + "-" + qi;
+      qHtml += `<div class="q"><p>${item.text}</p>
+        <div class="likert" role="group" aria-label="${item.text}">` +
+        LIKERT.map((_, v) =>
+          `<button type="button" data-key="${key}" data-val="${v+1}">${LIKERT[v]}</button>`
+        ).join("") +
+        `</div></div>`;
+    });
+    const backTarget = li === 0 ? "s-intake" : "s-q" + (li - 1);
+    const nextLabel = li === LEVELS.length - 1 ? "See my results" : "Continue";
+    sec.innerHTML = `
+      <span class="level-tag ${lvl.tagClass}">${lvl.tag}</span>
+      <div class="level-head">${lvl.head}</div>
+      <div class="level-sub">${lvl.sub}</div>
+      ${qHtml}
+      <div class="nav-row">
+        <button class="btn btn-ghost" onclick="go('${backTarget}')">Back</button>
+        <button class="btn" id="next-${li}" disabled onclick="${li === LEVELS.length - 1 ? "finish()" : `go('s-q${li+1}')`}">${nextLabel}</button>
+      </div>`;
+    holder.appendChild(sec);
+  });
+
+  holder.addEventListener("click", e => {
+    const btn = e.target.closest(".likert button");
+    if (!btn) return;
+    const key = btn.dataset.key;
+    answers[key] = parseInt(btn.dataset.val, 10);
+    btn.parentElement.querySelectorAll("button").forEach(b => b.classList.toggle("sel", b === btn));
+    updateProgress();
+    checkLevelComplete();
+  });
+}
+
+function startQuestions() {
+  go("s-q0");
+}
+
+function checkLevelComplete() {
+  LEVELS.forEach((lvl, li) => {
+    const done = lvl.items.every((_, qi) => answers[lvl.key + "-" + qi]);
+    const nb = document.getElementById("next-" + li);
+    if (nb) nb.disabled = !done;
+  });
+}
+
+function updateProgress() {
+  const total = LEVELS.reduce((n, l) => n + l.items.length, 0);
+  const pct = Object.keys(answers).length / total * 100;
+  document.getElementById("progressFill").style.width = pct + "%";
+}
+
+/* =====================================================
+   SCORING
+   ===================================================== */
+function normalize(mean1to5) {
+  // Maps a 1–5 mean onto the 0.1–10 scale
+  return 0.1 + ((mean1to5 - 1) / 4) * 9.9;
+}
+
+function tierFor(score) {
+  return TIERS.find(t => score >= t.min).label;
+}
+
+function computeScores() {
+  // Accumulate weighted values per level per indicator
+  const acc = {}; // level -> indicator -> {num, den}
+  LEVELS.forEach(lvl => {
+    acc[lvl.key] = {};
+    lvl.items.forEach((item, qi) => {
+      const raw = answers[lvl.key + "-" + qi];
+      const val = item.rev ? 6 - raw : raw;
+      for (const [ind, w] of Object.entries(item.weights)) {
+        const cell = acc[lvl.key][ind] = acc[lvl.key][ind] || { num: 0, den: 0 };
+        cell.num += w * val;
+        cell.den += w;
+      }
+    });
+  });
+
+  function weightedIndicator(ind) {
+    let num = 0, den = 0;
+    for (const lk of Object.keys(LEVEL_WEIGHTS)) {
+      const cell = acc[lk][ind];
+      if (!cell || !cell.den) continue;
+      num += LEVEL_WEIGHTS[lk] * (cell.num / cell.den);
+      den += LEVEL_WEIGHTS[lk];
+    }
+    return normalize(num / den);
+  }
+
+  const scores = {
+    conn:  weightedIndicator("conn"),
+    psych: weightedIndicator("psych"),
+    cocre: weightedIndicator("cocre"),
+    vuln:  weightedIndicator("vuln")
+  };
+
+  const overall =
+    INDICATOR_WEIGHTS.psych * scores.psych +
+    INDICATOR_WEIGHTS.conn  * scores.conn +
+    INDICATOR_WEIGHTS.cocre * scores.cocre;
+
+  // Quadrant by 5.5 crosshairs; zone depth and proximity computed from both axes
+  const xHigh = overall >= MID, yHigh = scores.vuln >= MID;
+  const zoneAt = (xh, yh) => xh ? (yh ? "belong" : "fitin") : (yh ? "survival" : "guarded");
+  const quadKey = zoneAt(xHigh, yHigh);
+
+  const dx = Math.abs(overall - MID), dy = Math.abs(scores.vuln - MID);
+  const deep = dx >= DEEP && dy >= DEEP;
+  const nearAxis = dx <= dy ? "x" : "y";
+  const adjacentKey = nearAxis === "x" ? zoneAt(!xHigh, yHigh) : zoneAt(xHigh, !yHigh);
+
+  // Belonging is the summit, not the quadrant: the top-right quadrant is Building; only its deep corner is Belong
+  const established = quadKey === "belong" && deep;
+  const displayName = quadKey === "belong" ? (deep ? "Belong" : "Building") : QUADRANTS[quadKey].name;
+  const bucket = quadKey === "belong" && !deep ? "Ambiguity" : QUADRANTS[quadKey].bucket;
+
+  return { scores, overall, quadKey, deep, nearAxis, adjacentKey, established, displayName, bucket };
+}
+
+/* =====================================================
+   RESULTS RENDERING
+   ===================================================== */
+function finish() {
+  results = computeScores();
+  const { scores, overall, quadKey } = results;
+  const quad = QUADRANTS[quadKey];
+
+  document.getElementById("scoreVal").textContent = overall.toFixed(1);
+  const chip = document.getElementById("tierChip");
+  chip.textContent = tierFor(overall);
+  const chipKey = quadKey === "belong" && !results.deep ? "fitin" : quadKey;
+  const chipTheme = {
+    belong:   { bg: "var(--teal-soft)", fg: "var(--teal)" },
+    fitin:    { bg: "var(--gold-soft)", fg: "#9c711f" },
+    survival: { bg: "var(--clay-soft)", fg: "var(--clay)" },
+    guarded:  { bg: "#e6ebf5",          fg: "var(--navy-soft)" }
+  }[chipKey];
+  chip.style.background = chipTheme.bg;
+  chip.style.color = chipTheme.fg;
+
+  // Quadrant callout: copy branches by zone depth and which side of the loop falls short
+  let quadCopy = quad.copy;
+  const STRONG = MID + DEEP;
+  if (quadKey === "belong" && !results.deep) {
+    quadCopy = "You're building toward belonging — and belonging isn't yours yet. It's earned at 7.5 on both axes: reception proven enough to trust, offer full enough to be known. Being somewhat open in a place that isn't hostile is not the same as belonging; it's the work in progress. What carries you the rest of the way is consistency — the honest offer repeated until it's simply who you are here, and reception tested enough times that you stop bracing for it.";
+  } else if (quadKey === "fitin") {
+    // Landing here means authenticity is below the midline, so the offer is never at full strength.
+    // The only open question is whether the reception is.
+    quadCopy = results.overall >= STRONG
+      ? "The reception is here — but the offer isn't. Your environment shows every sign it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?"
+      : "Neither the offer nor the reception is at full strength — you're holding some of yourself back, and the environment hasn't fully proven it would receive you. This is ambiguity: not exclusion, not belonging, and over time it costs like exclusion. The loop completes one honest offer, one safe reception at a time — and both sides have a move to make.";
+  }
+
+  // Depth read: settled pattern vs. near a line
+  const AXIS_MEANING = { x: "reception — how your environment receives you", y: "action — how authentically you show up" };
+  const DEEP_ZONES = { survival: "Casualty", guarded: "Absent", fitin: "Unknown" };
+  let depthLine;
+  if (quadKey === "belong" && results.deep) {
+    depthLine = `<p><strong>Depth read:</strong> you're in the Belong zone — both your action and its reception clear 7.5. This is belonging that has been earned and proven, not a borderline result.</p>`;
+  } else if (quadKey === "belong") {
+    depthLine = "";
+  } else if (results.deep) {
+    depthLine = `<p><strong>Depth read:</strong> you've reached the ${DEEP_ZONES[quadKey]} zone — the settled end of ${QUADRANTS[quadKey].name}. This is not a borderline result, and settled patterns don't shift on their own. Whatever happens next needs to be deliberate.</p>`;
+  } else {
+    depthLine = `<p><strong>Depth read:</strong> you're near the ${QUADRANTS[results.adjacentKey].name} line. A shift in ${AXIS_MEANING[results.nearAxis]} is what moves you across — in either direction.</p>`;
+  }
+
+  const orgTenure = document.getElementById("orgTenure").value;
+  let tenureLine = "";
+  if (quadKey === "fitin" && (orgTenure === "8–15 years" || orgTenure === "More than 15 years")) {
+    tenureLine = `<p><strong>Worth naming:</strong> you've been here a long time. Fitting in for this many years isn't a phase — it's a pattern, and patterns this old usually feel normal. It isn't.</p>`;
+  }
+  if (quadKey === "guarded" && orgTenure === "Less than 1 year") {
+    tenureLine = `<p><strong>Worth naming:</strong> you're new here, and guardedness early on can be pace, not permanence. Watch whether the environment earns your openness over the next few months — or confirms your instinct.</p>`;
+  }
+  const bucketColor = quadKey === "belong" && !results.deep ? "#9c711f" : quad.color;
+  document.getElementById("quadrantCallout").innerHTML = `
+    <div class="bucket" style="color:${bucketColor}">${results.bucket}</div>
+    <h3>You land in: ${results.displayName}</h3>
+    <p>${quadCopy}</p>${depthLine}${tenureLine}`;
+
+  // Indicator cards
+  const grid = document.getElementById("indGrid");
+  grid.innerHTML = ["psych", "conn", "cocre", "vuln"].map(k => {
+    const m = INDICATOR_META[k];
+    const s = scores[k];
+    return `<div class="ind-card ${m.cls}">
+      <div class="lbl">${m.label}</div>
+      <div class="val">${s.toFixed(1)}</div>
+      <div class="tier">${tierFor(s)}</div>
+      <div class="bar"><i style="width:${(s / 10) * 100}%"></i></div>
+    </div>`;
+  }).join("");
+
+  drawMatrix(overall, scores.vuln, quadKey, results.deep);
+  go("s-results");
+}
+
+function drawMatrix(x, y, quadKey, deep) {
+  const W = 560, H = 480, pad = 52;
+  const plotW = W - pad * 2, plotH = H - pad * 2;
+  const xPix = v => pad + (v / 10) * plotW;
+  const yPix = v => H - pad - (v / 10) * plotH;
+  const px = xPix(x), py = yPix(y);
+
+  const q = (key) => key === quadKey;
+  const lblColor = (key, base) => q(key) ? base : "#a9a294";
+  const dotColor = { belong: "#1f8a7d", fitin: "#d9a441", survival: "#c2543a", guarded: "#16263f" }[quadKey];
+
+  const hg = 3, top = pad, bottom = H - pad, right = W - pad;
+  const mx = xPix(MID), my = yPix(MID);
+  const dLo = MID - DEEP, dHi = MID + DEEP; // 3.5 and 7.5
+
+  // base + deep-corner fills per quadrant (occupied = full color, others muted)
+  const Z = {
+    survival: { base: "#f8e8e3", deepFill: "#f1d3c7", x: pad,      y: top,      w: mx - hg - pad,   h: my - hg - top,    dx: pad,        dy: top,        dw: xPix(dLo) - pad,        dh: yPix(dHi) - top },
+    belong:   { base: "#e3f2f0", deepFill: "#c9e6e1", x: mx + hg,  y: top,      w: right - mx - hg, h: my - hg - top,    dx: xPix(dHi),  dy: top,        dw: right - xPix(dHi),      dh: yPix(dHi) - top },
+    guarded:  { base: "#e6ebf5", deepFill: "#d0daea", x: pad,      y: my + hg,  w: mx - hg - pad,   h: bottom - my - hg, dx: pad,        dy: yPix(dLo),  dw: xPix(dLo) - pad,        dh: bottom - yPix(dLo) },
+    fitin:    { base: "#faf1de", deepFill: "#f2e2ba", x: mx + hg,  y: my + hg,  w: right - mx - hg, h: bottom - my - hg, dx: xPix(dHi),  dy: yPix(dLo),  dw: right - xPix(dHi),      dh: bottom - yPix(dLo) }
+  };
+  const tiles = Object.entries(Z).map(([key, z]) => {
+    const base = q(key) ? z.base : "#eeebe3";
+    const deepFill = q(key) ? z.deepFill : "#e5e1d6";
+    return `<rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="${base}"/>
+            <rect x="${z.dx}" y="${z.dy}" width="${z.dw}" height="${z.dh}" rx="8" fill="${deepFill}"/>`;
+  }).join("");
+
+  const tick = (X, Y, label, rot) =>
+    `<text x="${X}" y="${Y}" text-anchor="${rot ? "end" : "middle"}" font-family="Public Sans, sans-serif" font-size="10" font-weight="700" fill="#a9a294">${label}</text>`;
+
+  document.getElementById("matrixHolder").innerHTML = `
+  <svg class="matrix-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img"
+       aria-label="Belonging Matrix: your position is plotted at environment ${x.toFixed(1)} and vulnerability ${y.toFixed(1)}, in the ${quadKey === 'belong' ? (deep ? 'Belong' : 'Building') : QUADRANTS[quadKey].name} zone${deep ? ", deep zone" : ", near the lines"}.">
+    <defs>
+      <clipPath id="plotClip"><rect x="${pad}" y="${top}" width="${plotW}" height="${plotH}" rx="14"/></clipPath>
+    </defs>
+    <g clip-path="url(#plotClip)">${tiles}</g>
+
+    <!-- quadrant names -->
+    <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('survival', '#c2543a')}">Survival</text>
+    <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('survival', '#c2543a')}">EXCLUSION</text>
+    <text x="${pad + (xPix(dLo) - pad) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="16" font-weight="600" fill="${lblColor('survival', '#993c1d')}">Casualty</text>
+    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('belong', '#1f8a7d')}">Building</text>
+    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('belong', '#1f8a7d')}">AMBIGUITY</text>
+    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="17" font-weight="600" fill="${lblColor('belong', '#0f6e56')}">Belong</text>
+    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 + 13}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="10" letter-spacing="1.5" fill="${lblColor('belong', '#0f6e56')}">BELONGING</text>
+    <text x="${pad + (mx - pad) / 2}" y="${my + 34}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('guarded', '#24385c')}">Guarded</text>
+    <text x="${pad + (mx - pad) / 2}" y="${my + 52}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('guarded', '#24385c')}">EXCLUSION</text>
+    <text x="${pad + (xPix(dLo) - pad) / 2}" y="${yPix(dLo) + (bottom - yPix(dLo)) / 2 + 5}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="16" font-weight="600" fill="${lblColor('guarded', '#16263f')}">Absent</text>
+    <text x="${mx + (right - mx) / 2}" y="${my + 34}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('fitin', '#9c711f')}">Fit In</text>
+    <text x="${mx + (right - mx) / 2}" y="${my + 52}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('fitin', '#9c711f')}">AMBIGUITY</text>
+    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${yPix(dLo) + (bottom - yPix(dLo)) / 2 + 5}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="16" font-weight="600" fill="${lblColor('fitin', '#854f0b')}">Unknown</text>
+
+    <!-- axis labels + thresholds -->
+    <text x="${pad}" y="${H - 16}" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472">Hostile</text>
+    <text x="${right}" y="${H - 16}" text-anchor="end" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472">Supportive</text>
+    <text x="${(pad + right) / 2}" y="${H - 16}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1" fill="#a9a294">RECEPTION</text>
+    <text x="16" y="${bottom}" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472" transform="rotate(-90 16 ${bottom})">Low authenticity</text>
+    <text x="16" y="${top}" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472" transform="rotate(-90 16 ${top})" text-anchor="end">High authenticity</text>
+    <text x="16" y="${(top + bottom) / 2}" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1" fill="#a9a294" transform="rotate(-90 16 ${(top + bottom) / 2})" text-anchor="middle">ACTION</text>
+    ${tick(xPix(dLo), H - 16, "3.5")}${tick(mx, H - 16, "5.5")}${tick(xPix(dHi), H - 16, "7.5")}
+    ${tick(pad - 8, yPix(dLo) + 4, "3.5", true)}${tick(pad - 8, my + 4, "5.5", true)}${tick(pad - 8, yPix(dHi) + 4, "7.5", true)}
+
+    <!-- the person -->
+    <circle cx="${px}" cy="${py}" r="16" fill="${dotColor}" opacity="0.18">
+      <animate attributeName="r" values="12;20;12" dur="2.4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="${px}" cy="${py}" r="8" fill="${dotColor}" stroke="#fff" stroke-width="2.5"/>
+    <text x="${px}" y="${py - 18}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="12" font-weight="700" fill="#1c2430">You</text>
+  </svg>`;
+}
+
+/* =====================================================
+   SEND RESULTS — Make.com webhook
+   ===================================================== */
+async function sendResults() {
+  const err = document.getElementById("formErr");
+  err.hidden = true;
+  const name = document.getElementById("fName").value.trim();
+  const email = document.getElementById("fEmail").value.trim();
+  if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    err.textContent = "Add your name and a valid email so we know where to send your results.";
+    err.hidden = false;
+    return;
+  }
+
+  const payload = {
+    submittedAt: new Date().toISOString(),
+    contact: {
+      name, email,
+      organization: document.getElementById("fOrg").value.trim(),
+      role: document.getElementById("fRole").value.trim()
+    },
+    tenure: {
+      organization: document.getElementById("orgTenure").value,
+      profession: document.getElementById("profTenure").value
+    },
+    results: {
+      belongingScore: +results.overall.toFixed(1),
+      tier: tierFor(results.overall),
+      quadrant: results.displayName,
+      zoneDepth: results.deep ? "deep" : "edge",
+      deepZone: results.deep ? ({ belong: "Belong", survival: "Casualty", guarded: "Absent", fitin: "Unknown" })[results.quadKey] : null,
+      belongingEstablished: results.established,
+      bucket: results.bucket,
+      indicators: {
+        psychologicalSafety: +results.scores.psych.toFixed(1),
+        socialConnection: +results.scores.conn.toFixed(1),
+        coCreation: +results.scores.cocre.toFixed(1),
+        authenticity: +results.scores.vuln.toFixed(1)
+      }
+    },
+    rawAnswers: answers
+  };
+
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  btn.textContent = "Sending…";
+
+  const isPlaceholder = WEBHOOK_URL.includes("YOUR-WEBHOOK-ID");
+  try {
+    if (!isPlaceholder) {
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Webhook returned " + res.status);
+    } else {
+      console.warn("WEBHOOK_URL is still the placeholder — payload below was not sent:", payload);
+    }
+    document.getElementById("formFields").hidden = true;
+    document.getElementById("sentMsg").hidden = false;
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = "Email my results";
+    err.textContent = "That didn't go through. Check your connection and try again.";
+    err.hidden = false;
+  }
+}
+
+/* init */
+buildQuestionScreens();
+</script>
+</body>
+</html>
