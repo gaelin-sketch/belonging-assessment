@@ -159,6 +159,39 @@
 
   .section-gap { margin-top: 26px; }
 
+  /* indicator reads */
+  .read-row {
+    background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--teal);
+    border-radius: 10px; padding: 14px 16px; margin-top: 10px;
+  }
+  .read-row.psych { border-left-color: var(--navy); }
+  .read-row.cocre { border-left-color: var(--gold); }
+  .read-row.vuln  { border-left-color: var(--clay); }
+  .read-row .r-head {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 5px;
+  }
+  .read-row .r-name { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+  .read-row .r-score { font-size: 13px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+  .read-row p { font-size: 15px; color: var(--ink-soft); }
+
+  /* level cards */
+  .lvl-card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; margin-bottom: 10px;
+  }
+  .lvl-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .lvl-name { font-size: 17px; font-weight: 600; }
+  .lvl-zone { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; }
+  .lvl-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .m-lbl { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .m-val { font-family: "Fraunces", Georgia, serif; font-size: 24px; font-weight: 700; margin: 2px 0 4px; }
+  .gap-read {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; margin-top: 14px;
+  }
+  .gap-read p { font-size: 15px; color: var(--ink-soft); }
+  .gap-read p + p { margin-top: 8px; }
+
   /* form */
   .form-card { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 26px; margin-top: 30px; }
   .form-card h2 { color: #fff; }
@@ -195,7 +228,7 @@
       <div class="def-row"><span class="def-tag level-ext">Extended</span><span>The wider organization beyond your team — other divisions, other buildings, the whole.</span></div>
     </div>
     <button class="btn" onclick="go('s-intake')">Start the assessment</button>
-    <div class="meta-line">Your responses are yours — results are shown to you first, and shared only if you choose to send them.</div>
+    <div class="meta-line">Your answers are recorded anonymously so patterns across respondents can be studied. Your results are shown to you first, and your name and email are attached to them only if you ask for your report at the end.</div>
   </section>
 
   <!-- ============ INTAKE ============ -->
@@ -253,6 +286,14 @@
       <div class="cards-head">What's driving your score</div>
       <div class="cards-sub">Belonging has two variables. Authenticity is your action; the three indicators are the reception — each measured across your team, your leadership, and your organization.</div>
       <div class="ind-grid" id="indGrid"></div>
+      <div id="indReads"></div>
+    </div>
+
+    <div class="section-gap">
+      <div class="cards-head">Level by level</div>
+      <div class="cards-sub">The same two variables, scored separately at each level. Belonging is rarely even — this is where yours holds and where it breaks.</div>
+      <div id="levelList"></div>
+      <div id="gapRead"></div>
     </div>
 
     <div class="form-card" id="formCard">
@@ -269,7 +310,7 @@
         <input id="fRole" type="text" placeholder="What you do there" autocomplete="organization-title">
         <button class="btn" id="sendBtn" onclick="sendResults()">Email my results</button>
         <div class="err" id="formErr" hidden></div>
-        <div class="form-note">Your results go to you. We'll never share your score without your permission.</div>
+        <div class="form-note">Optional. Your report goes to you — adding your email links it to the answers you just gave. We'll never share your score without your permission.</div>
       </div>
       <div class="sent" id="sentMsg" hidden>
         <div class="display">Results on the way.</div>
@@ -285,7 +326,11 @@
    CONFIGURATION — edit these, nothing below needs touching
    ===================================================== */
 
-// Paste your Make.com webhook URL here to activate delivery + Pipedrive capture
+// Paste your Make.com webhook URL here to activate delivery + Pipedrive capture.
+// Both stages post to this one URL and are told apart by the payload's `event` field:
+//   event: "submission"     — fires for EVERY completed assessment, anonymous, no contact details
+//   event: "report_request" — fires only if the respondent opts in, carries name/email
+// Both carry the same `submissionId`, which is what links the two rows together.
 const WEBHOOK_URL = "https://hook.us1.make.com/YOUR-WEBHOOK-ID";
 
 // Level weights: how much each level of belonging counts (must sum to 1)
@@ -385,11 +430,53 @@ const QUADRANTS = {
   }
 };
 
+/* Per-indicator reads, keyed by tier. Three of these describe the reception;
+   Authenticity describes the offer, so it is written in the second person active. */
+const INDICATOR_READS = {
+  psych: {
+    Strong:     "You can say the hard thing here and survive it. That's the floor belonging is built on, and you have it.",
+    Building:   "You'll speak up, but you calculate first. The safety here is real and it isn't automatic — you're still reading the room before you trust it.",
+    Emerging:   "Speaking up costs you something here. You do it anyway sometimes, and you pay for it in energy you don't get back.",
+    Developing: "It isn't safe to be honest here, and you already know it. Treat that as accurate information about the environment, not a flaw in you."
+  },
+  conn: {
+    Strong:     "People here know you, and you know them. These are relationships, not working arrangements.",
+    Building:   "There's real connection here and it's uneven — some people know you, and it may not be the ones you spend the most hours beside.",
+    Emerging:   "The relationships are functional more than personal. If you left, the gap you'd leave would be logistical.",
+    Developing: "You're working alongside people who don't know you. That's isolation with company, and it's more tiring than being alone."
+  },
+  cocre: {
+    Strong:     "Your input changes outcomes here. You're not being consulted for form — you're shaping the thing.",
+    Building:   "You're asked sometimes, and it matters sometimes. Whether that's real participation or decoration is a question your next few months will answer.",
+    Emerging:   "You're informed more than involved. Being told early is not the same as being asked.",
+    Developing: "Decisions about your work get made without you. Over time that teaches you your view isn't worth offering — which is how good people go quiet."
+  },
+  vuln: {
+    Strong:     "You bring the real thing here — your voice, your feelings, your view. That's the offer belonging requires, and you're making it.",
+    Building:   "You show up mostly as yourself, with edits. The parts you hold back are the ones worth naming — to yourself first.",
+    Emerging:   "There's a version of you that comes to work, and it isn't quite you. Maintaining it costs more than it looks like from the outside.",
+    Developing: "You're not bringing yourself here at all. Whether that's protection or habit is worth knowing — because one of the two you can choose to stop."
+  }
+};
+
+/* What it means when a given level is the weakest of the three */
+const WEAK_LEVEL_READS = {
+  imm:  "When your immediate team is the weakest level, you feel it daily. This is the one that wears on you fastest, and the one closest to your reach.",
+  lead: "When leadership is the weakest level, it caps what feels possible everywhere else — however good your team is, the ceiling is set above them.",
+  ext:  "When the wider organization is the weakest level, you have a home but not a place. Your team holds you; the institution doesn't know you're there."
+};
+
 /* =====================================================
    STATE + FLOW
    ===================================================== */
 const answers = {};   // "levelKey-idx" -> 1..5
 let results = null;
+
+// Ties the anonymous submission (stage 1) to the report request (stage 2)
+const submissionId = (window.crypto && crypto.randomUUID)
+  ? crypto.randomUUID()
+  : "sub-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+let step1Delivered = false;
 
 function go(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
@@ -470,6 +557,18 @@ function tierFor(score) {
   return TIERS.find(t => score >= t.min).label;
 }
 
+/* Where a reception/authenticity pair lands. Used for the overall result and,
+   separately, for each of the three levels on its own. */
+function zoneFor(reception, authenticity) {
+  const xHigh = reception >= MID, yHigh = authenticity >= MID;
+  const key = xHigh ? (yHigh ? "belong" : "fitin") : (yHigh ? "survival" : "guarded");
+  const deep = Math.abs(reception - MID) >= DEEP && Math.abs(authenticity - MID) >= DEEP;
+  // Belonging is the summit, not the quadrant: top-right is Building until it reaches the deep corner
+  const displayName = key === "belong" ? (deep ? "Belong" : "Building") : QUADRANTS[key].name;
+  const bucket = key === "belong" && !deep ? "Ambiguity" : QUADRANTS[key].bucket;
+  return { key, deep, displayName, bucket, xHigh, yHigh };
+}
+
 function computeScores() {
   // Accumulate weighted values per level per indicator
   const acc = {}; // level -> indicator -> {num, den}
@@ -509,22 +608,55 @@ function computeScores() {
     INDICATOR_WEIGHTS.conn  * scores.conn +
     INDICATOR_WEIGHTS.cocre * scores.cocre;
 
+  // Each level scored on its own two axes, so a person can see where belonging
+  // holds and where it breaks rather than only the blended total.
+  const levels = {};
+  LEVELS.forEach(lvl => {
+    const meanOf = ind => {
+      const cell = acc[lvl.key][ind];
+      return cell && cell.den ? cell.num / cell.den : null;
+    };
+    let num = 0, den = 0;
+    for (const [ind, w] of Object.entries(INDICATOR_WEIGHTS)) {
+      const m = meanOf(ind);
+      if (m === null) continue;
+      num += w * m;
+      den += w;
+    }
+    const reception = normalize(num / den);
+    const authenticity = normalize(meanOf("vuln"));
+    levels[lvl.key] = {
+      key: lvl.key, head: lvl.head, tag: lvl.tag, tagClass: lvl.tagClass,
+      reception, authenticity,
+      zone: zoneFor(reception, authenticity),
+      indicators: {
+        psych: normalize(meanOf("psych")),
+        conn:  normalize(meanOf("conn")),
+        cocre: normalize(meanOf("cocre"))
+      }
+    };
+  });
+
+  // Strongest and weakest level by reception — the spread is the story
+  const ranked = Object.values(levels).slice().sort((a, b) => b.reception - a.reception);
+  const strongestLevel = ranked[0], weakestLevel = ranked[ranked.length - 1];
+  const levelSpread = strongestLevel.reception - weakestLevel.reception;
+
   // Quadrant by 5.5 crosshairs; zone depth and proximity computed from both axes
-  const xHigh = overall >= MID, yHigh = scores.vuln >= MID;
-  const zoneAt = (xh, yh) => xh ? (yh ? "belong" : "fitin") : (yh ? "survival" : "guarded");
-  const quadKey = zoneAt(xHigh, yHigh);
+  const zone = zoneFor(overall, scores.vuln);
+  const { key: quadKey, deep, displayName, bucket, xHigh, yHigh } = zone;
 
   const dx = Math.abs(overall - MID), dy = Math.abs(scores.vuln - MID);
-  const deep = dx >= DEEP && dy >= DEEP;
+  const zoneAt = (xh, yh) => xh ? (yh ? "belong" : "fitin") : (yh ? "survival" : "guarded");
   const nearAxis = dx <= dy ? "x" : "y";
   const adjacentKey = nearAxis === "x" ? zoneAt(!xHigh, yHigh) : zoneAt(xHigh, !yHigh);
 
-  // Belonging is the summit, not the quadrant: the top-right quadrant is Building; only its deep corner is Belong
   const established = quadKey === "belong" && deep;
-  const displayName = quadKey === "belong" ? (deep ? "Belong" : "Building") : QUADRANTS[quadKey].name;
-  const bucket = quadKey === "belong" && !deep ? "Ambiguity" : QUADRANTS[quadKey].bucket;
 
-  return { scores, overall, quadKey, deep, nearAxis, adjacentKey, established, displayName, bucket };
+  return {
+    scores, overall, zone, quadKey, deep, nearAxis, adjacentKey, established, displayName, bucket,
+    levels, strongestLevel, weakestLevel, levelSpread
+  };
 }
 
 /* =====================================================
@@ -538,13 +670,7 @@ function finish() {
   document.getElementById("scoreVal").textContent = overall.toFixed(1);
   const chip = document.getElementById("tierChip");
   chip.textContent = tierFor(overall);
-  const chipKey = quadKey === "belong" && !results.deep ? "fitin" : quadKey;
-  const chipTheme = {
-    belong:   { bg: "var(--teal-soft)", fg: "var(--teal)" },
-    fitin:    { bg: "var(--gold-soft)", fg: "#9c711f" },
-    survival: { bg: "var(--clay-soft)", fg: "var(--clay)" },
-    guarded:  { bg: "#e6ebf5",          fg: "var(--navy-soft)" }
-  }[chipKey];
+  const chipTheme = chipThemeFor(results.zone);
   chip.style.background = chipTheme.bg;
   chip.style.color = chipTheme.fg;
 
@@ -602,8 +728,76 @@ function finish() {
     </div>`;
   }).join("");
 
+  renderIndicatorReads(scores);
+  renderLevels(results);
+
   drawMatrix(overall, scores.vuln, quadKey, results.deep);
   go("s-results");
+
+  // Stage 1: every completed assessment is recorded, anonymously, whether or not
+  // the respondent goes on to ask for a report. Never blocks the results screen.
+  logSubmission();
+}
+
+const ZONE_CHIP = {
+  belong:   { bg: "var(--teal-soft)", fg: "var(--teal)" },
+  fitin:    { bg: "var(--gold-soft)", fg: "#9c711f" },
+  survival: { bg: "var(--clay-soft)", fg: "var(--clay)" },
+  guarded:  { bg: "#e6ebf5",          fg: "var(--navy-soft)" }
+};
+
+function chipThemeFor(zone) {
+  return ZONE_CHIP[zone.key === "belong" && !zone.deep ? "fitin" : zone.key];
+}
+
+function renderIndicatorReads(scores) {
+  document.getElementById("indReads").innerHTML = ["psych", "conn", "cocre", "vuln"].map(k => {
+    const m = INDICATOR_META[k];
+    const tier = tierFor(scores[k]);
+    return `<div class="read-row ${m.cls}">
+      <div class="r-head">
+        <span class="r-name">${m.label}</span>
+        <span class="r-score">${scores[k].toFixed(1)} · ${tier}</span>
+      </div>
+      <p>${INDICATOR_READS[k][tier]}</p>
+    </div>`;
+  }).join("");
+}
+
+function renderLevels(r) {
+  document.getElementById("levelList").innerHTML = LEVELS.map(lvl => {
+    const L = r.levels[lvl.key];
+    const theme = chipThemeFor(L.zone);
+    return `<div class="lvl-card">
+      <div class="lvl-top">
+        <span class="lvl-name">${L.head}</span>
+        <span class="lvl-zone" style="background:${theme.bg};color:${theme.fg}">${L.zone.displayName}</span>
+      </div>
+      <div class="lvl-metrics">
+        <div>
+          <div class="m-lbl">Reception</div>
+          <div class="m-val">${L.reception.toFixed(1)}</div>
+          <div class="bar"><i style="width:${(L.reception / 10) * 100}%"></i></div>
+        </div>
+        <div>
+          <div class="m-lbl">Your authenticity</div>
+          <div class="m-val">${L.authenticity.toFixed(1)}</div>
+          <div class="bar"><i style="width:${(L.authenticity / 10) * 100}%;background:var(--clay)"></i></div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // The spread between levels says more than any single level does
+  const { strongestLevel: hi, weakestLevel: lo, levelSpread: spread } = r;
+  let gap;
+  if (spread < 1.0) {
+    gap = `<p><strong>The spread:</strong> your experience is consistent across all three levels — within ${spread.toFixed(1)} of a point. Whatever is happening here isn't one bad team or one bad manager; it's the culture, and it's the same wherever you stand in it.</p>`;
+  } else {
+    gap = `<p><strong>The spread:</strong> ${hi.head.toLowerCase()} is where this works best (${hi.reception.toFixed(1)}) and ${lo.head.toLowerCase()} is where it works least (${lo.reception.toFixed(1)}) — a gap of ${spread.toFixed(1)} points. Your belonging is uneven, and the average hides that.</p>
+      <p>${WEAK_LEVEL_READS[lo.key]}</p>`;
+  }
+  document.getElementById("gapRead").innerHTML = `<div class="gap-read">${gap}</div>`;
 }
 
 function drawMatrix(x, y, quadKey, deep) {
@@ -668,7 +862,7 @@ function drawMatrix(x, y, quadKey, deep) {
     <text x="16" y="${bottom}" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472" transform="rotate(-90 16 ${bottom})">Low authenticity</text>
     <text x="16" y="${top}" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472" transform="rotate(-90 16 ${top})" text-anchor="end">High authenticity</text>
     <text x="16" y="${(top + bottom) / 2}" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1" fill="#a9a294" transform="rotate(-90 16 ${(top + bottom) / 2})" text-anchor="middle">ACTION</text>
-    ${tick(xPix(dLo), H - 16, "3.5")}${tick(mx, H - 16, "5.5")}${tick(xPix(dHi), H - 16, "7.5")}
+    ${tick(xPix(dLo), H - 34, "3.5")}${tick(mx, H - 34, "5.5")}${tick(xPix(dHi), H - 34, "7.5")}
     ${tick(pad - 8, yPix(dLo) + 4, "3.5", true)}${tick(pad - 8, my + 4, "5.5", true)}${tick(pad - 8, yPix(dHi) + 4, "7.5", true)}
 
     <!-- the person -->
@@ -681,8 +875,88 @@ function drawMatrix(x, y, quadKey, deep) {
 }
 
 /* =====================================================
-   SEND RESULTS — Make.com webhook
+   DELIVERY — Make.com webhook, two stages sharing one submissionId
    ===================================================== */
+const WEBHOOK_READY = !WEBHOOK_URL.includes("YOUR-WEBHOOK-ID");
+
+async function postToWebhook(payload) {
+  if (!WEBHOOK_READY) {
+    console.warn("WEBHOOK_URL is still the placeholder — payload below was not sent:", payload);
+    return;
+  }
+  const res = await fetch(WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error("Webhook returned " + res.status);
+}
+
+/* The full scored record. Identical in both stages so either one alone is
+   enough to rebuild the respondent's report. */
+function resultsBlock() {
+  const levelBlock = {};
+  for (const [k, L] of Object.entries(results.levels)) {
+    levelBlock[k] = {
+      name: L.head,
+      reception: +L.reception.toFixed(1),
+      authenticity: +L.authenticity.toFixed(1),
+      zone: L.zone.displayName,
+      bucket: L.zone.bucket,
+      psychologicalSafety: +L.indicators.psych.toFixed(1),
+      socialConnection: +L.indicators.conn.toFixed(1),
+      coCreation: +L.indicators.cocre.toFixed(1)
+    };
+  }
+  return {
+    belongingScore: +results.overall.toFixed(1),
+    tier: tierFor(results.overall),
+    quadrant: results.displayName,
+    zoneDepth: results.deep ? "deep" : "edge",
+    deepZone: results.deep ? ({ belong: "Belong", survival: "Casualty", guarded: "Absent", fitin: "Unknown" })[results.quadKey] : null,
+    belongingEstablished: results.established,
+    bucket: results.bucket,
+    indicators: {
+      psychologicalSafety: +results.scores.psych.toFixed(1),
+      socialConnection: +results.scores.conn.toFixed(1),
+      coCreation: +results.scores.cocre.toFixed(1),
+      authenticity: +results.scores.vuln.toFixed(1)
+    },
+    levels: levelBlock,
+    strongestLevel: results.strongestLevel.head,
+    weakestLevel: results.weakestLevel.head,
+    levelSpread: +results.levelSpread.toFixed(1)
+  };
+}
+
+function submissionPayload() {
+  return {
+    event: "submission",
+    submissionId,
+    submittedAt: new Date().toISOString(),
+    tenure: {
+      organization: document.getElementById("orgTenure").value,
+      profession: document.getElementById("profTenure").value
+    },
+    results: resultsBlock(),
+    rawAnswers: Object.assign({}, answers)
+  };
+}
+
+/* Stage 1 — fires on completion for everyone. Anonymous: no contact fields.
+   Failure is silent by design; a lost log must never cost the respondent
+   their results screen. If it did fail, stage 2 carries the record instead. */
+async function logSubmission() {
+  try {
+    await postToWebhook(submissionPayload());
+    step1Delivered = WEBHOOK_READY;
+  } catch (e) {
+    step1Delivered = false;
+    console.warn("Anonymous submission log failed; it will ride along with the report request.", e);
+  }
+}
+
+/* Stage 2 — optional. Links a name and email to the stage 1 row via submissionId. */
 async function sendResults() {
   const err = document.getElementById("formErr");
   err.hidden = true;
@@ -695,7 +969,9 @@ async function sendResults() {
   }
 
   const payload = {
-    submittedAt: new Date().toISOString(),
+    event: "report_request",
+    submissionId,
+    requestedAt: new Date().toISOString(),
     contact: {
       name, email,
       organization: document.getElementById("fOrg").value.trim(),
@@ -705,40 +981,19 @@ async function sendResults() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
-    results: {
-      belongingScore: +results.overall.toFixed(1),
-      tier: tierFor(results.overall),
-      quadrant: results.displayName,
-      zoneDepth: results.deep ? "deep" : "edge",
-      deepZone: results.deep ? ({ belong: "Belong", survival: "Casualty", guarded: "Absent", fitin: "Unknown" })[results.quadKey] : null,
-      belongingEstablished: results.established,
-      bucket: results.bucket,
-      indicators: {
-        psychologicalSafety: +results.scores.psych.toFixed(1),
-        socialConnection: +results.scores.conn.toFixed(1),
-        coCreation: +results.scores.cocre.toFixed(1),
-        authenticity: +results.scores.vuln.toFixed(1)
-      }
-    },
-    rawAnswers: answers
+    results: resultsBlock(),
+    // True when stage 1 already landed. When false, this payload is the only
+    // copy of the record, so the scenario should create the row rather than join.
+    linkedToSubmission: step1Delivered
   };
+  if (!step1Delivered) payload.rawAnswers = Object.assign({}, answers);
 
   const btn = document.getElementById("sendBtn");
   btn.disabled = true;
   btn.textContent = "Sending…";
 
-  const isPlaceholder = WEBHOOK_URL.includes("YOUR-WEBHOOK-ID");
   try {
-    if (!isPlaceholder) {
-      const res = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      if (!res.ok) throw new Error("Webhook returned " + res.status);
-    } else {
-      console.warn("WEBHOOK_URL is still the placeholder — payload below was not sent:", payload);
-    }
+    await postToWebhook(payload);
     document.getElementById("formFields").hidden = true;
     document.getElementById("sentMsg").hidden = false;
   } catch (e) {
