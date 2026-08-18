@@ -200,22 +200,7 @@
   .ind-card::before { background: var(--pair, var(--belong)); }
   .ind-card .val    { color: var(--pair, var(--belong)); }
   .ind-card .bar i  { background: var(--pair, var(--belong)); }
-  .read-row         { border-left-color: var(--pair, var(--belong)); }
 
-  /* indicator reads */
-  .read-row {
-    background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--belong);
-    border-radius: 10px; padding: 14px 16px; margin-top: 10px;
-  }
-  .read-row.psych { border-left-color: var(--navy); }
-  .read-row.cocre { border-left-color: var(--ambig); }
-  .read-row.vuln  { border-left-color: var(--exclu); }
-  .read-row .r-head {
-    display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 5px;
-  }
-  .read-row .r-name { font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-  .read-row .r-score { font-size: 13px; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
-  .read-row p { font-size: 15px; color: var(--ink-soft); }
 
   /* level cards */
   .lvl-card {
@@ -312,7 +297,7 @@
   @media (max-width: 640px) { .confetti { display: none; } }
 
   /* cards */
-  .q, .matrix-card, .ind-card, .lvl-card, .gap-read, .read-row, .code-card, .quadrant-callout {
+  .q, .matrix-card, .ind-card, .lvl-card, .gap-read, .code-card, .quadrant-callout {
     border-radius: var(--radius);
   }
   .btn { font-family: "Archivo", sans-serif; font-weight: 600; letter-spacing: .01em; }
@@ -324,14 +309,13 @@
   .ind-card::before { content: ""; display: block; width: 26px; height: 3px; border-radius: 2px; margin-bottom: 12px; background: var(--pair); }
   .ind-card .val { font-family: "Archivo", sans-serif; font-weight: 800; font-size: 38px; letter-spacing: -0.03em; color: var(--pair); }
   .ind-card .bar i { background: var(--pair); }
-  .read-row { border-left-color: var(--pair); }
 
   /* score hero */
   .score-num { font-family: "Archivo", sans-serif; font-weight: 800; letter-spacing: -0.045em; }
   .tier-chip { font-family: "Archivo", sans-serif; }
   .quadrant-callout { border-left: 5px solid var(--navy); }
   .quadrant-callout h3 { font-family: "Archivo", sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; color: var(--navy); }
-  .lvl-zone, .level-tag, .def-tag, .m-lbl, .lbl, .r-name { font-family: "Archivo", sans-serif; }
+  .lvl-zone, .level-tag, .def-tag, .m-lbl, .lbl { font-family: "Archivo", sans-serif; }
   .m-val, .lvl-name { font-family: "Archivo", sans-serif; font-weight: 700; }
 
   .form-card { background: var(--navy); }
@@ -491,7 +475,6 @@
       <div class="axis-label">Their reception</div>
       <div class="ind-grid" id="recGrid"></div>
       <div class="scale-note">Green from 7.5. Amber from 5.5. Burnt orange below the crosshairs.</div>
-      <div id="indReads"></div>
     </div>
 
     <div class="section-gap">
@@ -685,47 +668,6 @@ const QUADRANTS = {
   guarded: {
     name: "Guarded", bucket: "Exclusion", color: "var(--navy)",
     copy: "You've stopped offering because this environment has shown you what happens when you do. That guard is wisdom, not weakness, but no one should have to work this way. This is exclusion, whether or not anyone has named it."
-  }
-};
-
-/* Reads for each construct, keyed by tier. The three acts are written as what the
-   person does, the three indicators as what the environment does back. */
-const CONSTRUCT_READS = {
-  say: {
-    Strong:     "You say the hard thing out loud. That is the entry act, and you are making it.",
-    Building:   "You say most of it, and you pick your moments. The editing is selective rather than constant.",
-    Emerging:   "The honest read often stays in your head. It comes out when the stakes force it, not when you choose it.",
-    Developing: "You are not saying the thing here. Whatever taught you that, it has become the default."
-  },
-  show: {
-    Strong:     "You let people see the state you are actually in. That is the act most people withhold longest.",
-    Building:   "People here get a partly edited version. Some days you let it show, most days you manage it.",
-    Emerging:   "You keep how you are really doing largely to yourself. Managing that costs more than it looks like from outside.",
-    Developing: "Nobody here sees what the work is costing you. Of the three acts, that is the loneliest one to withhold."
-  },
-  share: {
-    Strong:     "You put your perspective on the work into the room. You are not waiting to be asked for it.",
-    Building:   "You offer your view when there is an opening, less often when you would have to make one.",
-    Emerging:   "Your view on the work mostly stays unoffered. Whether that is caution or resignation is worth knowing.",
-    Developing: "You have stopped offering your perspective. People rarely stop for no reason."
-  },
-  psych: {
-    Strong:     "You can say the hard thing here and survive it. That is the floor belonging is built on, and you have it.",
-    Building:   "You will speak up, and you calculate first. The safety here is real and it is not automatic.",
-    Emerging:   "Speaking up costs you something here. You do it anyway sometimes, and you pay for it in energy you do not get back.",
-    Developing: "It is not safe to be honest here, and you already know it. Treat that as accurate information about the environment, not a flaw in you."
-  },
-  conn: {
-    Strong:     "People here notice what the work is doing to you. That is care, not collegiality.",
-    Building:   "The care is real and uneven. Some people see you, and it may not be the ones you spend the most hours beside.",
-    Emerging:   "How the work lands on you is mostly nobody's concern here. That is a functional workplace and a lonely one.",
-    Developing: "You could be having the worst month of your career and nobody here would ask. That is isolation with company."
-  },
-  cocre: {
-    Strong:     "What you offer is taken in. You are not being consulted for form.",
-    Building:   "Your view is sometimes taken in and sometimes absorbed without trace. Which one it was is usually clear only later.",
-    Emerging:   "You are informed more than involved. Being told early is not the same as being asked.",
-    Developing: "What you offer does not land anywhere. Over time that teaches people their view is not worth offering, which is how good people go quiet."
   }
 };
 
@@ -1243,16 +1185,6 @@ function card(c, score) {
 function renderConstructs(r) {
   document.getElementById("actGrid").innerHTML = ACTS.map(c => card(c, r.constructs[c])).join("");
   document.getElementById("recGrid").innerHTML = INDICATORS.map(c => card(c, r.constructs[c])).join("");
-  document.getElementById("indReads").innerHTML = ACTS.concat(INDICATORS).map(c => {
-    const m = CONSTRUCT_META[c], sc = r.constructs[c], tier = tierFor(sc);
-    return `<div class="read-row ${m.cls}">
-      <div class="r-head">
-        <span class="r-name">${m.label}</span>
-        <span class="r-score" style="color:${tierColor(sc)}">${sc.toFixed(1)} · ${tier}</span>
-      </div>
-      <p>${CONSTRUCT_READS[c][tier]}</p>
-    </div>`;
-  }).join("");
 }
 
 function renderLevels(r) {
