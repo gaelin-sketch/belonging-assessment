@@ -151,6 +151,10 @@ Per level, under `results.levels.imm`, `.lead`, `.ext`
 Item responses
 - `rawAnswers`, 18 scored items keyed level-index, present on the `submission` event and on a
   `report_request` only when `linkedToSubmission` is false. Never quote item wording back to the reader.
+- The two axes are asked on different anchors. The nine act items are answered Never through Always,
+  because they are behaviours to be counted; the nine condition items are answered Strongly disagree
+  through Strongly agree, because they are perceptions. Both are stored 1 to 5. When you describe an
+  act, describe how often it happens; when you describe a condition, describe how strongly it holds.
 
 ## DISAMBIGUATION
 

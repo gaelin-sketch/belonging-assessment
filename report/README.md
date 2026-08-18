@@ -25,6 +25,13 @@ connection, share with co-creation. Every item loads exactly one construct, whic
 Action and Reception axes independent; before this, eight items carried weight on both and the two axes
 could not move apart. The three acts are weighted equally for now.
 
+The two axes use different anchors. The acts are asked Never through Always, since they are
+behaviours to be counted, and an agreement scale on a behaviour item measures self image instead:
+someone who believes they are open while rarely showing it is precisely who the assessment is trying
+to see. The conditions are asked Strongly disagree through Strongly agree, since they are perceptions.
+Both are five points, so scoring is identical either way, and each question screen marks the switch
+between them.
+
 Three more items, one per level, ask outright whether the person feels they belong. Those are never
 scored. They are the criterion held in reserve: once there are enough responses, regressing the three
 acts against them is what should set the act weights.

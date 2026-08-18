@@ -166,6 +166,12 @@
   .ind-card.vuln  .bar i { background: var(--exclu); }
 
   .section-gap { margin-top: 26px; }
+  .scale-head {
+    display: inline-block; font-family: "Archivo", sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft);
+    background: var(--paper-2); border-radius: 999px; padding: 8px 15px; margin: 24px 0 12px;
+  }
+  .screen .scale-head:first-of-type { margin-top: 4px; }
   .scale-note { font-size: 12px; color: var(--ink-faint); margin-top: 12px; }
   .axis-label {
     font-family: "Archivo", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .16em;
@@ -615,6 +621,18 @@ const LEVELS = [
 
 const LIKERT = ["Strongly disagree", "Disagree", "Neither", "Agree", "Strongly agree"];
 
+/* Two anchor sets. The acts are behaviours, so they are counted rather than agreed
+   with: an agreement scale on a behaviour item measures self image, and someone who
+   believes they are open while rarely showing it is exactly who this assessment is
+   trying to see. The reception items are climate perceptions, where agreement is
+   the right frame. Both are five points, so scoring is unaffected. */
+const SCALES = {
+  frequency: { name: "frequency", prompt: "How often is this true?",
+               labels: ["Never", "Rarely", "Sometimes", "Often", "Always"] },
+  agreement: { name: "agreement", prompt: "How much do you agree?", labels: LIKERT }
+};
+const scaleFor = c => CONSTRUCT_META[c].axis === "action" ? SCALES.frequency : SCALES.agreement;
+
 const ACTS = ["say", "show", "share"];
 const INDICATORS = ["psych", "conn", "cocre"];
 
@@ -737,23 +755,25 @@ function buildQuestionScreens() {
     const sec = document.createElement("section");
     sec.className = "screen";
     sec.id = "s-q" + li;
-    let qHtml = "";
+    let qHtml = "", lastScale = null;
+    const buttons = (scale, attr) => scale.labels
+      .map((lab, v) => `<button type="button" ${attr} data-val="${v+1}">${lab}</button>`).join("");
     lvl.items.forEach((item, qi) => {
-      const key = lvl.key + "-" + qi;
+      const scale = scaleFor(item.c);
+      // The anchors change between the acts and the conditions, so say so out loud
+      // rather than letting the buttons quietly mean something else.
+      if (scale.name !== lastScale) {
+        qHtml += `<div class="scale-head">${scale.prompt}</div>`;
+        lastScale = scale.name;
+      }
       qHtml += `<div class="q"><p>${item.text}</p>
-        <div class="likert" role="group" aria-label="${item.text}">` +
-        LIKERT.map((_, v) =>
-          `<button type="button" data-key="${key}" data-val="${v+1}">${LIKERT[v]}</button>`
-        ).join("") +
-        `</div></div>`;
+        <div class="likert" role="group" aria-label="${item.text}. ${scale.prompt}">` +
+        buttons(scale, `data-key="${lvl.key}-${qi}"`) + `</div></div>`;
     });
-    // Closing self-report for this level, same styling, scored nowhere
+    // Closing self-report for this level, agreement like the reception items, scored nowhere
     qHtml += `<div class="q"><p>${lvl.closer}</p>
-      <div class="likert" role="group" aria-label="${lvl.closer}">` +
-      LIKERT.map((_, v) =>
-        `<button type="button" data-pkey="${lvl.key}" data-val="${v+1}">${LIKERT[v]}</button>`
-      ).join("") +
-      `</div></div>`;
+      <div class="likert" role="group" aria-label="${lvl.closer}. ${SCALES.agreement.prompt}">` +
+      buttons(SCALES.agreement, `data-pkey="${lvl.key}"`) + `</div></div>`;
     const backTarget = li === 0 ? "s-intake" : "s-q" + (li - 1);
     const nextLabel = li === LEVELS.length - 1 ? "See my results" : "Continue";
     sec.innerHTML = `
