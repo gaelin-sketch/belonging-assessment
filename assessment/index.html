@@ -402,7 +402,7 @@ const LEVEL_WEIGHTS = { imm: 0.45, lead: 0.35, ext: 0.20 };
 // Indicator weights for the overall Belonging Score (must sum to 1)
 const INDICATOR_WEIGHTS = { psych: 0.40, conn: 0.35, cocre: 0.25 };
 
-// Tier thresholds on the 1–10 scale
+// Tier thresholds on the 0.1–10 scale
 const TIERS = [
   { min: 7.5, label: "Strong" },
   { min: 5.5, label: "Building" },
@@ -646,9 +646,8 @@ function updateProgress() {
    SCORING
    ===================================================== */
 function normalize(mean1to5) {
-  // Maps a 1–5 mean onto the 1–10 scale. Anchored so a neutral answer (3) lands on
-  // 5.5, the same value as the matrix crosshairs and the Building tier line.
-  return 1 + ((mean1to5 - 1) / 4) * 9;
+  // Maps a 1–5 mean onto the 0.1–10 scale
+  return 0.1 + ((mean1to5 - 1) / 4) * 9.9;
 }
 
 function tierFor(score) {

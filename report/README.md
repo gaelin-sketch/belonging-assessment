@@ -35,20 +35,18 @@ to be instant.
 
 [`sample-payload.json`](sample-payload.json) is a real capture from the assessment, already merged the way
 step 4 describes, with a fictional respondent. It is deliberately an awkward case: someone who leads
-supervisors (`authorityLevel` 4), scoring 4.9 in the Survival zone, still offering more than the
-environment returns. Their team reads Building at 6.5 while leadership sits at 3.8 and the wider
-organization at 3.0, so the level shape is a clean distance gradient. They rate belonging 9 out of 10
-for their own thriving, and their `perceivedBelonging` falls away by level, 4 then 2 then 1. Between
-them these exercise the authority CTA, the authority nuance clause, the belief gap, the level shape,
-and requirement 8 at once, without tripping the care protocol.
+supervisors (`authorityLevel` 4), scoring 4.4 in the Guarded zone. Their team reads Building at 6.2
+while leadership sits at 3.2 and the wider organization at 2.3, so the level shape is a clean distance
+gradient. They rate belonging 9 out of 10 for their own thriving, and their `perceivedBelonging` falls
+away by level, 4 then 2 then 1. Between them these exercise the authority CTA, the authority nuance
+clause, the belief gap, the level shape, and requirement 8 at once, without tripping the care protocol.
 
 ## Scale note
 
-Scores run 1 to 10, anchored so a neutral answer to every item lands on 5.5, the same value as the
-matrix crosshairs and the Building tier line. A neutral respondent therefore sits dead centre rather
-than slightly left of it.
+Scores run 0.1 to 10. A neutral answer to every item scores 5.05, just below the 5.5 crosshairs, so a
+flat respondent plots slightly left of and below centre and lands in Guarded. This is deliberate:
+neutrality is not counted as evidence of belonging, and the top right has to be earned.
 
-The care protocol thresholds were rescaled alongside that change, from 2.5 and 3.0 to 3.2 and 3.5, so
-the gate still catches the same two answer patterns it did before: everything at Strongly disagree
-(scores 1.0) and everything at Disagree (scores 3.25). Left at the old numbers the all-Disagree pattern
-would have slipped past the gate.
+The care protocol triggers at a score of 2.5 or below, or all four constructs at 3.0 or below. In
+practice that catches the bottom two uniform answer patterns: everything at Strongly disagree (scores
+0.1) and everything at Disagree (scores 2.58, caught by the construct condition).
