@@ -166,6 +166,22 @@
   .ind-card.vuln  .bar i { background: var(--exclu); }
 
   .section-gap { margin-top: 26px; }
+  /* the two variables, head to head */
+  .axis-duel { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; margin: 26px 0 4px; }
+  .duel-side { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; text-align: center; }
+  .duel-side .m-lbl { margin-bottom: 4px; }
+  .duel-side .duel-val { font-family: "Archivo", sans-serif; font-weight: 800; font-size: 40px; letter-spacing: -0.03em; line-height: 1.05; }
+  .duel-side .tier { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+  .duel-vs { font-family: "Archivo", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .duel-note { font-size: 14px; color: var(--ink-soft); text-align: center; margin-top: 10px; }
+  @media (max-width: 460px) { .duel-side .duel-val { font-size: 32px; } }
+
+  .path-card { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 24px; margin-top: 18px; }
+  .path-card h3 { font-family: "Archivo", sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; font-size: 20px; color: #fff; margin-bottom: 10px; }
+  .path-card p { color: #C7D5E2; font-size: 15px; }
+  .path-card p + p { margin-top: 10px; }
+  .path-card strong { color: var(--ambig); font-weight: 600; }
+
   .scale-head {
     display: inline-block; font-family: "Archivo", sans-serif; font-size: 11px; font-weight: 700;
     letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft);
@@ -454,7 +470,12 @@
       <span class="tier-chip" id="tierChip"></span>
     </div>
 
+    <div class="axis-duel" id="axisDuel"></div>
+    <div class="duel-note" id="duelNote"></div>
+
     <div class="quadrant-callout" id="quadrantCallout"></div>
+
+    <div class="path-card" id="pathCard"></div>
 
     <div class="matrix-card">
       <h2>The Belonging Matrix</h2>
@@ -927,8 +948,57 @@ function computeScores() {
     levels, strongestLevel, weakestLevel, levelSpread
   };
   r.reliability = buildReliability();
+  r.path = pathToBelong(r);
   r.findings = buildFindings(r);
   return r;
+}
+
+/* What would actually move this person toward Belong, which is 7.5 on both axes.
+   The two halves are not symmetrical: the action gap is theirs to close, the
+   reception gap is not, and saying so is more useful than pretending otherwise. */
+const ACT_MOVE = {
+  say:   "Saying the thing is the entry act. One honest sentence, in a room that has already shown it can take it, is the shortest distance you have.",
+  show:  "Showing the self is the act people withhold longest. Letting one person here see an unedited day is a smaller move than it feels from the inside.",
+  share: "Sharing the view costs the least of the three and travels the furthest. Offer the perspective you were about to keep."
+};
+
+function pathToBelong(r) {
+  const T = MID + DEEP;
+  const one = n => n.toFixed(1);
+  const aGap = Math.max(0, T - r.action), rGap = Math.max(0, T - r.reception);
+  const lowest = keys => keys.map(c => ({ c, s: r.constructs[c] })).sort((x, y) => x.s - y.s)[0].c;
+  // Naming a level means comparing single items, so only do it when the spread is
+  // wide enough to mean something. On a tie this returns null and the clause is dropped.
+  const thinnestLevel = c => {
+    const v = Object.values(r.levels).map(l => ({ head: l.head, s: l.constructs[c] })).sort((x, y) => x.s - y.s);
+    return (v[v.length - 1].s - v[0].s) >= MIN_GAP.cell ? v[0].head.toLowerCase() : null;
+  };
+  const act = lowest(ACTS), cond = lowest(INDICATORS);
+  const actName = CONSTRUCT_META[act].label, condName = CONSTRUCT_META[cond].label;
+  const where = thinnestLevel(cond);
+  const whereClause = where ? `, and thinnest of all with ${where}` : "";
+
+  if (r.established) {
+    return { headline: "You're already there",
+      paras: ["Both axes clear 7.5, which is the entire bar. Nothing here needs moving, which makes this the one result with something to protect rather than something to build.",
+              "The question worth carrying from here points outward. Someone near you is not experiencing this, and the people who have belonging are usually the last to notice who doesn't."] };
+  }
+  if (rGap === 0) {
+    return { headline: "What would move you to Belong",
+      paras: [`Belonging is earned at 7.5 on both axes. The reception is already here at <strong>${one(r.reception)}</strong>, which is the half you don't control and the half most people never get handed.`,
+              `The remaining <strong>${one(aGap)}</strong> is on your side, and <strong>${actName}</strong> is the act you hold back most. ${ACT_MOVE[act]}`] };
+  }
+  if (aGap === 0) {
+    return { headline: "What would move you to Belong",
+      paras: [`Belonging is earned at 7.5 on both axes. You're already there on your side at <strong>${one(r.action)}</strong>: the offer is being made.`,
+              `The remaining <strong>${one(rGap)}</strong> sits in how this place answers it, thinnest at <strong>${condName}</strong>${whereClause}. That half is not yours to move alone, and trying harder does not close it. What is yours is naming what you need out loud, once, to someone who could change it. What comes back is information either way.`] };
+  }
+  const mine = aGap <= rGap;
+  return { headline: "What would move you to Belong",
+    paras: [`Belonging is earned at 7.5 on both axes. You're <strong>${one(aGap)}</strong> short on action and <strong>${one(rGap)}</strong> short on reception.`,
+            mine
+              ? `The shorter distance is the one you hold. <strong>${actName}</strong> is the act you withhold most. ${ACT_MOVE[act]} The other half, <strong>${condName}</strong>, tends to follow an offer rather than lead it.`
+              : `Most of the distance is in the reception, thinnest at <strong>${condName}</strong>${whereClause}. That part is not yours to move alone. The part that is: <strong>${actName}</strong> is the act you withhold most, and it is the only lever in your hand. ${ACT_MOVE[act]}`] };
 }
 
 /* How much weight the rest of the pipeline may put on this response. */
@@ -1042,6 +1112,15 @@ function buildFindings(r) {
     });
   }
 
+  out.push({
+    type: "path_to_belong",
+    magnitude: +Math.max(0, (MID + DEEP) - r.action).toFixed(1) + +Math.max(0, (MID + DEEP) - r.reception).toFixed(1),
+    confidence: "high",
+    actionGap: +Math.max(0, (MID + DEEP) - r.action).toFixed(1),
+    receptionGap: +Math.max(0, (MID + DEEP) - r.reception).toFixed(1),
+    statement: r.path.paras.join(" ").replace(/<[^>]+>/g, "")
+  });
+
   // High confidence first, then by size. Rank is what the report frames on.
   out.sort((a, b) => (a.confidence === b.confidence)
     ? b.magnitude - a.magnitude
@@ -1088,7 +1167,8 @@ function finish() {
   } else if (results.deep) {
     depthLine = `<p><strong>Depth read:</strong> you've reached the ${DEEP_ZONES[quadKey]} zone, the settled end of ${QUADRANTS[quadKey].name}. This is not a borderline result, and settled patterns don't shift on their own. Whatever happens next needs to be deliberate.</p>`;
   } else {
-    depthLine = `<p><strong>Depth read:</strong> you're near the ${QUADRANTS[results.adjacentKey].name} line. A shift in ${AXIS_MEANING[results.nearAxis]} is what moves you across, in either direction.</p>`;
+    const nearBy = Math.min(Math.abs(reception - MID), Math.abs(action - MID)).toFixed(1);
+    depthLine = `<p><strong>Depth read:</strong> this is a borderline result, ${nearBy} from the ${QUADRANTS[results.adjacentKey].name} line on ${AXIS_MEANING[results.nearAxis]}. Treat the zone name as a description of right now, not of you.</p>`;
   }
 
   const orgTenure = document.getElementById("orgTenure").value;
@@ -1105,6 +1185,8 @@ function finish() {
     <h3>You land in: ${results.displayName}</h3>
     <p>${quadCopy}</p>${depthLine}${tenureLine}`;
 
+  renderAxisDuel(results);
+  renderPath(results);
   renderConstructs(results);
   renderLevels(results);
   renderLiveSession(results);
@@ -1124,6 +1206,28 @@ const ZONE_CHIP = {
 
 function chipThemeFor(zone) {
   return ZONE_CHIP[zone.key === "belong" && !zone.deep ? "fitin" : zone.key];
+}
+
+function renderAxisDuel(r) {
+  const side = (label, score) => `<div class="duel-side">
+      <div class="m-lbl">${label}</div>
+      <div class="duel-val" style="color:${tierColor(score)}">${score.toFixed(1)}</div>
+      <div class="tier">${tierFor(score)}</div>
+    </div>`;
+  const gap = Math.abs(r.action - r.reception);
+  const note = gap < MIN_GAP.construct
+    ? "Your offer and its reception are level with each other."
+    : (r.action > r.reception
+        ? `You are offering ${gap.toFixed(1)} more than is coming back.`
+        : `This place is offering ${gap.toFixed(1)} more than is being taken up.`);
+  document.getElementById("axisDuel").innerHTML =
+    side("Your action", r.action) + `<div class="duel-vs">vs</div>` + side("Their reception", r.reception);
+  document.getElementById("duelNote").textContent = note;
+}
+
+function renderPath(r) {
+  document.getElementById("pathCard").innerHTML =
+    `<h3>${r.path.headline}</h3>` + r.path.paras.map(t => `<p>${t}</p>`).join("");
 }
 
 function card(c, score) {

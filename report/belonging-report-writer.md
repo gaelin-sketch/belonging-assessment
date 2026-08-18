@@ -61,6 +61,10 @@ entry carrying a `confidence` of high or low. Your job is to write, not to detec
   notice, never a claim.
 - **If `reliability.straightLined` is true**, the response is close to uniform. Soften
   every claim, lean on the questions, and do not name a level shape at all.
+- **`path_to_belong` is the one finding you may not write from directly.** It exists for the
+  results page, which is allowed to suggest a next move; this email is not. Use its
+  `actionGap` and `receptionGap` to know which side of the loop is short, and let that shape
+  what you mirror. Never turn it into an instruction, a plan, or a numbered step.
 
 Three tiers of evidence, and they are not interchangeable:
 
