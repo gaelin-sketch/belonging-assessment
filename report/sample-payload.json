@@ -1,0 +1,100 @@
+{
+  "event": "report_request",
+  "submissionId": "1a01b454-6555-4f9a-8cad-1609e174fb90",
+  "requestedAt": "2026-08-18T00:38:29.575Z",
+  "contact": {
+    "name": "Dana Reyes",
+    "email": "dana.reyes@example.gov",
+    "organization": "County Health Department",
+    "role": "Program Supervisor"
+  },
+  "tenure": {
+    "organization": "8–15 years",
+    "profession": "More than 15 years"
+  },
+  "authorityLevel": 4,
+  "beliefs": {
+    "belongingEssentialToSelf": 9,
+    "belongingEssentialToClients": 8
+  },
+  "perceivedBelonging": {
+    "imm": 4,
+    "lead": 2,
+    "ext": 1
+  },
+  "results": {
+    "belongingScore": 4.4,
+    "tier": "Emerging",
+    "quadrant": "Guarded",
+    "zoneDepth": "edge",
+    "deepZone": null,
+    "belongingEstablished": false,
+    "bucket": "Exclusion",
+    "indicators": {
+      "psychologicalSafety": 4.8,
+      "socialConnection": 3.2,
+      "coCreation": 5.3,
+      "authenticity": 5.1
+    },
+    "levels": {
+      "imm": {
+        "name": "Your team",
+        "reception": 6.2,
+        "authenticity": 6.2,
+        "zone": "Building",
+        "bucket": "Ambiguity",
+        "psychologicalSafety": 6.4,
+        "socialConnection": 5,
+        "coCreation": 7.5
+      },
+      "lead": {
+        "name": "Your leadership",
+        "reception": 3.2,
+        "authenticity": 5.1,
+        "zone": "Guarded",
+        "bucket": "Exclusion",
+        "psychologicalSafety": 4.1,
+        "socialConnection": 2.6,
+        "coCreation": 2.6
+      },
+      "ext": {
+        "name": "Your organization",
+        "reception": 2.3,
+        "authenticity": 2.7,
+        "zone": "Guarded",
+        "bucket": "Exclusion",
+        "psychologicalSafety": 2.4,
+        "socialConnection": 0.1,
+        "coCreation": 5
+      }
+    },
+    "strongestLevel": "Your team",
+    "weakestLevel": "Your organization",
+    "levelSpread": 3.9
+  },
+  "linkedToSubmission": true,
+  "rawAnswers": {
+    "imm-0": 4,
+    "imm-1": 4,
+    "imm-2": 4,
+    "imm-3": 4,
+    "imm-4": 4,
+    "imm-5": 4,
+    "imm-6": 4,
+    "lead-0": 2,
+    "lead-1": 2,
+    "lead-2": 2,
+    "lead-3": 2,
+    "lead-4": 2,
+    "lead-5": 2,
+    "lead-6": 2,
+    "ext-0": 1,
+    "ext-1": 1,
+    "ext-2": 1,
+    "ext-3": 1,
+    "ext-4": 1,
+    "ext-5": 1,
+    "ext-6": 1
+  },
+  "submittedAt": "2026-08-18T00:38:28.001Z"
+}

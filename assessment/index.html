@@ -269,6 +269,17 @@
       </select>
     </div>
     <div class="field">
+      <label for="authorityLevel">Which best describes your level of authority at work?</label>
+      <select id="authorityLevel" required>
+        <option value="">Select one</option>
+        <option value="1">I do the direct work; no one reports to me</option>
+        <option value="2">I guide others' work, but no one formally reports to me</option>
+        <option value="3">People report directly to me</option>
+        <option value="4">I lead supervisors or whole programs/departments</option>
+        <option value="5">I share responsibility for the entire organization</option>
+      </select>
+    </div>
+    <div class="field">
       <label for="essentialSelf">How essential is belonging at work to your own thriving at work?</label>
       <select id="essentialSelf" required>
         <option value="">Select one</option>
@@ -598,22 +609,22 @@ function startQuestions() {
 }
 
 /* Belief items, collected for context, deliberately kept out of scoring */
-const REQUIRED_INTAKE = ["essentialSelf", "essentialClients"];
+const REQUIRED_INTAKE = ["authorityLevel", "essentialSelf", "essentialClients"];
 
 function checkIntakeComplete() {
   const done = REQUIRED_INTAKE.every(id => document.getElementById(id).value !== "");
   document.getElementById("intakeNext").disabled = !done;
 }
 
-function beliefValue(id) {
+function intakeValue(id) {
   const raw = document.getElementById(id).value;
   return raw === "" ? null : parseInt(raw, 10);
 }
 
 function beliefsBlock() {
   return {
-    belongingEssentialToSelf: beliefValue("essentialSelf"),
-    belongingEssentialToClients: beliefValue("essentialClients")
+    belongingEssentialToSelf: intakeValue("essentialSelf"),
+    belongingEssentialToClients: intakeValue("essentialClients")
   };
 }
 
@@ -1025,6 +1036,7 @@ function submissionPayload() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    authorityLevel: intakeValue("authorityLevel"),
     beliefs: beliefsBlock(),
     perceivedBelonging: Object.assign({}, perceivedBelonging),
     results: resultsBlock(),
@@ -1070,6 +1082,7 @@ async function sendResults() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    authorityLevel: intakeValue("authorityLevel"),
     beliefs: beliefsBlock(),
     perceivedBelonging: Object.assign({}, perceivedBelonging),
     results: resultsBlock(),
@@ -1118,8 +1131,9 @@ function buildResultCode(r) {
     a: d1(r.scores.vuln),
     q: r.quadKey,
     d: r.deep,
-    e1: beliefValue("essentialSelf"),
-    e2: beliefValue("essentialClients"),
+    al: intakeValue("authorityLevel"),
+    e1: intakeValue("essentialSelf"),
+    e2: intakeValue("essentialClients"),
     p1: perceivedBelonging.imm ?? null,
     p2: perceivedBelonging.lead ?? null,
     p3: perceivedBelonging.ext ?? null,
