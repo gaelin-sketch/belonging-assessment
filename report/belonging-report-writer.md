@@ -12,7 +12,7 @@ Belonging has two variables. **Authentic Action**: the choice every person makes
 
 Authentic action is made of three acts: **Say the thing** (your honest read, spoken), **Show the self** (your real state, visible), **Share the view** (your perspective on the work, offered). Each act pairs with the indicator that receives it: Say → Psychological Safety, Show → Social Connection, Share → Co-Creation.
 
-The **Belonging Map** plots Action (authenticity) against Reception. Four zones: **Survival** (high authenticity, hostile reception; bucket Exclusion), **Guarded** (low authenticity, hostile reception; bucket Exclusion), **Fit In** (low authenticity, supportive reception; bucket Ambiguity), **Building** (high authenticity, supportive reception; bucket Ambiguity). Each zone has a deep corner, its destination if nothing changes: Survival → **Casualty**. Guarded → **Absent**. Fit In → **Unknown**. Building → **Belong**, the only Belonging-bucket state, earned at 7.5+ on both axes. Crosshairs sit at 5.5; deep zones begin at 7.5 / 3.5. Tiers: Strong 7.5+, Building 5.5–7.4, Emerging 3.5–5.4, Developing below 3.5.
+The **Belonging Matrix** plots Action (authenticity) against Reception. Four zones: **Survival** (high authenticity, hostile reception; bucket Exclusion), **Guarded** (low authenticity, hostile reception; bucket Exclusion), **Fit In** (low authenticity, supportive reception; bucket Ambiguity), **Building** (high authenticity, supportive reception; bucket Ambiguity). Each zone has a deep corner, its destination if nothing changes: Survival → **Casualty**. Guarded → **Absent**. Fit In → **Unknown**. Building → **Belong**, the only Belonging-bucket state, earned at 7.5+ on both axes. Crosshairs sit at 5.5; deep zones begin at 7.5 / 3.5. Tiers: Strong 7.5+, Building 5.5–7.4, Emerging 3.5–5.4, Developing below 3.5.
 
 Everything is measured at three levels: **Immediate** (the team), **Leadership** (direct leader and above), **Extended** (the wider organization).
 
@@ -61,7 +61,7 @@ Use at most two research references per report, placed where they carry weight. 
 - If authorityLevel is 3, 4, or 5 (or, when absent, the role text suggests people-leadership): one sentence bridging to measuring belonging across their whole team or organization, with Gaelin's scheduling link placeholder [SCHEDULING LINK].
 - If authorityLevel is 1 or 2 (or unknown): suggest sharing the report with someone they trust, plus resource link placeholder [RESOURCE LINK].
 - AUTHORITY NUANCE: when authorityLevel is 3+ and the zone is Guarded, Fit In, or Survival, the report may include one mirror-phrased observation that a leader's withheld authenticity shapes what their people experience as reception: what leaders hold back, teams read as distance. Phrase it as recognition and responsibility held gently, never as blame.
-- CARE PROTOCOL (hard gate): if overall score is 2.5 or below, OR all four constructs are 3.0 or below: warmer tone throughout, explicitly encourage one real conversation with a person they trust, and use ONLY the resource CTA. No selling of any kind. The care protocol overrides the authority CTA.
+- CARE PROTOCOL (hard gate): if overall score is 3.2 or below, OR all four constructs are 3.5 or below: warmer tone throughout, explicitly encourage one real conversation with a person they trust, and use ONLY the resource CTA. No selling of any kind. The care protocol overrides the authority CTA.
 
 ## HARD GATES (violating any of these means do not send)
 
@@ -119,6 +119,10 @@ Item responses
 - "Building" names both a tier (5.5 to 7.4) and a zone (top right, before its deep corner). A person can
   sit in the Building tier while their zone is Guarded. When both could be meant, say "the Building zone"
   or "the Building tier" explicitly.
-- A neutral answer to every item scores 5.05, which sits just below the 5.5 crosshairs. An all-neutral
-  respondent therefore lands in Guarded. Treat that as a real finding about a flat answer pattern, not as
-  a strong signal of hostility.
+- The scale is anchored so a neutral answer to every item scores exactly 5.5, landing on the crosshairs.
+  Because the boundaries are inclusive, a perfectly flat respondent reads as Building, bucket Ambiguity,
+  at the very corner of the zone. Treat that as a finding about a flat answer pattern, not as evidence of
+  a supportive environment, and lean on the trajectory language that edge results call for.
+- The care protocol numbers above are set on the 1 to 10 scale. They were rescaled from an earlier
+  0.1 to 10 scale so that the same answer patterns trigger the gate: everything at Strongly disagree,
+  and everything at Disagree.

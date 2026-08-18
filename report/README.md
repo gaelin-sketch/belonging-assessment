@@ -34,17 +34,21 @@ to be instant.
 ## Testing the prompt
 
 [`sample-payload.json`](sample-payload.json) is a real capture from the assessment, already merged the way
-step 4 describes, with a fictional respondent. It is deliberately an awkward case: a supervisor
-(`authorityLevel` 4) in the Guarded zone whose team reads Building while leadership and the wider
-organization sit far lower, who rates belonging 9 out of 10 for their own thriving, and whose
-`perceivedBelonging` falls away by level (4 / 2 / 1). It exercises the authority CTA, the authority
-nuance clause, the belief gap, the level shape, and requirement 8 at once.
+step 4 describes, with a fictional respondent. It is deliberately an awkward case: someone who leads
+supervisors (`authorityLevel` 4), scoring 4.9 in the Survival zone, still offering more than the
+environment returns. Their team reads Building at 6.5 while leadership sits at 3.8 and the wider
+organization at 3.0, so the level shape is a clean distance gradient. They rate belonging 9 out of 10
+for their own thriving, and their `perceivedBelonging` falls away by level, 4 then 2 then 1. Between
+them these exercise the authority CTA, the authority nuance clause, the belief gap, the level shape,
+and requirement 8 at once, without tripping the care protocol.
 
-## Open questions for Gaelin
+## Scale note
 
-- The prompt calls the plot the **Belonging Map**; the assessment UI calls it the **Belonging Matrix**.
-  A respondent reading both will see two names for one thing. Worth settling on one.
-- The care protocol triggers at a score of 2.5 or below, or all four constructs at 3.0 or below. On the
-  current scale a person answering "Strongly disagree" to everything scores 0.1, and one answering
-  "Disagree" to everything scores 2.58, so the gate catches roughly the bottom two response patterns.
-  Confirm that is the intended width.
+Scores run 1 to 10, anchored so a neutral answer to every item lands on 5.5, the same value as the
+matrix crosshairs and the Building tier line. A neutral respondent therefore sits dead centre rather
+than slightly left of it.
+
+The care protocol thresholds were rescaled alongside that change, from 2.5 and 3.0 to 3.2 and 3.5, so
+the gate still catches the same two answer patterns it did before: everything at Strongly disagree
+(scores 1.0) and everything at Disagree (scores 3.25). Left at the old numbers the all-Disagree pattern
+would have slipped past the gate.

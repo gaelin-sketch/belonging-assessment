@@ -1,7 +1,7 @@
 {
   "event": "report_request",
-  "submissionId": "1a01b454-6555-4f9a-8cad-1609e174fb90",
-  "requestedAt": "2026-08-18T00:38:29.575Z",
+  "submissionId": "c6b96940-1fb6-44d6-bb75-faca2c90c557",
+  "requestedAt": "2026-08-18T00:43:38.411Z",
   "contact": {
     "name": "Dana Reyes",
     "email": "dana.reyes@example.gov",
@@ -23,54 +23,54 @@
     "ext": 1
   },
   "results": {
-    "belongingScore": 4.4,
+    "belongingScore": 4.9,
     "tier": "Emerging",
-    "quadrant": "Guarded",
+    "quadrant": "Survival",
     "zoneDepth": "edge",
     "deepZone": null,
     "belongingEstablished": false,
     "bucket": "Exclusion",
     "indicators": {
-      "psychologicalSafety": 4.8,
-      "socialConnection": 3.2,
-      "coCreation": 5.3,
-      "authenticity": 5.1
+      "psychologicalSafety": 5.3,
+      "socialConnection": 3.8,
+      "coCreation": 5.7,
+      "authenticity": 5.6
     },
     "levels": {
       "imm": {
         "name": "Your team",
-        "reception": 6.2,
-        "authenticity": 6.2,
+        "reception": 6.5,
+        "authenticity": 6.6,
         "zone": "Building",
         "bucket": "Ambiguity",
-        "psychologicalSafety": 6.4,
-        "socialConnection": 5,
-        "coCreation": 7.5
+        "psychologicalSafety": 6.7,
+        "socialConnection": 5.5,
+        "coCreation": 7.8
       },
       "lead": {
         "name": "Your leadership",
-        "reception": 3.2,
-        "authenticity": 5.1,
-        "zone": "Guarded",
+        "reception": 3.8,
+        "authenticity": 5.5,
+        "zone": "Survival",
         "bucket": "Exclusion",
-        "psychologicalSafety": 4.1,
-        "socialConnection": 2.6,
-        "coCreation": 2.6
+        "psychologicalSafety": 4.7,
+        "socialConnection": 3.3,
+        "coCreation": 3.3
       },
       "ext": {
         "name": "Your organization",
-        "reception": 2.3,
-        "authenticity": 2.7,
+        "reception": 3,
+        "authenticity": 3.3,
         "zone": "Guarded",
         "bucket": "Exclusion",
-        "psychologicalSafety": 2.4,
-        "socialConnection": 0.1,
-        "coCreation": 5
+        "psychologicalSafety": 3.1,
+        "socialConnection": 1,
+        "coCreation": 5.5
       }
     },
     "strongestLevel": "Your team",
     "weakestLevel": "Your organization",
-    "levelSpread": 3.9
+    "levelSpread": 3.6
   },
   "linkedToSubmission": true,
   "rawAnswers": {
@@ -96,5 +96,5 @@
     "ext-5": 1,
     "ext-6": 1
   },
-  "submittedAt": "2026-08-18T00:38:28.001Z"
+  "submittedAt": "2026-08-18T00:43:36.857Z"
 }
