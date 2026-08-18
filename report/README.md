@@ -17,6 +17,24 @@ They share a `submissionId`. `report_request` also carries `linkedToSubmission`:
 `submission` row already landed and should be joined to; when `false` that row never arrived, so this
 payload is the only copy and carries `rawAnswers` itself.
 
+## The instrument
+
+Eighteen scored items, six per level, one per construct. Three are acts the respondent takes and three
+are how the environment answers them, paired: say with psychological safety, show with social
+connection, share with co-creation. Every item loads exactly one construct, which is what keeps the
+Action and Reception axes independent; before this, eight items carried weight on both and the two axes
+could not move apart. The three acts are weighted equally for now.
+
+Three more items, one per level, ask outright whether the person feels they belong. Those are never
+scored. They are the criterion held in reserve: once there are enough responses, regressing the three
+acts against them is what should set the act weights.
+
+Every payload also carries `results.findings`, a ranked list of patterns detected in code rather than by
+the report writer, and `results.reliability`, which states the straight lining flag and the minimum gap
+that counts as a real difference. The prompt is written to assert nothing the findings list does not
+contain. Pattern detection in prose is where noise becomes confident nonsense, so it happens in
+arithmetic instead.
+
 ## How the browser posts
 
 The assessment posts with `mode: "no-cors"` and `Content-Type: text/plain;charset=UTF-8`, which
@@ -82,11 +100,11 @@ is built from table cells so it survives clients that strip SVG.
 
 [`sample-payload.json`](sample-payload.json) is a real capture from the assessment, already merged the way
 step 4 describes, with a fictional respondent. It is deliberately an awkward case: someone who leads
-supervisors (`authorityLevel` 4), scoring 4.4 in the Guarded zone. Their team reads Building at 6.2
-while leadership sits at 3.2 and the wider organization at 2.3, so the level shape is a clean distance
-gradient. They rate belonging 9 out of 10 for their own thriving, and their `perceivedBelonging` falls
-away by level, 4 then 2 then 1. Between them these exercise the authority CTA, the authority nuance
-clause, the belief gap, the level shape, and requirement 8 at once, without tripping the care protocol.
+supervisors (`authorityLevel` 4) offering far more than comes back, action 8.8 against reception 4.4,
+which puts them in Survival. Their team receives them at 7.5 while the wider organization reads 0.7, so
+the level gradient is steep and unambiguous. They rate belonging 9 out of 10 for their own thriving.
+Between them these exercise the authority CTA, the authority nuance clause, the belief gap, a high
+confidence level shape, and requirement 8, without tripping the care protocol.
 
 ## Scale note
 

@@ -1,7 +1,7 @@
 {
   "event": "report_request",
-  "submissionId": "e69d1181-36e8-49d3-a1e1-1df01f7e5d25",
-  "requestedAt": "2026-08-18T00:45:36.073Z",
+  "submissionId": "538ac563-ecb2-4f01-b66e-65cbe3f25c2e",
+  "requestedAt": "2026-08-18T04:12:40.679Z",
   "contact": {
     "name": "Dana Reyes",
     "email": "dana.reyes@example.gov",
@@ -19,82 +19,161 @@
   },
   "perceivedBelonging": {
     "imm": 4,
-    "lead": 2,
-    "ext": 1
+    "lead": 3,
+    "ext": 2
   },
   "results": {
     "belongingScore": 4.4,
+    "actionScore": 8.8,
+    "receptionScore": 4.4,
     "tier": "Emerging",
-    "quadrant": "Guarded",
+    "quadrant": "Survival",
     "zoneDepth": "edge",
     "deepZone": null,
     "belongingEstablished": false,
     "bucket": "Exclusion",
-    "indicators": {
-      "psychologicalSafety": 4.8,
-      "socialConnection": 3.2,
-      "coCreation": 5.3,
-      "authenticity": 5.1
+    "constructs": {
+      "say": 8.6,
+      "show": 8.6,
+      "share": 9.1,
+      "psychologicalSafety": 4.3,
+      "socialConnection": 4.3,
+      "coCreation": 4.8
     },
     "levels": {
       "imm": {
         "name": "Your team",
-        "reception": 6.2,
-        "authenticity": 6.2,
-        "zone": "Building",
-        "bucket": "Ambiguity",
-        "psychologicalSafety": 6.4,
-        "socialConnection": 5,
-        "coCreation": 7.5
+        "action": 10,
+        "reception": 7.5,
+        "zone": "Belong",
+        "bucket": "Belonging",
+        "constructs": {
+          "say": 10,
+          "show": 10,
+          "share": 10,
+          "psychologicalSafety": 7.5,
+          "socialConnection": 7.5,
+          "coCreation": 7.5
+        }
       },
       "lead": {
         "name": "Your leadership",
-        "reception": 3.2,
-        "authenticity": 5.1,
-        "zone": "Guarded",
+        "action": 7.5,
+        "reception": 2.6,
+        "zone": "Survival",
         "bucket": "Exclusion",
-        "psychologicalSafety": 4.1,
-        "socialConnection": 2.6,
-        "coCreation": 2.6
+        "constructs": {
+          "say": 7.5,
+          "show": 7.5,
+          "share": 7.5,
+          "psychologicalSafety": 2.6,
+          "socialConnection": 2.6,
+          "coCreation": 2.6
+        }
       },
       "ext": {
         "name": "Your organization",
-        "reception": 2.3,
-        "authenticity": 2.7,
-        "zone": "Guarded",
+        "action": 8.3,
+        "reception": 0.7,
+        "zone": "Survival",
         "bucket": "Exclusion",
-        "psychologicalSafety": 2.4,
-        "socialConnection": 0.1,
-        "coCreation": 5
+        "constructs": {
+          "say": 7.5,
+          "show": 7.5,
+          "share": 10,
+          "psychologicalSafety": 0.1,
+          "socialConnection": 0.1,
+          "coCreation": 2.6
+        }
       }
     },
     "strongestLevel": "Your team",
     "weakestLevel": "Your organization",
-    "levelSpread": 3.9
+    "levelSpread": 6.8,
+    "findings": [
+      {
+        "type": "level_gradient",
+        "shape": "descending",
+        "magnitude": 6.8,
+        "confidence": "high",
+        "statement": "Your team reads 7.5 and Your organization reads 0.7, a gap of 6.8.",
+        "rank": 1
+      },
+      {
+        "type": "construct_range",
+        "lowest": "psych",
+        "highest": "share",
+        "magnitude": 4.8,
+        "confidence": "high",
+        "statement": "Psychological Safety is lowest at 4.3; Share the view is highest at 9.1.",
+        "rank": 2
+      },
+      {
+        "type": "belief_vs_experience",
+        "magnitude": 4.6,
+        "confidence": "high",
+        "statement": "They rate belonging 9 out of 10 for their own thriving, against a reception score of 4.4.",
+        "rank": 3
+      },
+      {
+        "type": "axis_gap",
+        "magnitude": 4.4,
+        "confidence": "high",
+        "direction": "action_exceeds_reception",
+        "statement": "Action 8.8 runs 4.4 ahead of reception 4.4: more is offered than comes back.",
+        "rank": 4
+      },
+      {
+        "type": "boundary_proximity",
+        "magnitude": 1.1,
+        "axis": "reception",
+        "adjacentZone": "Belong",
+        "confidence": "low",
+        "statement": "This result is not close to a boundary; the nearest line is 1.1 away.",
+        "rank": 5
+      },
+      {
+        "type": "perceived_vs_measured",
+        "magnitude": 0.6,
+        "direction": "feels_better_than_measured",
+        "confidence": "low",
+        "statement": "What they say outright about belonging, 5.0, matches what the items measure, 4.4.",
+        "rank": 6
+      }
+    ],
+    "reliability": {
+      "itemCount": 18,
+      "distinctAnswers": 4,
+      "answerVariance": 1.99,
+      "straightLined": false,
+      "minMeaningfulGap": {
+        "construct": 1.5,
+        "cell": 2.5
+      },
+      "itemsPerCell": 1,
+      "note": "Axes rest on 9 items each and constructs on 3. A single level and construct cell is one item; report its shape, never its number."
+    }
   },
   "linkedToSubmission": true,
   "rawAnswers": {
-    "imm-0": 4,
-    "imm-1": 4,
-    "imm-2": 4,
+    "imm-0": 5,
+    "imm-1": 1,
+    "imm-2": 5,
     "imm-3": 4,
     "imm-4": 4,
     "imm-5": 4,
-    "imm-6": 4,
-    "lead-0": 2,
-    "lead-1": 2,
-    "lead-2": 2,
-    "lead-3": 2,
+    "lead-0": 4,
+    "lead-1": 4,
+    "lead-2": 4,
+    "lead-3": 4,
     "lead-4": 2,
     "lead-5": 2,
-    "lead-6": 2,
-    "ext-0": 1,
-    "ext-1": 1,
+    "ext-0": 4,
+    "ext-1": 4,
     "ext-2": 1,
     "ext-3": 1,
     "ext-4": 1,
-    "ext-5": 1,
-    "ext-6": 1
+    "ext-5": 2
   },
-  "submittedAt": "2026-08-18T00:45:34.515Z"
+  "submittedAt": "2026-08-18T04:12:39.078Z"
 }

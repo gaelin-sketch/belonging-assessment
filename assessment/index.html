@@ -166,6 +166,18 @@
   .ind-card.vuln  .bar i { background: var(--exclu); }
 
   .section-gap { margin-top: 26px; }
+  .axis-label {
+    font-family: "Archivo", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-faint); margin: 18px 0 8px;
+  }
+  /* Each act carries the colour of the condition that receives it. */
+  .pair-say   { --pair: var(--blue); }
+  .pair-show  { --pair: var(--belong); }
+  .pair-share { --pair: var(--ambig); }
+  .ind-card::before { background: var(--pair, var(--belong)); }
+  .ind-card .val    { color: var(--pair, var(--belong)); }
+  .ind-card .bar i  { background: var(--pair, var(--belong)); }
+  .read-row         { border-left-color: var(--pair, var(--belong)); }
 
   /* indicator reads */
   .read-row {
@@ -283,20 +295,13 @@
   .btn { font-family: "Archivo", sans-serif; font-weight: 600; letter-spacing: .01em; }
 
   /* indicator stat cards, one colour per construct, mirroring the logo */
+  /* Colour comes from the pair token set by .pair-say / .pair-show / .pair-share,
+     so an act and the condition that receives it always match. */
   .ind-card { border-top: 1px solid var(--line); padding: 18px; }
-  .ind-card::before { content: ""; display: block; width: 26px; height: 3px; border-radius: 2px; margin-bottom: 12px; background: var(--belong); }
-  .ind-card.psych::before { background: var(--blue); }
-  .ind-card.cocre::before { background: var(--ambig); }
-  .ind-card.vuln::before  { background: var(--exclu); }
-  .ind-card .val { font-family: "Archivo", sans-serif; font-weight: 800; font-size: 38px; letter-spacing: -0.03em; color: var(--belong); }
-  .ind-card.psych .val { color: var(--blue); }
-  .ind-card.cocre .val { color: var(--ambig); }
-  .ind-card.vuln  .val { color: var(--exclu); }
-  .ind-card .bar i,  .lvl-card .bar i { background: var(--belong); }
-  .ind-card.psych .bar i { background: var(--blue); }
-  .ind-card.cocre .bar i { background: var(--ambig); }
-  .ind-card.vuln  .bar i { background: var(--exclu); }
-  .read-row.psych { border-left-color: var(--blue); }
+  .ind-card::before { content: ""; display: block; width: 26px; height: 3px; border-radius: 2px; margin-bottom: 12px; background: var(--pair); }
+  .ind-card .val { font-family: "Archivo", sans-serif; font-weight: 800; font-size: 38px; letter-spacing: -0.03em; color: var(--pair); }
+  .ind-card .bar i { background: var(--pair); }
+  .read-row { border-left-color: var(--pair); }
 
   /* score hero */
   .score-num { font-family: "Archivo", sans-serif; font-weight: 800; letter-spacing: -0.045em; }
@@ -439,9 +444,12 @@
     </div>
 
     <div class="section-gap">
-      <div class="cards-head">What's driving your score</div>
-      <div class="cards-sub">Belonging has two variables. Authenticity is your action; the three indicators are the reception, each measured across your team, your leadership, and your organization.</div>
-      <div class="ind-grid" id="indGrid"></div>
+      <div class="cards-head">What you offer, and what comes back</div>
+      <div class="cards-sub">Belonging has two variables. Three acts are yours to make; three conditions are how this place answers them. Each act is paired with the condition that receives it.</div>
+      <div class="axis-label">Your action</div>
+      <div class="ind-grid" id="actGrid"></div>
+      <div class="axis-label">Their reception</div>
+      <div class="ind-grid" id="recGrid"></div>
       <div id="indReads"></div>
     </div>
 
@@ -506,8 +514,13 @@ const WEBHOOK_URL = "https://hook.us2.make.com/3wq4uyqifzv1m4rgqlwql2rjdxcm9gcy"
 // Level weights: how much each level of belonging counts (must sum to 1)
 const LEVEL_WEIGHTS = { imm: 0.45, lead: 0.35, ext: 0.20 };
 
-// Indicator weights for the overall Belonging Score (must sum to 1)
+// Reception weights: how much each indicator counts toward the Reception axis (must sum to 1)
 const INDICATOR_WEIGHTS = { psych: 0.40, conn: 0.35, cocre: 0.25 };
+
+// Action weights: how much each act counts toward the Action axis (must sum to 1).
+// Equal for now. Once there are enough responses, regress the three acts against the
+// perceivedBelonging closers and let the data set these.
+const ACT_WEIGHTS = { say: 1/3, show: 1/3, share: 1/3 };
 
 // Tier thresholds on the 0.1–10 scale
 const TIERS = [
@@ -520,10 +533,25 @@ const TIERS = [
 // Matrix geometry
 const MID = 5.5;    // quadrant crosshairs (aligned to tier lines)
 const DEEP = 2.0;   // deep-zone margin: past MID+DEEP (7.5) / below MID-DEEP (3.5) on both axes.
-                    // Belonging is only ESTABLISHED in the Belong quadrant's deep zone. Territory ≠ arrival.
+                    // Belonging is only ESTABLISHED in the Belong quadrant's deep zone: territory is not arrival.
+
+// A difference smaller than this is inside the measurement noise and must not be
+// reported as a finding. One step on a five point scale is about 2.5 points here,
+// so a single item comparison needs a much wider gap than a three item one.
+const MIN_GAP = { construct: 1.5, cell: 2.5 };
 
 /* =====================================================
-   INSTRUMENT: 6 items per level: 4 indicator + 2 vulnerability
+   INSTRUMENT
+
+   Six items per level, one per construct, nothing shared. Three are acts the
+   respondent takes (the Action axis) and three are how the environment answers
+   them (the Reception axis). Each act pairs with the indicator that receives it:
+   say with psychological safety, show with social connection, share with
+   co-creation. Keeping every item on a single construct is what lets the two
+   axes move independently.
+
+   One item per level is reverse worded, as an attention check. Because each sits
+   on a single construct it cannot drag the other axis with it.
    ===================================================== */
 
 const LEVELS = [
@@ -533,13 +561,12 @@ const LEVELS = [
     sub: "The team you work with every day.",
     closer: "Overall, I feel like I belong on this team.",
     items: [
-      { rev: false, weights: { conn: 0.6, vuln: 0.4 },  text: "If work got heavy, I would talk to someone on my team about it." },
-      { rev: false, weights: { psych: 1 },              text: "I can raise a concern with my team without worrying it will be held against me." },
-      { rev: false, weights: { cocre: 1 },              text: "My input is valued and can influence how my team does its work." },
-      { rev: true,  weights: { conn: 1 },               text: "My relationships on my team feel transactional; we work together, but we aren't connected." },
-      { rev: false, weights: { vuln: 1 },               text: "My team knows the real me, not a work version of me." },
-      { rev: true,  weights: { vuln: 0.7, psych: 0.3 }, text: "I edit what I really want to say before I speak to my team." },
-      { rev: false, weights: { vuln: 0.6, conn: 0.4 },  text: "When I'm having a hard day, my team knows it; I don't have to hide it." }
+      { c: "say",   rev: false, text: "When I disagree with my team, I say so out loud." },
+      { c: "show",  rev: true,  text: "Around my team, I keep how I am really doing to myself." },
+      { c: "share", rev: false, text: "I offer my team my view on how the work should be done." },
+      { c: "psych", rev: false, text: "When I raise a concern with my team, it is received without being held against me." },
+      { c: "conn",  rev: false, text: "My team cares about how work is affecting me." },
+      { c: "cocre", rev: false, text: "When I offer my point of view to my team, it is taken into consideration." }
     ]
   },
   {
@@ -548,13 +575,12 @@ const LEVELS = [
     sub: "Your supervisor and the leaders above them.",
     closer: "Overall, I feel like I belong with my direct leader.",
     items: [
-      { rev: false, weights: { conn: 1 },               text: "At least one leader here knows me beyond my job duties." },
-      { rev: false, weights: { psych: 1 },              text: "I can respectfully disagree with my leader openly without fearing consequences." },
-      { rev: false, weights: { cocre: 1 },              text: "Leadership cares about my perspective regarding decisions that affect my work." },
-      { rev: true,  weights: { psych: 0.6, vuln: 0.4 }, text: "I keep concerns to myself because raising them with leadership isn't worth the risk." },
-      { rev: false, weights: { vuln: 0.7, conn: 0.3 },  text: "I can be honest with my leader about what I'm struggling with." },
-      { rev: true,  weights: { vuln: 1 },               text: "Around leadership, I perform a confidence I don't always feel." },
-      { rev: false, weights: { vuln: 0.7, psych: 0.3 }, text: "I can admit a mistake to my leader without fear of it defining me." }
+      { c: "say",   rev: false, text: "I tell my leader what I actually think, even when it is not what they want to hear." },
+      { c: "show",  rev: false, text: "I let my leader see when I am struggling." },
+      { c: "share", rev: false, text: "I offer my leader my view on decisions that affect my work." },
+      { c: "psych", rev: true,  text: "Raising a concern with my leader is not worth the risk." },
+      { c: "conn",  rev: false, text: "My leader cares about how work is affecting me." },
+      { c: "cocre", rev: false, text: "When I offer my point of view to my leader, it is taken into consideration." }
     ]
   },
   {
@@ -563,24 +589,30 @@ const LEVELS = [
     sub: "The wider organization beyond your team: other divisions, other buildings, the whole.",
     closer: "Overall, I feel like I belong in this organization.",
     items: [
-      { rev: false, weights: { conn: 1 },               text: "My relationships with my extended team are as satisfactory as I'd like for them to be." },
-      { rev: false, weights: { psych: 1 },              text: "I could speak candidly in a room of people from across this organization." },
-      { rev: false, weights: { cocre: 1 },              text: "The perspective of the people in my role is valued regarding where the organization is headed." },
-      { rev: true,  weights: { cocre: 1 },              text: "Decisions that affect my work get made without anyone asking people like me." },
-      { rev: false, weights: { vuln: 1 },               text: "I don't change how I speak, dress, or carry myself to be accepted across this organization." },
-      { rev: true,  weights: { vuln: 0.6, psych: 0.4 }, text: "Outside my team, it's necessary I keep my guard up." },
-      { rev: false, weights: { vuln: 0.7, psych: 0.3 }, text: "In organization-wide settings, I say what I actually think." }
+      { c: "say",   rev: false, text: "In rooms with people from across this organization, I say what I actually think." },
+      { c: "show",  rev: false, text: "Outside my team, I let people see me as I actually am, not a managed version." },
+      { c: "share", rev: true,  text: "I keep my perspective on where this organization is headed to myself." },
+      { c: "psych", rev: false, text: "Speaking candidly across this organization is safe for someone in my role." },
+      { c: "conn",  rev: false, text: "Beyond my team, people here care about how work is affecting me." },
+      { c: "cocre", rev: false, text: "People in my role are consulted before decisions about our work get made." }
     ]
   }
 ];
 
 const LIKERT = ["Strongly disagree", "Disagree", "Neither", "Agree", "Strongly agree"];
 
-const INDICATOR_META = {
-  conn:  { label: "Social Connection",     cls: "" },
-  psych: { label: "Psychological Safety",  cls: "psych" },
-  cocre: { label: "Co-Creation",           cls: "cocre" },
-  vuln:  { label: "Authenticity",          cls: "vuln" }
+const ACTS = ["say", "show", "share"];
+const INDICATORS = ["psych", "conn", "cocre"];
+
+/* Each act is coloured with the indicator that receives it, so the pairing reads
+   at a glance: say with safety, show with connection, share with co-creation. */
+const CONSTRUCT_META = {
+  say:   { label: "Say the thing",       axis: "action",    pair: "psych", cls: "pair-say" },
+  show:  { label: "Show the self",       axis: "action",    pair: "conn",  cls: "pair-show" },
+  share: { label: "Share the view",      axis: "action",    pair: "cocre", cls: "pair-share" },
+  psych: { label: "Psychological Safety", axis: "reception", pair: "say",   cls: "pair-say" },
+  conn:  { label: "Social Connection",    axis: "reception", pair: "show",  cls: "pair-show" },
+  cocre: { label: "Co-Creation",          axis: "reception", pair: "share", cls: "pair-share" }
 };
 
 /* Quadrants: X = environment (indicator composite), Y = vulnerability */
@@ -603,32 +635,44 @@ const QUADRANTS = {
   }
 };
 
-/* Per-indicator reads, keyed by tier. Three of these describe the reception;
-   Authenticity describes the offer, so it is written in the second person active. */
-const INDICATOR_READS = {
+/* Reads for each construct, keyed by tier. The three acts are written as what the
+   person does, the three indicators as what the environment does back. */
+const CONSTRUCT_READS = {
+  say: {
+    Strong:     "You say the hard thing out loud. That is the entry act, and you are making it.",
+    Building:   "You say most of it, and you pick your moments. The editing is selective rather than constant.",
+    Emerging:   "The honest read often stays in your head. It comes out when the stakes force it, not when you choose it.",
+    Developing: "You are not saying the thing here. Whatever taught you that, it has become the default."
+  },
+  show: {
+    Strong:     "You let people see the state you are actually in. That is the act most people withhold longest.",
+    Building:   "People here get a partly edited version. Some days you let it show, most days you manage it.",
+    Emerging:   "You keep how you are really doing largely to yourself. Managing that costs more than it looks like from outside.",
+    Developing: "Nobody here sees what the work is costing you. Of the three acts, that is the loneliest one to withhold."
+  },
+  share: {
+    Strong:     "You put your perspective on the work into the room. You are not waiting to be asked for it.",
+    Building:   "You offer your view when there is an opening, less often when you would have to make one.",
+    Emerging:   "Your view on the work mostly stays unoffered. Whether that is caution or resignation is worth knowing.",
+    Developing: "You have stopped offering your perspective. People rarely stop for no reason."
+  },
   psych: {
-    Strong:     "You can say the hard thing here and survive it. That's the floor belonging is built on, and you have it.",
-    Building:   "You'll speak up, but you calculate first. The safety here is real and it isn't automatic. You're still reading the room before you trust it.",
-    Emerging:   "Speaking up costs you something here. You do it anyway sometimes, and you pay for it in energy you don't get back.",
-    Developing: "It isn't safe to be honest here, and you already know it. Treat that as accurate information about the environment, not a flaw in you."
+    Strong:     "You can say the hard thing here and survive it. That is the floor belonging is built on, and you have it.",
+    Building:   "You will speak up, and you calculate first. The safety here is real and it is not automatic.",
+    Emerging:   "Speaking up costs you something here. You do it anyway sometimes, and you pay for it in energy you do not get back.",
+    Developing: "It is not safe to be honest here, and you already know it. Treat that as accurate information about the environment, not a flaw in you."
   },
   conn: {
-    Strong:     "People here know you, and you know them. These are relationships, not working arrangements.",
-    Building:   "There's real connection here and it's uneven. Some people know you, and it may not be the ones you spend the most hours beside.",
-    Emerging:   "The relationships are functional more than personal. If you left, the gap you'd leave would be logistical.",
-    Developing: "You're working alongside people who don't know you. That's isolation with company, and it's more tiring than being alone."
+    Strong:     "People here notice what the work is doing to you. That is care, not collegiality.",
+    Building:   "The care is real and uneven. Some people see you, and it may not be the ones you spend the most hours beside.",
+    Emerging:   "How the work lands on you is mostly nobody's concern here. That is a functional workplace and a lonely one.",
+    Developing: "You could be having the worst month of your career and nobody here would ask. That is isolation with company."
   },
   cocre: {
-    Strong:     "Your input changes outcomes here. You're not being consulted for form. You're shaping the thing.",
-    Building:   "You're asked sometimes, and it matters sometimes. Whether that's real participation or decoration is a question your next few months will answer.",
-    Emerging:   "You're informed more than involved. Being told early is not the same as being asked.",
-    Developing: "Decisions about your work get made without you. Over time that teaches you your view isn't worth offering, which is how good people go quiet."
-  },
-  vuln: {
-    Strong:     "You bring the real thing here: your voice, your feelings, your view. That's the offer belonging requires, and you're making it.",
-    Building:   "You show up mostly as yourself, with edits. The parts you hold back are the ones worth naming, to yourself first.",
-    Emerging:   "There's a version of you that comes to work, and it isn't quite you. Maintaining it costs more than it looks like from the outside.",
-    Developing: "You're not bringing yourself here at all. Whether that's protection or habit is worth knowing, because one of the two you can choose to stop."
+    Strong:     "What you offer is taken in. You are not being consulted for form.",
+    Building:   "Your view is sometimes taken in and sometimes absorbed without trace. Which one it was is usually clear only later.",
+    Emerging:   "You are informed more than involved. Being told early is not the same as being asked.",
+    Developing: "What you offer does not land anywhere. Over time that teaches people their view is not worth offering, which is how good people go quiet."
   }
 };
 
@@ -785,93 +829,181 @@ function zoneFor(reception, authenticity) {
 }
 
 function computeScores() {
-  // Accumulate weighted values per level per indicator
-  const acc = {}; // level -> indicator -> {num, den}
+  // One item per construct per level, so the answer is the score. Reverse worded
+  // items are flipped here and nowhere else.
+  const v = {};
   LEVELS.forEach(lvl => {
-    acc[lvl.key] = {};
+    v[lvl.key] = {};
     lvl.items.forEach((item, qi) => {
       const raw = answers[lvl.key + "-" + qi];
-      const val = item.rev ? 6 - raw : raw;
-      for (const [ind, w] of Object.entries(item.weights)) {
-        const cell = acc[lvl.key][ind] = acc[lvl.key][ind] || { num: 0, den: 0 };
-        cell.num += w * val;
-        cell.den += w;
-      }
+      v[lvl.key][item.c] = item.rev ? 6 - raw : raw;
     });
   });
 
-  function weightedIndicator(ind) {
-    let num = 0, den = 0;
-    for (const lk of Object.keys(LEVEL_WEIGHTS)) {
-      const cell = acc[lk][ind];
-      if (!cell || !cell.den) continue;
-      num += LEVEL_WEIGHTS[lk] * (cell.num / cell.den);
-      den += LEVEL_WEIGHTS[lk];
-    }
-    return normalize(num / den);
-  }
+  const ALL = ACTS.concat(INDICATORS);
+  const constructs = {};
+  ALL.forEach(c => {
+    let n = 0;
+    for (const lk of Object.keys(LEVEL_WEIGHTS)) n += LEVEL_WEIGHTS[lk] * v[lk][c];
+    constructs[c] = normalize(n);
+  });
 
-  const scores = {
-    conn:  weightedIndicator("conn"),
-    psych: weightedIndicator("psych"),
-    cocre: weightedIndicator("cocre"),
-    vuln:  weightedIndicator("vuln")
-  };
+  const action    = ACTS.reduce((t, a) => t + ACT_WEIGHTS[a] * constructs[a], 0);
+  const reception = INDICATORS.reduce((t, i) => t + INDICATOR_WEIGHTS[i] * constructs[i], 0);
 
-  const overall =
-    INDICATOR_WEIGHTS.psych * scores.psych +
-    INDICATOR_WEIGHTS.conn  * scores.conn +
-    INDICATOR_WEIGHTS.cocre * scores.cocre;
-
-  // Each level scored on its own two axes, so a person can see where belonging
-  // holds and where it breaks rather than only the blended total.
+  // Each level on its own two axes
   const levels = {};
   LEVELS.forEach(lvl => {
-    const meanOf = ind => {
-      const cell = acc[lvl.key][ind];
-      return cell && cell.den ? cell.num / cell.den : null;
-    };
-    let num = 0, den = 0;
-    for (const [ind, w] of Object.entries(INDICATOR_WEIGHTS)) {
-      const m = meanOf(ind);
-      if (m === null) continue;
-      num += w * m;
-      den += w;
-    }
-    const reception = normalize(num / den);
-    const authenticity = normalize(meanOf("vuln"));
+    const lv = v[lvl.key];
+    const a = ACTS.reduce((t, k) => t + ACT_WEIGHTS[k] * normalize(lv[k]), 0);
+    const r = INDICATORS.reduce((t, k) => t + INDICATOR_WEIGHTS[k] * normalize(lv[k]), 0);
+    const cs = {};
+    ALL.forEach(k => cs[k] = normalize(lv[k]));
     levels[lvl.key] = {
-      key: lvl.key, head: lvl.head, tag: lvl.tag, tagClass: lvl.tagClass,
-      reception, authenticity,
-      zone: zoneFor(reception, authenticity),
-      indicators: {
-        psych: normalize(meanOf("psych")),
-        conn:  normalize(meanOf("conn")),
-        cocre: normalize(meanOf("cocre"))
-      }
+      key: lvl.key, head: lvl.head, action: a, reception: r,
+      zone: zoneFor(r, a), constructs: cs
     };
   });
 
-  // Strongest and weakest level by reception. The spread is the story
-  const ranked = Object.values(levels).slice().sort((a, b) => b.reception - a.reception);
+  const ranked = Object.values(levels).slice().sort((x, y) => y.reception - x.reception);
   const strongestLevel = ranked[0], weakestLevel = ranked[ranked.length - 1];
   const levelSpread = strongestLevel.reception - weakestLevel.reception;
 
-  // Quadrant by 5.5 crosshairs; zone depth and proximity computed from both axes
-  const zone = zoneFor(overall, scores.vuln);
+  const zone = zoneFor(reception, action);
   const { key: quadKey, deep, displayName, bucket, xHigh, yHigh } = zone;
-
-  const dx = Math.abs(overall - MID), dy = Math.abs(scores.vuln - MID);
+  const dx = Math.abs(reception - MID), dy = Math.abs(action - MID);
   const zoneAt = (xh, yh) => xh ? (yh ? "belong" : "fitin") : (yh ? "survival" : "guarded");
   const nearAxis = dx <= dy ? "x" : "y";
   const adjacentKey = nearAxis === "x" ? zoneAt(!xHigh, yHigh) : zoneAt(xHigh, !yHigh);
-
   const established = quadKey === "belong" && deep;
 
-  return {
-    scores, overall, zone, quadKey, deep, nearAxis, adjacentKey, established, displayName, bucket,
+  const r = {
+    v, constructs, action, reception, overall: reception,
+    zone, quadKey, deep, nearAxis, adjacentKey, established, displayName, bucket,
     levels, strongestLevel, weakestLevel, levelSpread
   };
+  r.reliability = buildReliability();
+  r.findings = buildFindings(r);
+  return r;
+}
+
+/* How much weight the rest of the pipeline may put on this response. */
+function buildReliability() {
+  const raw = [];
+  LEVELS.forEach(lvl => lvl.items.forEach((_, qi) => raw.push(answers[lvl.key + "-" + qi])));
+  const mean = raw.reduce((a, b) => a + b, 0) / raw.length;
+  const variance = raw.reduce((a, b) => a + (b - mean) * (b - mean), 0) / raw.length;
+  const distinct = new Set(raw).size;
+  return {
+    itemCount: raw.length,
+    distinctAnswers: distinct,
+    answerVariance: +variance.toFixed(2),
+    // Reverse worded items mean a considered response varies even when the
+    // experience is uniform, so flat answers here suggest clicking through.
+    straightLined: distinct <= 2 && variance < 0.5,
+    minMeaningfulGap: MIN_GAP,
+    itemsPerCell: 1,
+    note: "Axes rest on 9 items each and constructs on 3. A single level and construct cell is one item; report its shape, never its number."
+  };
+}
+
+/* Pattern detection lives here rather than in the report writer, so that what
+   gets asserted is decided by arithmetic and a stated threshold. */
+function buildFindings(r) {
+  const out = [];
+  const g = MIN_GAP.construct;
+  const one = n => n.toFixed(1);
+
+  const axisGap = r.action - r.reception;
+  out.push({
+    type: "axis_gap",
+    magnitude: +Math.abs(axisGap).toFixed(1),
+    confidence: Math.abs(axisGap) >= g ? "high" : "low",
+    direction: axisGap >= 0 ? "action_exceeds_reception" : "reception_exceeds_action",
+    statement: Math.abs(axisGap) < g
+      ? `Action ${one(r.action)} and reception ${one(r.reception)} are level with each other.`
+      : (axisGap > 0
+          ? `Action ${one(r.action)} runs ${one(Math.abs(axisGap))} ahead of reception ${one(r.reception)}: more is offered than comes back.`
+          : `Reception ${one(r.reception)} runs ${one(Math.abs(axisGap))} ahead of action ${one(r.action)}: more is on offer from the environment than is being taken up.`)
+  });
+
+  const L = r.levels, imm = L.imm.reception, lead = L.lead.reception, ext = L.ext.reception;
+  let shape;
+  if (r.levelSpread < g) shape = "flat";
+  else if (imm > lead && lead > ext) shape = "descending";
+  else if (imm < lead && lead < ext) shape = "ascending";
+  else if (lead < imm && lead < ext) shape = "leadership_dip";
+  else if (ext < imm && ext < lead) shape = "extended_isolation";
+  else shape = "mixed";
+  out.push({
+    type: "level_gradient",
+    shape,
+    magnitude: +r.levelSpread.toFixed(1),
+    confidence: r.levelSpread >= g ? "high" : "low",
+    statement: shape === "flat"
+      ? `All three levels sit within ${one(r.levelSpread)} of each other: the pattern is the culture, not one relationship.`
+      : `${r.strongestLevel.head} reads ${one(r.strongestLevel.reception)} and ${r.weakestLevel.head} reads ${one(r.weakestLevel.reception)}, a gap of ${one(r.levelSpread)}.`
+  });
+
+  const all = ACTS.concat(INDICATORS).map(c => ({ c, score: r.constructs[c], label: CONSTRUCT_META[c].label }));
+  const lo = all.slice().sort((a, b) => a.score - b.score)[0];
+  const hi = all.slice().sort((a, b) => b.score - a.score)[0];
+  out.push({
+    type: "construct_range",
+    lowest: lo.c, highest: hi.c,
+    magnitude: +(hi.score - lo.score).toFixed(1),
+    confidence: (hi.score - lo.score) >= g ? "high" : "low",
+    statement: `${lo.label} is lowest at ${one(lo.score)}; ${hi.label} is highest at ${one(hi.score)}.`
+  });
+
+  const near = Math.min(Math.abs(r.reception - MID), Math.abs(r.action - MID));
+  out.push({
+    type: "boundary_proximity",
+    magnitude: +near.toFixed(1),
+    axis: r.nearAxis === "x" ? "reception" : "action",
+    adjacentZone: QUADRANTS[r.adjacentKey].name,
+    confidence: near <= 0.75 ? "high" : "low",
+    statement: near <= 0.75
+      ? `This result sits ${one(near)} from the ${QUADRANTS[r.adjacentKey].name} line on the ${r.nearAxis === "x" ? "reception" : "action"} axis.`
+      : `This result is not close to a boundary; the nearest line is ${one(near)} away.`
+  });
+
+  // Self report against measurement. Agreement confirms, disagreement is either
+  // the sharpest material in the payload or a reason to distrust the response.
+  const pb = ["imm", "lead", "ext"].map(k => perceivedBelonging[k]).filter(n => n);
+  if (pb.length === 3) {
+    const felt = normalize(pb.reduce((a, b) => a + b, 0) / 3);
+    const d = felt - r.reception;
+    out.push({
+      type: "perceived_vs_measured",
+      magnitude: +Math.abs(d).toFixed(1),
+      direction: d >= 0 ? "feels_better_than_measured" : "feels_worse_than_measured",
+      confidence: Math.abs(d) >= g ? "high" : "low",
+      statement: Math.abs(d) < g
+        ? `What they say outright about belonging, ${one(felt)}, matches what the items measure, ${one(r.reception)}.`
+        : (d > 0
+            ? `They report belonging at ${one(felt)} while the items read ${one(r.reception)}: felt belonging outruns the conditions.`
+            : `They report belonging at ${one(felt)} while the items read ${one(r.reception)}: the conditions read better than it feels.`)
+    });
+  }
+
+  const self = intakeValue("essentialSelf");
+  if (self) {
+    const d = self - r.reception;
+    out.push({
+      type: "belief_vs_experience",
+      magnitude: +Math.abs(d).toFixed(1),
+      confidence: Math.abs(d) >= 3 ? "high" : "low",
+      statement: `They rate belonging ${self} out of 10 for their own thriving, against a reception score of ${one(r.reception)}.`
+    });
+  }
+
+  // High confidence first, then by size. Rank is what the report frames on.
+  out.sort((a, b) => (a.confidence === b.confidence)
+    ? b.magnitude - a.magnitude
+    : (a.confidence === "high" ? -1 : 1));
+  out.forEach((f, i) => f.rank = i + 1);
+  return out;
 }
 
 /* =====================================================
@@ -879,12 +1011,12 @@ function computeScores() {
    ===================================================== */
 function finish() {
   results = computeScores();
-  const { scores, overall, quadKey } = results;
+  const { reception, action, quadKey } = results;
   const quad = QUADRANTS[quadKey];
 
-  document.getElementById("scoreVal").textContent = overall.toFixed(1);
+  document.getElementById("scoreVal").textContent = reception.toFixed(1);
   const chip = document.getElementById("tierChip");
-  chip.textContent = tierFor(overall);
+  chip.textContent = tierFor(reception);
   const chipTheme = chipThemeFor(results.zone);
   chip.style.background = chipTheme.bg;
   chip.style.color = chipTheme.fg;
@@ -895,15 +1027,12 @@ function finish() {
   if (quadKey === "belong" && !results.deep) {
     quadCopy = "You're building toward belonging, and belonging isn't yours yet. It's earned at 7.5 on both axes: reception proven enough to trust, offer full enough to be known. Being somewhat open in a place that isn't hostile is not the same as belonging; it's the work in progress. What carries you the rest of the way is consistency: the honest offer repeated until it's simply who you are here, and reception tested enough times that you stop bracing for it.";
   } else if (quadKey === "fitin") {
-    // Landing here means authenticity is below the midline, so the offer is never at full strength.
-    // The only open question is whether the reception is.
-    quadCopy = results.overall >= STRONG
+    quadCopy = reception >= STRONG
       ? "The reception is here, but the offer isn't. Your environment shows every sign it would receive your real voice, your real feelings, your real view, and you're still holding them back. Fitting in looks like belonging from the outside and costs like exclusion over time. The question worth sitting with: what taught you to keep your guard up, and does it still apply here?"
       : "Neither the offer nor the reception is at full strength. You're holding some of yourself back, and the environment hasn't fully proven it would receive you. This is ambiguity: not exclusion, not belonging, and over time it costs like exclusion. The loop completes one honest offer, one safe reception at a time, and both sides have a move to make.";
   }
 
-  // Depth read: settled pattern vs. near a line
-  const AXIS_MEANING = { x: "reception, how your environment receives you", y: "action, how authentically you show up" };
+  const AXIS_MEANING = { x: "reception, how your environment receives you", y: "action, how much of yourself you offer" };
   const DEEP_ZONES = { survival: "Casualty", guarded: "Absent", fitin: "Unknown" };
   let depthLine;
   if (quadKey === "belong" && results.deep) {
@@ -919,63 +1048,59 @@ function finish() {
   const orgTenure = document.getElementById("orgTenure").value;
   let tenureLine = "";
   if (quadKey === "fitin" && (orgTenure === "8–15 years" || orgTenure === "More than 15 years")) {
-    tenureLine = `<p><strong>Worth naming:</strong> you've been here a long time. Fitting in for this many years isn't a phase. It's a pattern, and patterns this old usually feel normal. It isn't.</p>`;
+    tenureLine = `<p><strong>Worth naming:</strong> you've been here a long time. Fitting in for this many years isn't a phase, it's a pattern, and patterns this old usually feel normal. It isn't.</p>`;
   }
   if (quadKey === "guarded" && orgTenure === "Less than 1 year") {
     tenureLine = `<p><strong>Worth naming:</strong> you're new here, and guardedness early on can be pace, not permanence. Watch whether the environment earns your openness over the next few months, or confirms your instinct.</p>`;
   }
-  const bucketColor = quadKey === "belong" && !results.deep ? C.ambigD : quad.color;
+  const bucketColor = quadKey === "belong" && !results.deep ? "var(--ambig-d)" : quad.color;
   document.getElementById("quadrantCallout").innerHTML = `
     <div class="bucket" style="color:${bucketColor}">${results.bucket}</div>
     <h3>You land in: ${results.displayName}</h3>
     <p>${quadCopy}</p>${depthLine}${tenureLine}`;
 
-  // Indicator cards
-  const grid = document.getElementById("indGrid");
-  grid.innerHTML = ["psych", "conn", "cocre", "vuln"].map(k => {
-    const m = INDICATOR_META[k];
-    const s = scores[k];
-    return `<div class="ind-card ${m.cls}">
-      <div class="lbl">${m.label}</div>
-      <div class="val">${s.toFixed(1)}</div>
-      <div class="tier">${tierFor(s)}</div>
-      <div class="bar"><i style="width:${(s / 10) * 100}%"></i></div>
-    </div>`;
-  }).join("");
-
-  renderIndicatorReads(scores);
+  renderConstructs(results);
   renderLevels(results);
   renderLiveSession(results);
 
-  drawMatrix(overall, scores.vuln, quadKey, results.deep);
+  drawMatrix(reception, action, quadKey, results.deep);
   go("s-results");
 
-  // Stage 1: every completed assessment is recorded, anonymously, whether or not
-  // the respondent goes on to ask for a report. Never blocks the results screen.
   logSubmission();
 }
 
 const ZONE_CHIP = {
-  belong:   { bg: "var(--belong-soft)", fg: "var(--belong)" },
-  fitin:    { bg: "var(--ambig-soft)", fg: C.ambigD },
-  survival: { bg: "var(--exclu-soft)", fg: "var(--exclu)" },
-  guarded:  { bg: C.navyTint,          fg: "var(--navy-soft)" }
+  belong:   { bg: "var(--belong-soft)", fg: "var(--belong-d)" },
+  fitin:    { bg: "var(--ambig-soft)",  fg: "var(--ambig-text)" },
+  survival: { bg: "var(--exclu-soft)",  fg: "var(--exclu-d)" },
+  guarded:  { bg: "var(--navy-tint)",   fg: "var(--navy-soft)" }
 };
 
 function chipThemeFor(zone) {
   return ZONE_CHIP[zone.key === "belong" && !zone.deep ? "fitin" : zone.key];
 }
 
-function renderIndicatorReads(scores) {
-  document.getElementById("indReads").innerHTML = ["psych", "conn", "cocre", "vuln"].map(k => {
-    const m = INDICATOR_META[k];
-    const tier = tierFor(scores[k]);
+function card(c, score) {
+  const m = CONSTRUCT_META[c];
+  return `<div class="ind-card ${m.cls}">
+    <div class="lbl">${m.label}</div>
+    <div class="val">${score.toFixed(1)}</div>
+    <div class="tier">${tierFor(score)}</div>
+    <div class="bar"><i style="width:${(score / 10) * 100}%"></i></div>
+  </div>`;
+}
+
+function renderConstructs(r) {
+  document.getElementById("actGrid").innerHTML = ACTS.map(c => card(c, r.constructs[c])).join("");
+  document.getElementById("recGrid").innerHTML = INDICATORS.map(c => card(c, r.constructs[c])).join("");
+  document.getElementById("indReads").innerHTML = ACTS.concat(INDICATORS).map(c => {
+    const m = CONSTRUCT_META[c], sc = r.constructs[c], tier = tierFor(sc);
     return `<div class="read-row ${m.cls}">
       <div class="r-head">
         <span class="r-name">${m.label}</span>
-        <span class="r-score">${scores[k].toFixed(1)} · ${tier}</span>
+        <span class="r-score">${sc.toFixed(1)} · ${tier}</span>
       </div>
-      <p>${INDICATOR_READS[k][tier]}</p>
+      <p>${CONSTRUCT_READS[c][tier]}</p>
     </div>`;
   }).join("");
 }
@@ -991,27 +1116,25 @@ function renderLevels(r) {
       </div>
       <div class="lvl-metrics">
         <div>
-          <div class="m-lbl">Reception</div>
-          <div class="m-val">${L.reception.toFixed(1)}</div>
-          <div class="bar"><i style="width:${(L.reception / 10) * 100}%"></i></div>
+          <div class="m-lbl">Your action</div>
+          <div class="m-val">${L.action.toFixed(1)}</div>
+          <div class="bar"><i style="width:${(L.action / 10) * 100}%;background:var(--exclu)"></i></div>
         </div>
         <div>
-          <div class="m-lbl">Your authenticity</div>
-          <div class="m-val">${L.authenticity.toFixed(1)}</div>
-          <div class="bar"><i style="width:${(L.authenticity / 10) * 100}%;background:var(--exclu)"></i></div>
+          <div class="m-lbl">Their reception</div>
+          <div class="m-val">${L.reception.toFixed(1)}</div>
+          <div class="bar"><i style="width:${(L.reception / 10) * 100}%;background:var(--belong)"></i></div>
         </div>
       </div>
     </div>`;
   }).join("");
 
-  // The spread between levels says more than any single level does
-  const { strongestLevel: hi, weakestLevel: lo, levelSpread: spread } = r;
-  let gap;
-  if (spread < 1.0) {
-    gap = `<p><strong>The spread:</strong> your experience is consistent across all three levels, within ${spread.toFixed(1)} of a point. Whatever is happening here isn't one bad team or one bad manager; it's the culture, and it's the same wherever you stand in it.</p>`;
-  } else {
-    gap = `<p><strong>The spread:</strong> ${hi.head.toLowerCase()} is where this works best (${hi.reception.toFixed(1)}) and ${lo.head.toLowerCase()} is where it works least (${lo.reception.toFixed(1)}), a gap of ${spread.toFixed(1)} points. Your belonging is uneven, and the average hides that.</p>
-      <p>${WEAK_LEVEL_READS[lo.key]}</p>`;
+  // Driven by the computed finding, so the page and the emailed report cannot
+  // disagree, and a gap inside the noise is never named as one.
+  const grad = r.findings.find(f => f.type === "level_gradient");
+  let gap = `<p><strong>The spread:</strong> ${grad.statement}</p>`;
+  if (grad.confidence === "high" && grad.shape !== "flat") {
+    gap += `<p>${WEAK_LEVEL_READS[r.weakestLevel.key]}</p>`;
   }
   document.getElementById("gapRead").innerHTML = `<div class="gap-read">${gap}</div>`;
 }
@@ -1046,11 +1169,11 @@ function drawMatrix(x, y, quadKey, deep) {
   }).join("");
 
   const tick = (X, Y, label, rot) =>
-    `<text x="${X}" y="${Y}" text-anchor="${rot ? "end" : "middle"}" font-family="IBM Plex Sans, sans-serif" font-size="10" font-weight="700" fill=C.inkFaint>${label}</text>`;
+    `<text x="${X}" y="${Y}" text-anchor="${rot ? "end" : "middle"}" font-family="IBM Plex Sans, sans-serif" font-size="10" font-weight="700" fill="${C.inkFaint}">${label}</text>`;
 
   document.getElementById("matrixHolder").innerHTML = `
   <svg class="matrix-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img"
-       aria-label="Belonging Matrix: your position is plotted at environment ${x.toFixed(1)} and vulnerability ${y.toFixed(1)}, in the ${quadKey === 'belong' ? (deep ? 'Belong' : 'Building') : QUADRANTS[quadKey].name} zone${deep ? ", deep zone" : ", near the lines"}.">
+       aria-label="Belonging Matrix: your position is plotted at reception ${x.toFixed(1)} and action ${y.toFixed(1)}, in the ${quadKey === 'belong' ? (deep ? 'Belong' : 'Building') : QUADRANTS[quadKey].name} zone${deep ? ", deep zone" : ", near the lines"}.">
     <defs>
       <clipPath id="plotClip"><rect x="${pad}" y="${top}" width="${plotW}" height="${plotH}" rx="14"/></clipPath>
     </defs>
@@ -1072,12 +1195,12 @@ function drawMatrix(x, y, quadKey, deep) {
     <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${yPix(dLo) + (bottom - yPix(dLo)) / 2 + 5}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="16" font-weight="600" fill="${lblColor('fitin', C.ambigDD)}">Unknown</text>
 
     <!-- axis labels + thresholds -->
-    <text x="${pad}" y="${H - 16}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill=C.inkSoft>Hostile</text>
-    <text x="${right}" y="${H - 16}" text-anchor="end" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill=C.inkSoft>Supportive</text>
-    <text x="${(pad + right) / 2}" y="${H - 16}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1" fill=C.inkFaint>RECEPTION</text>
-    <text x="16" y="${bottom}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill=C.inkSoft transform="rotate(-90 16 ${bottom})">Low authenticity</text>
-    <text x="16" y="${top}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill=C.inkSoft transform="rotate(-90 16 ${top})" text-anchor="end">High authenticity</text>
-    <text x="16" y="${(top + bottom) / 2}" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1" fill=C.inkFaint transform="rotate(-90 16 ${(top + bottom) / 2})" text-anchor="middle">ACTION</text>
+    <text x="${pad}" y="${H - 16}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="${C.inkSoft}">Hostile</text>
+    <text x="${right}" y="${H - 16}" text-anchor="end" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="${C.inkSoft}">Supportive</text>
+    <text x="${(pad + right) / 2}" y="${H - 16}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1" fill="${C.inkFaint}">RECEPTION</text>
+    <text x="16" y="${bottom}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="${C.inkSoft}" transform="rotate(-90 16 ${bottom})">Withheld</text>
+    <text x="16" y="${top}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="${C.inkSoft}" transform="rotate(-90 16 ${top})" text-anchor="end">Offered</text>
+    <text x="16" y="${(top + bottom) / 2}" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1" fill="${C.inkFaint}" transform="rotate(-90 16 ${(top + bottom) / 2})" text-anchor="middle">ACTION</text>
     ${tick(xPix(dLo), H - 34, "3.5")}${tick(mx, H - 34, "5.5")}${tick(xPix(dHi), H - 34, "7.5")}
     ${tick(pad - 8, yPix(dLo) + 4, "3.5", true)}${tick(pad - 8, my + 4, "5.5", true)}${tick(pad - 8, yPix(dHi) + 4, "7.5", true)}
 
@@ -1086,7 +1209,7 @@ function drawMatrix(x, y, quadKey, deep) {
       <animate attributeName="r" values="12;20;12" dur="2.4s" repeatCount="indefinite"/>
     </circle>
     <circle cx="${px}" cy="${py}" r="8" fill="${dotColor}" stroke="#fff" stroke-width="2.5"/>
-    <text x="${px}" y="${py - 18}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="700" fill=C.ink>You</text>
+    <text x="${px}" y="${py - 18}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="700" fill="${C.ink}">You</text>
   </svg>`;
 }
 
@@ -1123,37 +1246,42 @@ async function postToWebhook(payload) {
 /* The full scored record. Identical in both stages so either one alone is
    enough to rebuild the respondent's report. */
 function resultsBlock() {
+  const named = cs => ({
+    say: +cs.say.toFixed(1), show: +cs.show.toFixed(1), share: +cs.share.toFixed(1),
+    psychologicalSafety: +cs.psych.toFixed(1),
+    socialConnection: +cs.conn.toFixed(1),
+    coCreation: +cs.cocre.toFixed(1)
+  });
   const levelBlock = {};
   for (const [k, L] of Object.entries(results.levels)) {
     levelBlock[k] = {
       name: L.head,
+      action: +L.action.toFixed(1),
       reception: +L.reception.toFixed(1),
-      authenticity: +L.authenticity.toFixed(1),
       zone: L.zone.displayName,
       bucket: L.zone.bucket,
-      psychologicalSafety: +L.indicators.psych.toFixed(1),
-      socialConnection: +L.indicators.conn.toFixed(1),
-      coCreation: +L.indicators.cocre.toFixed(1)
+      constructs: named(L.constructs)
     };
   }
   return {
-    belongingScore: +results.overall.toFixed(1),
-    tier: tierFor(results.overall),
+    belongingScore: +results.reception.toFixed(1),
+    actionScore: +results.action.toFixed(1),
+    receptionScore: +results.reception.toFixed(1),
+    tier: tierFor(results.reception),
     quadrant: results.displayName,
     zoneDepth: results.deep ? "deep" : "edge",
     deepZone: results.deep ? ({ belong: "Belong", survival: "Casualty", guarded: "Absent", fitin: "Unknown" })[results.quadKey] : null,
     belongingEstablished: results.established,
     bucket: results.bucket,
-    indicators: {
-      psychologicalSafety: +results.scores.psych.toFixed(1),
-      socialConnection: +results.scores.conn.toFixed(1),
-      coCreation: +results.scores.cocre.toFixed(1),
-      authenticity: +results.scores.vuln.toFixed(1)
-    },
+    constructs: named(results.constructs),
     levels: levelBlock,
     strongestLevel: results.strongestLevel.head,
     weakestLevel: results.weakestLevel.head,
-    levelSpread: +results.levelSpread.toFixed(1)
+    levelSpread: +results.levelSpread.toFixed(1),
+    // Computed here so the report writer describes findings rather than hunting
+    // for them, and never asserts a difference below the stated threshold.
+    findings: results.findings,
+    reliability: results.reliability
   };
 }
 
@@ -1248,17 +1376,14 @@ const d1 = n => +n.toFixed(1);
 function buildResultCode(r) {
   const L = {};
   for (const [key, lvl] of Object.entries(r.levels)) {
-    L[key] = {
-      ps: d1(lvl.indicators.psych),
-      sc: d1(lvl.indicators.conn),
-      cc: d1(lvl.indicators.cocre),
-      au: d1(lvl.authenticity)
-    };
+    const c = lvl.constructs;
+    L[key] = { sa: d1(c.say), sh: d1(c.show), sr: d1(c.share),
+               ps: d1(c.psych), sc: d1(c.conn), cc: d1(c.cocre) };
   }
   const obj = {
-    v: 1,
-    o: d1(r.overall),
-    a: d1(r.scores.vuln),
+    v: 2,
+    o: d1(r.reception),
+    a: d1(r.action),
     q: r.quadKey,
     d: r.deep,
     al: intakeValue("authorityLevel"),
