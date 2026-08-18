@@ -16,12 +16,13 @@
     --on-navy: #FFFFFF;   --on-navy-mute: #8FA3B8;
     --paper: #FBFAF6;     --paper-2: #F1ECE1;   --card: #FFFFFF;
     --ink: #16242F;       --ink-soft: #5E6E79;  --ink-faint: #8A97A0;   --line: #E4DED1;
-    --blue: #1F5FAD;
+    --blue: #1F5FAD;    --blue-d: #17488A;    --blue-soft: #E7EFF9;
     /* Belonging */
     --belong: #34B27E;  --belong-d: #1E8A5E;  --belong-soft: #E3F5EC;  --belong-fill: #C7EBDA;
     /* Ambiguity */
     --ambig: #F2A516;   --ambig-d: #C9820A;   --ambig-dd: #A56A08;
-    --ambig-l: var(--ambig-l); --ambig-soft: #FDF1DC; --ambig-fill: #FAE4B4;
+    --ambig-l: #FFB92E; --ambig-soft: #FDF1DC; --ambig-fill: #FAE4B4;
+    --ambig-text: #8F5C07;  /* amber dark enough to read on --ambig-soft */
     /* Exclusion. The burnt orange, and navy for the Guarded corner. */
     --exclu: #EB4824;   --exclu-d: #C2371A;   --exclu-l: #FF9B7A;
     --exclu-soft: #FDE9E3; --exclu-fill: #F9D2C6;
@@ -90,9 +91,11 @@
     display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .12em;
     text-transform: uppercase; padding: 6px 12px; border-radius: 999px; margin-bottom: 8px;
   }
-  .level-imm  { background: var(--belong-soft); color: var(--belong); }
-  .level-lead { background: var(--navy-tint); color: var(--navy-soft); }
-  .level-ext  { background: var(--ambig-soft); color: var(--ambig-d); }
+  /* The three levels take the logo's own colours, which also frees green to
+     mean Belonging and nothing else. */
+  .level-imm  { background: var(--exclu-soft); color: var(--exclu-d); }
+  .level-lead { background: var(--blue-soft);  color: var(--blue-d); }
+  .level-ext  { background: var(--ambig-soft); color: var(--ambig-text); }
   .level-head { font-size: 26px; font-weight: 600; margin-bottom: 4px; }
   .level-sub { color: var(--ink-soft); font-size: 15px; margin-bottom: 26px; }
 
