@@ -166,6 +166,7 @@
   .ind-card.vuln  .bar i { background: var(--exclu); }
 
   .section-gap { margin-top: 26px; }
+  .scale-note { font-size: 12px; color: var(--ink-faint); margin-top: 12px; }
   .axis-label {
     font-family: "Archivo", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .16em;
     text-transform: uppercase; color: var(--ink-faint); margin: 18px 0 8px;
@@ -376,6 +377,18 @@
       </select>
     </div>
     <div class="field">
+      <label for="generation">Which generation do you identify with?</label>
+      <select id="generation" required>
+        <option value="">Select one</option>
+        <option value="Baby Boomer">Baby Boomer (born 1946&ndash;1964)</option>
+        <option value="Gen X">Gen X (born 1965&ndash;1980)</option>
+        <option value="Older Millennial">Older Millennial (born 1981&ndash;1988)</option>
+        <option value="Young Millennial">Young Millennial (born 1989&ndash;1996)</option>
+        <option value="Gen Z">Gen Z (born 1997&ndash;2012)</option>
+        <option value="Gen Alpha">Gen Alpha (born 2013 or later)</option>
+      </select>
+    </div>
+    <div class="field">
       <label for="authorityLevel">Which best describes your level of authority at work?</label>
       <select id="authorityLevel" required>
         <option value="">Select one</option>
@@ -450,6 +463,7 @@
       <div class="ind-grid" id="actGrid"></div>
       <div class="axis-label">Their reception</div>
       <div class="ind-grid" id="recGrid"></div>
+      <div class="scale-note">Green from 7.5. Amber from 5.5. Burnt orange below the crosshairs.</div>
       <div id="indReads"></div>
     </div>
 
@@ -771,7 +785,7 @@ function startQuestions() {
 }
 
 /* Belief items, collected for context, deliberately kept out of scoring */
-const REQUIRED_INTAKE = ["authorityLevel", "essentialSelf", "essentialClients"];
+const REQUIRED_INTAKE = ["generation", "authorityLevel", "essentialSelf", "essentialClients"];
 
 function checkIntakeComplete() {
   const done = REQUIRED_INTAKE.every(id => document.getElementById(id).value !== "");
@@ -815,6 +829,16 @@ function normalize(mean1to5) {
 function tierFor(score) {
   return TIERS.find(t => score >= t.min).label;
 }
+
+/* Value colour, so a number reads before it is read. Green at Strong, amber
+   through Building, burnt orange once a score drops below the crosshairs. */
+const TIER_COLOR = {
+  Strong:     "var(--belong)",
+  Building:   "var(--ambig)",
+  Emerging:   "var(--exclu)",
+  Developing: "var(--exclu-d)"
+};
+const tierColor = score => TIER_COLOR[tierFor(score)];
 
 /* Where a reception/authenticity pair lands. Used for the overall result and,
    separately, for each of the three levels on its own. */
@@ -1014,7 +1038,9 @@ function finish() {
   const { reception, action, quadKey } = results;
   const quad = QUADRANTS[quadKey];
 
-  document.getElementById("scoreVal").textContent = reception.toFixed(1);
+  const scoreEl = document.getElementById("scoreVal");
+  scoreEl.textContent = reception.toFixed(1);
+  scoreEl.style.color = tierColor(reception);
   const chip = document.getElementById("tierChip");
   chip.textContent = tierFor(reception);
   const chipTheme = chipThemeFor(results.zone);
@@ -1081,12 +1107,12 @@ function chipThemeFor(zone) {
 }
 
 function card(c, score) {
-  const m = CONSTRUCT_META[c];
+  const m = CONSTRUCT_META[c], col = tierColor(score);
   return `<div class="ind-card ${m.cls}">
     <div class="lbl">${m.label}</div>
-    <div class="val">${score.toFixed(1)}</div>
-    <div class="tier">${tierFor(score)}</div>
-    <div class="bar"><i style="width:${(score / 10) * 100}%"></i></div>
+    <div class="val" style="color:${col}">${score.toFixed(1)}</div>
+    <div class="tier" style="color:${col}">${tierFor(score)}</div>
+    <div class="bar"><i style="width:${(score / 10) * 100}%;background:${col}"></i></div>
   </div>`;
 }
 
@@ -1098,7 +1124,7 @@ function renderConstructs(r) {
     return `<div class="read-row ${m.cls}">
       <div class="r-head">
         <span class="r-name">${m.label}</span>
-        <span class="r-score">${sc.toFixed(1)} · ${tier}</span>
+        <span class="r-score" style="color:${tierColor(sc)}">${sc.toFixed(1)} · ${tier}</span>
       </div>
       <p>${CONSTRUCT_READS[c][tier]}</p>
     </div>`;
@@ -1117,13 +1143,13 @@ function renderLevels(r) {
       <div class="lvl-metrics">
         <div>
           <div class="m-lbl">Your action</div>
-          <div class="m-val">${L.action.toFixed(1)}</div>
-          <div class="bar"><i style="width:${(L.action / 10) * 100}%;background:var(--exclu)"></i></div>
+          <div class="m-val" style="color:${tierColor(L.action)}">${L.action.toFixed(1)}</div>
+          <div class="bar"><i style="width:${(L.action / 10) * 100}%;background:${tierColor(L.action)}"></i></div>
         </div>
         <div>
           <div class="m-lbl">Their reception</div>
-          <div class="m-val">${L.reception.toFixed(1)}</div>
-          <div class="bar"><i style="width:${(L.reception / 10) * 100}%;background:var(--belong)"></i></div>
+          <div class="m-val" style="color:${tierColor(L.reception)}">${L.reception.toFixed(1)}</div>
+          <div class="bar"><i style="width:${(L.reception / 10) * 100}%;background:${tierColor(L.reception)}"></i></div>
         </div>
       </div>
     </div>`;
@@ -1294,6 +1320,7 @@ function submissionPayload() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    generation: document.getElementById("generation").value,
     authorityLevel: intakeValue("authorityLevel"),
     beliefs: beliefsBlock(),
     perceivedBelonging: Object.assign({}, perceivedBelonging),
@@ -1340,6 +1367,7 @@ async function sendResults() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    generation: document.getElementById("generation").value,
     authorityLevel: intakeValue("authorityLevel"),
     beliefs: beliefsBlock(),
     perceivedBelonging: Object.assign({}, perceivedBelonging),

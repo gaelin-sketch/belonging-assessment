@@ -117,6 +117,9 @@ which is how the two rows join.
 Identity and context
 - `contact.name`, `contact.email`, `contact.organization`, `contact.role`
 - `tenure.organization`, `tenure.profession`, five bands from "Less than 1 year" to "More than 15 years"
+- `generation`, one of Baby Boomer, Gen X, Older Millennial, Young Millennial, Gen Z, Gen Alpha.
+  Demographic context only. Never use it to characterise the person or to explain their result by
+  their age band; a generational label is not an explanation for anything in this report.
 - `authorityLevel`, 1 to 5: 1 does the direct work, 2 guides without reports, 3 has direct reports,
   4 leads supervisors or departments, 5 shares responsibility for the whole organization
 
