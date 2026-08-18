@@ -17,6 +17,28 @@ They share a `submissionId`. `report_request` also carries `linkedToSubmission`:
 `submission` row already landed and should be joined to; when `false` that row never arrived, so this
 payload is the only copy and carries `rawAnswers` itself.
 
+## How the browser posts
+
+The assessment posts with `mode: "no-cors"` and `Content-Type: text/plain;charset=UTF-8`, which
+looks wrong and is deliberate. An `application/json` body makes the request preflighted, and Make
+answers the OPTIONS preflight with 400, so the browser never sends the POST at all. Sending
+`text/plain` in ordinary cors mode does deliver, but Make returns no `Access-Control-Allow-Origin`
+header, so the promise rejects after the row has already landed, and retrying on that failure would
+duplicate it.
+
+Two consequences for the scenario:
+
+- The body arrives as JSON text under a `text/plain` content type. If Make does not parse it
+  automatically, turn on JSON pass-through for the webhook and put a Parse JSON module first.
+- The page cannot see the response, so an HTTP level failure is invisible to the respondent. They see
+  the success message whenever the request leaves the browser. Watch the Make execution history rather
+  than trusting the on-screen confirmation.
+
+A webhook URL alone is not enough. The webhook has to be attached to a Custom webhook trigger in a
+scenario, and that scenario has to be saved and switched on, or Make reports the URL as not linked to
+any scenario and nothing is stored. Run one real assessment while the webhook is in "Determine data
+structure" mode so Make learns the full shape, including the nested `results.levels` object.
+
 ## Scenario shape
 
 1. Webhook receives the post.

@@ -1100,12 +1100,24 @@ async function postToWebhook(payload) {
     console.warn("WEBHOOK_URL is still the placeholder. Payload below was not sent:", payload);
     return;
   }
-  const res = await fetch(WEBHOOK_URL, {
+  // Posted as a simple request in no-cors mode, deliberately.
+  //
+  // An application/json body makes this a preflighted request, and Make's webhook
+  // answers the OPTIONS preflight with 400, so the browser never sends the POST at
+  // all. Sending text/plain in normal cors mode does deliver the POST, but Make
+  // returns no Access-Control-Allow-Origin header, so the promise rejects after the
+  // data has already landed; retrying on that failure would duplicate the row.
+  //
+  // no-cors delivers exactly once and resolves. The response is opaque, so an HTTP
+  // level failure cannot be seen from here. A genuine connection failure still
+  // throws, which is what the caller reports to the respondent. Every payload
+  // carries submissionId, so Make can dedupe if a request is ever repeated.
+  await fetch(WEBHOOK_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=UTF-8" },
     body: JSON.stringify(payload)
   });
-  if (!res.ok) throw new Error("Webhook returned " + res.status);
 }
 
 /* The full scored record. Identical in both stages so either one alone is
