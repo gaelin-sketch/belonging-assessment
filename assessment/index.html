@@ -6,23 +6,28 @@
 <title>Individual Belonging Assessment</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #16263f;
-    --navy-soft: #24385c;
-    --teal: #1f8a7d;
-    --teal-soft: #e3f2f0;
-    --gold: #d9a441;
-    --gold-soft: #faf1de;
-    --clay: #c2543a;
-    --clay-soft: #f8e8e3;
-    --paper: #f7f5f0;
-    --card: #ffffff;
-    --ink: #1c2430;
-    --ink-soft: #5a6472;
-    --line: #e4e0d7;
-    --radius: 14px;
+    /* Brand system, carried over from the Belonging Assessment Report */
+    --navy: #122A42;
+    --navy-2: #0C1E30;
+    --navy-soft: #1C3A57;
+    --navy-line: #26456380;
+    --paper: #FBFAF6;
+    --paper-2: #F1ECE1;
+    --card: #FFFFFF;
+    --ink: #16242F;
+    --ink-soft: #5E6E79;
+    --ink-faint: #8A97A0;
+    --line: #E4DED1;
+    --blue: #1F5FAD;
+    /* Bucket colours. The legacy names are kept because the matrix and chip
+       code reference them directly. */
+    --belong: #34B27E;  --teal: #34B27E;  --teal-soft: #E3F5EC;
+    --ambig:  #F2A516;  --gold: #F2A516;  --gold-soft: #FDF1DC;
+    --exclu:  #EB4824;  --clay: #EB4824;  --clay-soft: #FDE9E3;
+    --radius: 16px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -31,14 +36,14 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
   body {
-    font-family: "Public Sans", system-ui, sans-serif;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
     background: var(--paper);
     color: var(--ink);
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
   }
   .wrap { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
-  .display { font-family: "Fraunces", Georgia, serif; }
+  .display { font-family: "Archivo", system-ui, sans-serif; }
 
   /* ---------- shared ---------- */
   .eyebrow {
@@ -86,8 +91,8 @@
     text-transform: uppercase; padding: 6px 12px; border-radius: 999px; margin-bottom: 8px;
   }
   .level-imm  { background: var(--teal-soft); color: var(--teal); }
-  .level-lead { background: #e6ebf5; color: var(--navy-soft); }
-  .level-ext  { background: var(--gold-soft); color: #9c711f; }
+  .level-lead { background: #E6ECF3; color: var(--navy-soft); }
+  .level-ext  { background: var(--gold-soft); color: #C9820A; }
   .level-head { font-size: 26px; font-weight: 600; margin-bottom: 4px; }
   .level-sub { color: var(--ink-soft); font-size: 15px; margin-bottom: 26px; }
 
@@ -120,7 +125,7 @@
   /* ---------- results ---------- */
   .score-hero { text-align: center; padding: 12px 0 8px; }
   .score-num {
-    font-family: "Fraunces", Georgia, serif; font-weight: 700;
+    font-family: "Archivo", system-ui, sans-serif; font-weight: 700;
     font-size: clamp(72px, 16vw, 104px); line-height: 1; color: var(--navy); letter-spacing: -0.02em;
   }
   .score-denom { font-size: .38em; color: var(--ink-soft); font-weight: 500; }
@@ -132,7 +137,7 @@
     background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
     padding: 22px; margin: 26px 0;
   }
-  .quadrant-callout h3 { font-family: "Fraunces", Georgia, serif; font-size: 22px; margin-bottom: 6px; }
+  .quadrant-callout h3 { font-family: "Archivo", system-ui, sans-serif; font-size: 22px; margin-bottom: 6px; }
   .quadrant-callout .bucket { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 10px; }
   .quadrant-callout p { color: var(--ink-soft); font-size: 15px; }
   .quadrant-callout p + p { margin-top: 8px; }
@@ -149,7 +154,7 @@
   .ind-card.cocre { border-top-color: var(--gold); }
   .ind-card.vuln  { border-top-color: var(--clay); }
   .ind-card .lbl { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
-  .ind-card .val { font-family: "Fraunces", Georgia, serif; font-size: 32px; font-weight: 700; color: var(--ink); margin: 4px 0 2px; }
+  .ind-card .val { font-family: "Archivo", system-ui, sans-serif; font-size: 32px; font-weight: 700; color: var(--ink); margin: 4px 0 2px; }
   .ind-card .tier { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
   .bar { height: 5px; background: var(--paper); border-radius: 999px; margin-top: 10px; overflow: hidden; }
   .bar i { display: block; height: 100%; border-radius: 999px; background: var(--teal); }
@@ -184,7 +189,7 @@
   .lvl-zone { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; }
   .lvl-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .m-lbl { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
-  .m-val { font-family: "Fraunces", Georgia, serif; font-size: 24px; font-weight: 700; margin: 2px 0 4px; }
+  .m-val { font-family: "Archivo", system-ui, sans-serif; font-size: 24px; font-weight: 700; margin: 2px 0 4px; }
   .gap-read {
     background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
     padding: 18px; margin-top: 14px;
@@ -220,17 +225,111 @@
   .sent .display { font-size: 24px; margin-bottom: 6px; color: #fff; }
   .sent p { color: #b9c3d6; font-size: 15px; }
   .err { color: #ffb4a2; font-size: 14px; margin-top: 12px; text-align: center; }
+
+  /* ================= BRAND LAYER =================
+     Carries the Belonging Assessment Report styling: Archivo display over
+     IBM Plex Sans, the logo palette, and the report's card and eyebrow motifs. */
+  body { font-family: "IBM Plex Sans", system-ui, sans-serif; }
+
+  .brand-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding-bottom: 20px; margin-bottom: 28px; border-bottom: 1px solid var(--line);
+  }
+  .brand-bar svg { width: 34px; height: auto; display: block; flex: 0 0 auto; }
+  .brand-name {
+    font-family: "Archivo", sans-serif; font-weight: 800; font-size: 12.5px;
+    letter-spacing: .16em; text-transform: uppercase; color: var(--navy); line-height: 1.25;
+  }
+  .brand-name span { display: block; color: var(--ink-faint); font-weight: 600; letter-spacing: .13em; }
+
+  .page-foot {
+    margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .page-foot svg { width: 22px; height: auto; display: block; }
+  .page-foot span { font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-faint); }
+
+  /* eyebrow gains the report's leading rule */
+  .eyebrow {
+    display: flex; align-items: center; gap: 10px;
+    font-family: "Archivo", sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: .16em; text-transform: uppercase; color: var(--exclu); margin-bottom: 14px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 3px; border-radius: 2px; background: var(--exclu); flex: 0 0 auto; }
+
+  /* display headings */
+  .intro { position: relative; }
+  .intro h1 {
+    font-family: "Archivo", sans-serif; font-weight: 800; text-transform: uppercase;
+    font-size: clamp(36px, 7.4vw, 58px); line-height: 1.02; letter-spacing: -0.02em;
+    color: var(--navy); margin-bottom: 20px;
+  }
+  .intro h1 em { font-style: normal; color: var(--ambig); }
+  .level-head, .cards-head, .matrix-card h2, .form-card h2, .code-card h2 {
+    font-family: "Archivo", sans-serif; font-weight: 700; letter-spacing: -0.01em; color: var(--navy);
+  }
+  .cards-head, .matrix-card h2, .form-card h2, .code-card h2 { font-size: 21px; }
+
+  .confetti { position: absolute; top: -8px; right: -6px; width: 118px; height: auto; pointer-events: none; }
+  @media (max-width: 640px) { .confetti { display: none; } }
+
+  /* cards */
+  .q, .matrix-card, .ind-card, .lvl-card, .gap-read, .read-row, .code-card, .quadrant-callout {
+    border-radius: var(--radius);
+  }
+  .btn { font-family: "Archivo", sans-serif; font-weight: 600; letter-spacing: .01em; }
+
+  /* indicator stat cards, one colour per construct, mirroring the logo */
+  .ind-card { border-top: 1px solid var(--line); padding: 18px; }
+  .ind-card::before { content: ""; display: block; width: 26px; height: 3px; border-radius: 2px; margin-bottom: 12px; background: var(--belong); }
+  .ind-card.psych::before { background: var(--blue); }
+  .ind-card.cocre::before { background: var(--ambig); }
+  .ind-card.vuln::before  { background: var(--exclu); }
+  .ind-card .val { font-family: "Archivo", sans-serif; font-weight: 800; font-size: 38px; letter-spacing: -0.03em; color: var(--belong); }
+  .ind-card.psych .val { color: var(--blue); }
+  .ind-card.cocre .val { color: var(--ambig); }
+  .ind-card.vuln  .val { color: var(--exclu); }
+  .ind-card .bar i,  .lvl-card .bar i { background: var(--belong); }
+  .ind-card.psych .bar i { background: var(--blue); }
+  .ind-card.cocre .bar i { background: var(--ambig); }
+  .ind-card.vuln  .bar i { background: var(--exclu); }
+  .read-row.psych { border-left-color: var(--blue); }
+
+  /* score hero */
+  .score-num { font-family: "Archivo", sans-serif; font-weight: 800; letter-spacing: -0.045em; }
+  .tier-chip { font-family: "Archivo", sans-serif; }
+  .quadrant-callout { border-left: 5px solid var(--navy); }
+  .quadrant-callout h3 { font-family: "Archivo", sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.01em; color: var(--navy); }
+  .lvl-zone, .level-tag, .def-tag, .m-lbl, .lbl, .r-name { font-family: "Archivo", sans-serif; }
+  .m-val, .lvl-name { font-family: "Archivo", sans-serif; font-weight: 700; }
+
+  .form-card { background: var(--navy); }
+  .form-card h2 { color: #fff; }   /* the brand heading rule above sets navy, invisible here */
+  .form-card .btn { background: var(--ambig); color: var(--navy); font-weight: 700; }
+  .form-card .btn:hover { background: #FFB92E; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
+  <header class="brand-bar">
+    <svg viewBox="0 0 100 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="68.1" height="23.5" rx="5" fill="#EB4824"/><rect x="74.3" y="0" width="25.7" height="23.5" rx="5" fill="#1F5FAD"/><rect x="0" y="27" width="30.1" height="28.8" rx="5" fill="#122A42"/><rect x="74.3" y="57.1" width="25.7" height="26.5" rx="5" fill="#122A42"/><g fill="#F2A516"><rect x="46" y="27" width="54" height="23.4" rx="5"/><rect x="46" y="27" width="22.1" height="56.2" rx="5"/><rect x="0" y="59.7" width="68.1" height="23.5" rx="5"/></g></svg>
+    <div class="brand-name">Gaelin Elmore<span>The Elmore Group</span></div>
+  </header>
+
   <div class="progress" id="progress" hidden><div class="progress-fill" id="progressFill"></div></div>
 
   <!-- ============ INTRO ============ -->
   <section class="screen active intro" id="s-intro">
+    <svg class="confetti" viewBox="0 0 120 74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="62" y="0"  width="34" height="20" rx="7" fill="#122A42"/>
+      <rect x="100" y="4" width="20" height="20" rx="7" fill="#1F5FAD"/>
+      <rect x="40" y="28" width="20" height="20" rx="7" fill="#F2A516"/>
+      <rect x="66" y="28" width="54" height="24" rx="9" fill="#EB4824"/>
+      <rect x="96" y="58" width="16" height="16" rx="6" fill="#F2A516"/>
+    </svg>
     <div class="eyebrow">Gaelin Elmore's Individual Belonging Assessment</div>
-    <h1>Do you BELONG at work?</h1>
+    <h1>Do you <em>BELONG</em> at work?</h1>
     <p>In a world where belonging matters more than ever, it's becoming increasingly rare to belong at work. One of the biggest obstacles, beyond direct opposition to belonging, is a simple reality: belonging is hard to measure.</p>
     <p>Most surveys ask whether you feel like you belong. Both you and I know it's more complicated than that. Fitting in can feel like belonging if you've never experienced what it's like to truly belong at work. Brené Brown says "the opposite of belonging is fitting in." This assessment measures what belonging is actually made of: the authenticity you bring, how your environment receives it, and three research-grounded conditions: psychological safety, social connection, and co-creation. And to make sure it's as accurate as possible, we apply these elements across the different levels of your organization: your immediate team, your direct leader, and your extended team members.</p>
     <div class="levels-def">
@@ -381,6 +480,11 @@
       </div>
     </div>
   </section>
+
+  <footer class="page-foot">
+    <svg viewBox="0 0 100 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="68.1" height="23.5" rx="5" fill="#EB4824"/><rect x="74.3" y="0" width="25.7" height="23.5" rx="5" fill="#1F5FAD"/><rect x="0" y="27" width="30.1" height="28.8" rx="5" fill="#122A42"/><rect x="74.3" y="57.1" width="25.7" height="26.5" rx="5" fill="#122A42"/><g fill="#F2A516"><rect x="46" y="27" width="54" height="23.4" rx="5"/><rect x="46" y="27" width="22.1" height="56.2" rx="5"/><rect x="0" y="59.7" width="68.1" height="23.5" rx="5"/></g></svg>
+    <span>Individual Belonging Assessment &middot; Gaelin Elmore</span>
+  </footer>
 
 </div>
 
@@ -806,7 +910,7 @@ function finish() {
   if (quadKey === "guarded" && orgTenure === "Less than 1 year") {
     tenureLine = `<p><strong>Worth naming:</strong> you're new here, and guardedness early on can be pace, not permanence. Watch whether the environment earns your openness over the next few months, or confirms your instinct.</p>`;
   }
-  const bucketColor = quadKey === "belong" && !results.deep ? "#9c711f" : quad.color;
+  const bucketColor = quadKey === "belong" && !results.deep ? "#C9820A" : quad.color;
   document.getElementById("quadrantCallout").innerHTML = `
     <div class="bucket" style="color:${bucketColor}">${results.bucket}</div>
     <h3>You land in: ${results.displayName}</h3>
@@ -839,9 +943,9 @@ function finish() {
 
 const ZONE_CHIP = {
   belong:   { bg: "var(--teal-soft)", fg: "var(--teal)" },
-  fitin:    { bg: "var(--gold-soft)", fg: "#9c711f" },
+  fitin:    { bg: "var(--gold-soft)", fg: "#C9820A" },
   survival: { bg: "var(--clay-soft)", fg: "var(--clay)" },
-  guarded:  { bg: "#e6ebf5",          fg: "var(--navy-soft)" }
+  guarded:  { bg: "#E6ECF3",          fg: "var(--navy-soft)" }
 };
 
 function chipThemeFor(zone) {
@@ -906,8 +1010,8 @@ function drawMatrix(x, y, quadKey, deep) {
   const px = xPix(x), py = yPix(y);
 
   const q = (key) => key === quadKey;
-  const lblColor = (key, base) => q(key) ? base : "#a9a294";
-  const dotColor = { belong: "#1f8a7d", fitin: "#d9a441", survival: "#c2543a", guarded: "#16263f" }[quadKey];
+  const lblColor = (key, base) => q(key) ? base : "#8A97A0";
+  const dotColor = { belong: "#34B27E", fitin: "#F2A516", survival: "#EB4824", guarded: "#122A42" }[quadKey];
 
   const hg = 3, top = pad, bottom = H - pad, right = W - pad;
   const mx = xPix(MID), my = yPix(MID);
@@ -915,20 +1019,20 @@ function drawMatrix(x, y, quadKey, deep) {
 
   // base + deep-corner fills per quadrant (occupied = full color, others muted)
   const Z = {
-    survival: { base: "#f8e8e3", deepFill: "#f1d3c7", x: pad,      y: top,      w: mx - hg - pad,   h: my - hg - top,    dx: pad,        dy: top,        dw: xPix(dLo) - pad,        dh: yPix(dHi) - top },
-    belong:   { base: "#e3f2f0", deepFill: "#c9e6e1", x: mx + hg,  y: top,      w: right - mx - hg, h: my - hg - top,    dx: xPix(dHi),  dy: top,        dw: right - xPix(dHi),      dh: yPix(dHi) - top },
-    guarded:  { base: "#e6ebf5", deepFill: "#d0daea", x: pad,      y: my + hg,  w: mx - hg - pad,   h: bottom - my - hg, dx: pad,        dy: yPix(dLo),  dw: xPix(dLo) - pad,        dh: bottom - yPix(dLo) },
-    fitin:    { base: "#faf1de", deepFill: "#f2e2ba", x: mx + hg,  y: my + hg,  w: right - mx - hg, h: bottom - my - hg, dx: xPix(dHi),  dy: yPix(dLo),  dw: right - xPix(dHi),      dh: bottom - yPix(dLo) }
+    survival: { base: "#FDE9E3", deepFill: "#F9D2C6", x: pad,      y: top,      w: mx - hg - pad,   h: my - hg - top,    dx: pad,        dy: top,        dw: xPix(dLo) - pad,        dh: yPix(dHi) - top },
+    belong:   { base: "#E3F5EC", deepFill: "#C7EBDA", x: mx + hg,  y: top,      w: right - mx - hg, h: my - hg - top,    dx: xPix(dHi),  dy: top,        dw: right - xPix(dHi),      dh: yPix(dHi) - top },
+    guarded:  { base: "#E6ECF3", deepFill: "#CFDAE8", x: pad,      y: my + hg,  w: mx - hg - pad,   h: bottom - my - hg, dx: pad,        dy: yPix(dLo),  dw: xPix(dLo) - pad,        dh: bottom - yPix(dLo) },
+    fitin:    { base: "#FDF1DC", deepFill: "#FAE4B4", x: mx + hg,  y: my + hg,  w: right - mx - hg, h: bottom - my - hg, dx: xPix(dHi),  dy: yPix(dLo),  dw: right - xPix(dHi),      dh: bottom - yPix(dLo) }
   };
   const tiles = Object.entries(Z).map(([key, z]) => {
-    const base = q(key) ? z.base : "#eeebe3";
-    const deepFill = q(key) ? z.deepFill : "#e5e1d6";
+    const base = q(key) ? z.base : "#F1ECE1";
+    const deepFill = q(key) ? z.deepFill : "#E7E1D3";
     return `<rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" fill="${base}"/>
             <rect x="${z.dx}" y="${z.dy}" width="${z.dw}" height="${z.dh}" rx="8" fill="${deepFill}"/>`;
   }).join("");
 
   const tick = (X, Y, label, rot) =>
-    `<text x="${X}" y="${Y}" text-anchor="${rot ? "end" : "middle"}" font-family="Public Sans, sans-serif" font-size="10" font-weight="700" fill="#a9a294">${label}</text>`;
+    `<text x="${X}" y="${Y}" text-anchor="${rot ? "end" : "middle"}" font-family="IBM Plex Sans, sans-serif" font-size="10" font-weight="700" fill="#8A97A0">${label}</text>`;
 
   document.getElementById("matrixHolder").innerHTML = `
   <svg class="matrix-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img"
@@ -939,27 +1043,27 @@ function drawMatrix(x, y, quadKey, deep) {
     <g clip-path="url(#plotClip)">${tiles}</g>
 
     <!-- quadrant names -->
-    <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('survival', '#c2543a')}">Survival</text>
-    <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('survival', '#c2543a')}">EXCLUSION</text>
-    <text x="${pad + (xPix(dLo) - pad) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="16" font-weight="600" fill="${lblColor('survival', '#993c1d')}">Casualty</text>
-    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('belong', '#1f8a7d')}">Building</text>
-    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('belong', '#1f8a7d')}">AMBIGUITY</text>
-    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="17" font-weight="600" fill="${lblColor('belong', '#0f6e56')}">Belong</text>
-    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 + 13}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="10" letter-spacing="1.5" fill="${lblColor('belong', '#0f6e56')}">BELONGING</text>
-    <text x="${pad + (mx - pad) / 2}" y="${my + 34}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('guarded', '#24385c')}">Guarded</text>
-    <text x="${pad + (mx - pad) / 2}" y="${my + 52}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('guarded', '#24385c')}">EXCLUSION</text>
-    <text x="${pad + (xPix(dLo) - pad) / 2}" y="${yPix(dLo) + (bottom - yPix(dLo)) / 2 + 5}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="16" font-weight="600" fill="${lblColor('guarded', '#16263f')}">Absent</text>
-    <text x="${mx + (right - mx) / 2}" y="${my + 34}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="21" font-weight="600" fill="${lblColor('fitin', '#9c711f')}">Fit In</text>
-    <text x="${mx + (right - mx) / 2}" y="${my + 52}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('fitin', '#9c711f')}">AMBIGUITY</text>
-    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${yPix(dLo) + (bottom - yPix(dLo)) / 2 + 5}" text-anchor="middle" font-family="Fraunces, Georgia, serif" font-size="16" font-weight="600" fill="${lblColor('fitin', '#854f0b')}">Unknown</text>
+    <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="21" font-weight="600" fill="${lblColor('survival', '#EB4824')}">Survival</text>
+    <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('survival', '#EB4824')}">EXCLUSION</text>
+    <text x="${pad + (xPix(dLo) - pad) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="16" font-weight="600" fill="${lblColor('survival', '#C2371A')}">Casualty</text>
+    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="21" font-weight="600" fill="${lblColor('belong', '#34B27E')}">Building</text>
+    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('belong', '#34B27E')}">AMBIGUITY</text>
+    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="17" font-weight="600" fill="${lblColor('belong', '#1E8A5E')}">Belong</text>
+    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 + 13}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" letter-spacing="1.5" fill="${lblColor('belong', '#1E8A5E')}">BELONGING</text>
+    <text x="${pad + (mx - pad) / 2}" y="${my + 34}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="21" font-weight="600" fill="${lblColor('guarded', '#1C3A57')}">Guarded</text>
+    <text x="${pad + (mx - pad) / 2}" y="${my + 52}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('guarded', '#1C3A57')}">EXCLUSION</text>
+    <text x="${pad + (xPix(dLo) - pad) / 2}" y="${yPix(dLo) + (bottom - yPix(dLo)) / 2 + 5}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="16" font-weight="600" fill="${lblColor('guarded', '#122A42')}">Absent</text>
+    <text x="${mx + (right - mx) / 2}" y="${my + 34}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="21" font-weight="600" fill="${lblColor('fitin', '#C9820A')}">Fit In</text>
+    <text x="${mx + (right - mx) / 2}" y="${my + 52}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('fitin', '#C9820A')}">AMBIGUITY</text>
+    <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${yPix(dLo) + (bottom - yPix(dLo)) / 2 + 5}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="16" font-weight="600" fill="${lblColor('fitin', '#A56A08')}">Unknown</text>
 
     <!-- axis labels + thresholds -->
-    <text x="${pad}" y="${H - 16}" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472">Hostile</text>
-    <text x="${right}" y="${H - 16}" text-anchor="end" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472">Supportive</text>
-    <text x="${(pad + right) / 2}" y="${H - 16}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1" fill="#a9a294">RECEPTION</text>
-    <text x="16" y="${bottom}" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472" transform="rotate(-90 16 ${bottom})">Low authenticity</text>
-    <text x="16" y="${top}" font-family="Public Sans, sans-serif" font-size="12" font-weight="600" fill="#5a6472" transform="rotate(-90 16 ${top})" text-anchor="end">High authenticity</text>
-    <text x="16" y="${(top + bottom) / 2}" font-family="Public Sans, sans-serif" font-size="11" letter-spacing="1" fill="#a9a294" transform="rotate(-90 16 ${(top + bottom) / 2})" text-anchor="middle">ACTION</text>
+    <text x="${pad}" y="${H - 16}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="#5E6E79">Hostile</text>
+    <text x="${right}" y="${H - 16}" text-anchor="end" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="#5E6E79">Supportive</text>
+    <text x="${(pad + right) / 2}" y="${H - 16}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1" fill="#8A97A0">RECEPTION</text>
+    <text x="16" y="${bottom}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="#5E6E79" transform="rotate(-90 16 ${bottom})">Low authenticity</text>
+    <text x="16" y="${top}" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="600" fill="#5E6E79" transform="rotate(-90 16 ${top})" text-anchor="end">High authenticity</text>
+    <text x="16" y="${(top + bottom) / 2}" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1" fill="#8A97A0" transform="rotate(-90 16 ${(top + bottom) / 2})" text-anchor="middle">ACTION</text>
     ${tick(xPix(dLo), H - 34, "3.5")}${tick(mx, H - 34, "5.5")}${tick(xPix(dHi), H - 34, "7.5")}
     ${tick(pad - 8, yPix(dLo) + 4, "3.5", true)}${tick(pad - 8, my + 4, "5.5", true)}${tick(pad - 8, yPix(dHi) + 4, "7.5", true)}
 
@@ -968,7 +1072,7 @@ function drawMatrix(x, y, quadKey, deep) {
       <animate attributeName="r" values="12;20;12" dur="2.4s" repeatCount="indefinite"/>
     </circle>
     <circle cx="${px}" cy="${py}" r="8" fill="${dotColor}" stroke="#fff" stroke-width="2.5"/>
-    <text x="${px}" y="${py - 18}" text-anchor="middle" font-family="Public Sans, sans-serif" font-size="12" font-weight="700" fill="#1c2430">You</text>
+    <text x="${px}" y="${py - 18}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" font-weight="700" fill="#16242F">You</text>
   </svg>`;
 }
 

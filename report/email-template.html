@@ -1,0 +1,70 @@
+<!-- Belonging Assessment results email.
+     Make replaces the {{TOKENS}}. Table layout and inline styles throughout,
+     because email clients do not reliably support flex, grid, or web fonts.
+     {{BODY}} receives the report writer's plain text after this conversion:
+       blank-line separated blocks  ->  <p style="margin:0 0 16px;">...</p>
+       a short line with no closing period  ->  <h2 class="sec">...</h2>
+       *text*  ->  <em>text</em>
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FBFAF6;margin:0;padding:0;">
+<tr><td align="center" style="padding:0;">
+
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">{{PREVIEW}}</div>
+
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;">
+
+    <!-- header -->
+    <tr><td style="background:#122A42;padding:22px 32px;">
+      <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+        <td style="padding-right:12px;" valign="middle">
+          <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:separate;">
+            <tr><td width="22" height="9" style="background:#EB4824;border-radius:3px;"></td><td width="3"></td><td width="9" height="9" style="background:#1F5FAD;border-radius:3px;"></td></tr>
+            <tr><td colspan="3" height="3"></td></tr>
+            <tr><td width="10" height="10" style="background:#FFFFFF;border-radius:3px;"></td><td></td><td width="9" height="10" style="background:#F2A516;border-radius:3px;"></td></tr>
+            <tr><td colspan="3" height="3"></td></tr>
+            <tr><td width="22" height="9" style="background:#F2A516;border-radius:3px;"></td><td width="3"></td><td width="9" height="9" style="background:#FFFFFF;border-radius:3px;"></td></tr>
+          </table>
+        </td>
+        <td valign="middle" style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:2px;color:#FFFFFF;text-transform:uppercase;line-height:1.4;">
+          Gaelin Elmore<br><span style="color:#8FA3B8;font-weight:600;">The Elmore Group</span>
+        </td>
+      </tr></table>
+    </td></tr>
+
+    <!-- score hero -->
+    <tr><td style="background:#0C1E30;padding:34px 32px 30px;text-align:center;">
+      <div style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#EB4824;text-transform:uppercase;margin-bottom:14px;">Your Belonging Score</div>
+      <div style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:64px;line-height:1;font-weight:800;color:#F2A516;letter-spacing:-2px;">{{SCORE}}<span style="font-size:22px;color:#8FA3B8;font-weight:600;">/10</span></div>
+      <div style="margin-top:16px;">
+        <span style="display:inline-block;font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#0C1E30;background:{{ZONE_COLOR}};border-radius:999px;padding:7px 18px;">{{ZONE}}</span>
+      </div>
+      <div style="font-family:'IBM Plex Sans',Helvetica,Arial,sans-serif;font-size:13px;color:#8FA3B8;margin-top:12px;">{{BUCKET}} &middot; {{TIER}} tier</div>
+    </td></tr>
+
+    <!-- body -->
+    <tr><td style="background:#FFFFFF;padding:36px 32px 30px;font-family:'IBM Plex Sans',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.62;color:#16242F;">
+      {{BODY}}
+    </td></tr>
+
+    <!-- indicators -->
+    <tr><td style="background:#FFFFFF;padding:0 32px 34px;">
+      <div style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A97A0;padding-bottom:12px;border-top:1px solid #E4DED1;padding-top:22px;">What drives the score</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td width="25%" style="padding-right:8px;"><div style="height:3px;width:24px;background:#1F5FAD;border-radius:2px;margin-bottom:8px;"></div><div style="font-family:'IBM Plex Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#5E6E79;line-height:1.3;">Psych.<br>Safety</div><div style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:28px;font-weight:800;color:#1F5FAD;letter-spacing:-1px;">{{PSYCH}}</div></td>
+        <td width="25%" style="padding-right:8px;"><div style="height:3px;width:24px;background:#34B27E;border-radius:2px;margin-bottom:8px;"></div><div style="font-family:'IBM Plex Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#5E6E79;line-height:1.3;">Social<br>Connection</div><div style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:28px;font-weight:800;color:#34B27E;letter-spacing:-1px;">{{CONN}}</div></td>
+        <td width="25%" style="padding-right:8px;"><div style="height:3px;width:24px;background:#F2A516;border-radius:2px;margin-bottom:8px;"></div><div style="font-family:'IBM Plex Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#5E6E79;line-height:1.3;">Co-<br>Creation</div><div style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:28px;font-weight:800;color:#F2A516;letter-spacing:-1px;">{{COCRE}}</div></td>
+        <td width="25%"><div style="height:3px;width:24px;background:#EB4824;border-radius:2px;margin-bottom:8px;"></div><div style="font-family:'IBM Plex Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#5E6E79;line-height:1.3;">Authen-<br>ticity</div><div style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:28px;font-weight:800;color:#EB4824;letter-spacing:-1px;">{{AUTH}}</div></td>
+      </tr></table>
+    </td></tr>
+
+    <!-- footer -->
+    <tr><td style="background:#122A42;padding:26px 32px;font-family:'IBM Plex Sans',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.7;color:#8FA3B8;">
+      <div style="font-family:Archivo,'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#FFFFFF;padding-bottom:8px;">Gaelin Elmore</div>
+      <a href="https://www.gaelinelmore.com" style="color:#F2A516;text-decoration:none;">www.gaelinelmore.com</a> &nbsp;&middot;&nbsp;
+      <a href="mailto:gaelin@gaelinelmore.com" style="color:#F2A516;text-decoration:none;">gaelin@gaelinelmore.com</a>
+      <div style="padding-top:10px;color:#5E6E79;">You received this because you asked for your results at belong.gaelinelmore.com.</div>
+    </td></tr>
+
+  </table>
+</td></tr>
+</table>

@@ -31,6 +31,31 @@ payload is the only copy and carries `rawAnswers` itself.
 The email promises delivery "within 2 business days", so a queued or reviewed send is fine; nothing has
 to be instant.
 
+## Branding the email
+
+[`email-template.html`](email-template.html) is the shell the report is delivered in. It carries the
+same design as the Belonging Assessment Report and the assessment itself: Archivo over IBM Plex Sans,
+the navy and paper base, and the logo palette on the four constructs.
+
+Make fills the `{{TOKENS}}`: `{{SUBJECT}}`, `{{PREVIEW}}`, `{{SCORE}}`, `{{ZONE}}`, `{{ZONE_COLOR}}`,
+`{{BUCKET}}`, `{{TIER}}`, `{{BODY}}`, and `{{PSYCH}}` `{{CONN}}` `{{COCRE}}` `{{AUTH}}`.
+
+The model still writes plain text, exactly as the prompt specifies. The template does the design, so
+nothing about the look depends on what the model decides to emit. Converting its output into `{{BODY}}`
+takes three rules:
+
+- split on blank lines; each block becomes `<p style="margin:0 0 16px;">`
+- a short block with no closing period is a section header; wrap it in the `<h2>` style shown in the
+  template comment
+- `*text*` becomes `<em>text</em>`, which is how the closing question of each section is marked
+
+`{{ZONE_COLOR}}` is the chip behind the zone name: `#34B27E` for Belong, `#F2A516` for Building and
+Fit In, `#EB4824` for Survival and Guarded.
+
+Email clients do not load web fonts reliably, so every font declaration falls back to Helvetica or
+Arial, and the layout is tables with inline styles rather than flex or grid. The logo mark in the header
+is built from table cells so it survives clients that strip SVG.
+
 ## Testing the prompt
 
 [`sample-payload.json`](sample-payload.json) is a real capture from the assessment, already merged the way
