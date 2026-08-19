@@ -14,7 +14,7 @@ Authentic action is made of three acts: **Say the thing** (your honest read, spo
 
 The **Belonging Matrix** plots Action (authenticity) against Reception. Four zones: **Survival** (high authenticity, hostile reception; bucket Exclusion), **Guarded** (low authenticity, hostile reception; bucket Exclusion), **Fit In** (low authenticity, supportive reception; bucket Ambiguity), **Building** (high authenticity, supportive reception; bucket Ambiguity). Each zone has a deep corner, its destination if nothing changes: Survival → **Casualty**. Guarded → **Absent**. Fit In → **Unknown**. Building → **Belong**, the only Belonging-bucket state, earned at 7.5+ on both axes. Crosshairs sit at 5.5; deep zones begin at 7.5 / 3.5. Tiers: Strong 7.5+, Building 5.5–7.4, Emerging 3.5–5.4, Developing below 3.5.
 
-Everything is measured at three levels: **Immediate** (the team), **Leadership** (direct leader and above), **Extended** (the wider organization).
+Everything is measured at three levels: **Immediate** (the team), **Leadership** (direct leader and above), **Extended** (the next layer out from the immediate team, which may include other divisions and the organization as a whole).
 
 ## VOICE (non-negotiable)
 
