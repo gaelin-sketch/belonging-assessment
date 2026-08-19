@@ -182,6 +182,16 @@
   .path-card p + p { margin-top: 10px; }
   .path-card strong { color: var(--ambig); font-weight: 600; }
 
+  .return-note {
+    background: var(--ambig-soft); border: 1px solid var(--ambig-fill); border-radius: var(--radius);
+    padding: 18px 20px; margin-bottom: 24px;
+  }
+  /* the corner motif would sit on top of this card, so stand it down */
+  .return-note:not([hidden]) ~ .confetti { display: none; }
+  .return-note p { font-size: 15px; color: var(--ink); }
+  .return-note .return-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .return-note .btn { padding: 11px 20px; font-size: 15px; }
+
   .scale-head {
     display: inline-block; font-family: "Archivo", sans-serif; font-size: 11px; font-weight: 700;
     letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft);
@@ -220,16 +230,6 @@
   .gap-read p { font-size: 15px; color: var(--ink-soft); }
   .gap-read p + p { margin-top: 8px; }
 
-  /* live session result code */
-  .code-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; }
-  .code-row { display: flex; gap: 10px; align-items: stretch; margin-top: 14px; }
-  .code-box {
-    flex: 1; min-width: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12px; line-height: 1.5; color: var(--ink); background: var(--paper);
-    border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 14px;
-    overflow-wrap: anywhere; max-height: 108px; overflow-y: auto;
-  }
-  .code-row .btn { flex: 0 0 auto; align-self: flex-start; padding: 12px 22px; font-size: 15px; }
 
   /* form */
   .form-card { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 26px; margin-top: 30px; }
@@ -288,16 +288,16 @@
     color: var(--navy); margin-bottom: 20px;
   }
   .intro h1 em { font-style: normal; color: var(--ambig); }
-  .level-head, .cards-head, .matrix-card h2, .form-card h2, .code-card h2 {
+  .level-head, .cards-head, .matrix-card h2, .form-card h2 {
     font-family: "Archivo", sans-serif; font-weight: 700; letter-spacing: -0.01em; color: var(--navy);
   }
-  .cards-head, .matrix-card h2, .form-card h2, .code-card h2 { font-size: 21px; }
+  .cards-head, .matrix-card h2, .form-card h2 { font-size: 21px; }
 
   .confetti { position: absolute; top: -8px; right: -6px; width: 118px; height: auto; pointer-events: none; }
   @media (max-width: 640px) { .confetti { display: none; } }
 
   /* cards */
-  .q, .matrix-card, .ind-card, .lvl-card, .gap-read, .code-card, .quadrant-callout {
+  .q, .matrix-card, .ind-card, .lvl-card, .gap-read, .quadrant-callout {
     border-radius: var(--radius);
   }
   .btn { font-family: "Archivo", sans-serif; font-weight: 600; letter-spacing: .01em; }
@@ -336,6 +336,7 @@
 
   <!-- ============ INTRO ============ -->
   <section class="screen active intro" id="s-intro">
+    <div class="return-note" id="returnNote" hidden></div>
     <svg class="confetti" viewBox="0 0 120 74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="62" y="0"  width="34" height="20" rx="7" fill="#122A42"/>
       <rect x="100" y="4" width="20" height="20" rx="7" fill="#1F5FAD"/>
@@ -353,7 +354,7 @@
       <div class="def-row"><span class="def-tag level-ext">Extended</span><span>The next layer out from your immediate team, which may include other divisions and the organization as a whole.</span></div>
     </div>
     <button class="btn" onclick="go('s-intake')">Start the assessment</button>
-    <div class="meta-line">Your answers are recorded anonymously so patterns across respondents can be studied. Your results are shown to you first, and your name and email are attached to them only if you ask for your report at the end.</div>
+    <div class="meta-line">Your answers are recorded anonymously so patterns across respondents can be studied. Your results are shown to you first, and your name and email are attached to them only if you ask for your report at the end. This browser keeps a random id so repeat attempts can be counted; it holds nothing personal.</div>
   </section>
 
   <!-- ============ INTAKE ============ -->
@@ -482,15 +483,6 @@
       <div class="cards-sub">The same two variables, scored separately at each level. Belonging is rarely even. This is where yours holds and where it breaks.</div>
       <div id="levelList"></div>
       <div id="gapRead"></div>
-    </div>
-
-    <div class="code-card section-gap" id="liveCard">
-      <h2>In a live session?</h2>
-      <div class="sub">Share this result code with your facilitator. It carries your scores, never your name, your email, or anything you typed.</div>
-      <div class="code-row">
-        <code class="code-box" id="resultCode"></code>
-        <button class="btn btn-ghost" id="copyCodeBtn" onclick="copyResultCode()">Copy</button>
-      </div>
     </div>
 
     <div class="form-card" id="formCard">
@@ -698,6 +690,26 @@ const answers = {};   // "levelKey-idx" -> 1..5
 const perceivedBelonging = {};   // "imm" | "lead" | "ext" -> 1..5
 let results = null;
 
+/* A random id kept in this browser, plus a count of completed attempts. This
+   cannot stop anyone retaking the assessment, since a new browser or a private
+   window defeats it in seconds. What it does is let repeats be counted in the
+   data rather than blocked at the door, which is the only place the question can
+   be answered honestly. Storage may be unavailable, so every access is guarded. */
+const STORE_KEY = "iba:v1";
+function storeGet() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); } catch (e) { return {}; } }
+function storeSet(o) { try { localStorage.setItem(STORE_KEY, JSON.stringify(o)); } catch (e) {} }
+function newId() {
+  return (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+    : "b-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+}
+const browserId = (() => {
+  const st = storeGet();
+  if (!st.browserId) { st.browserId = newId(); storeSet(st); }
+  return st.browserId;
+})();
+const attemptNumber = (storeGet().completed || 0) + 1;
+let isReplay = false;
+
 // Ties the anonymous submission (stage 1) to the report request (stage 2)
 const submissionId = (window.crypto && crypto.randomUUID)
   ? crypto.randomUUID()
@@ -761,6 +773,36 @@ function buildQuestionScreens() {
     updateProgress();
     checkLevelComplete();
   });
+}
+
+const INTAKE_FIELDS = ["orgTenure", "profTenure", "generation", "authorityLevel", "essentialSelf", "essentialClients"];
+
+/* Someone who has finished before gets told so, and offered both doors. A hard
+   block would refuse the second person at a shared desk and would fight the
+   honest reason to retake, which is that belonging moves. */
+function renderReturnNote() {
+  const st = storeGet();
+  if (!st.completed || !st.snapshot) return;
+  const when = st.lastAt ? new Date(st.lastAt).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }) : null;
+  const el = document.getElementById("returnNote");
+  el.innerHTML = `<p><strong>You have taken this before on this browser${when ? ", on " + when : ""}.</strong> Belonging moves, so taking it again is worth doing. New answers are recorded separately from the old ones.</p>
+    <div class="return-actions">
+      <button class="btn" onclick="go('s-intake')">Take it again</button>
+      <button class="btn btn-ghost" onclick="showPrevious()">See my last result</button>
+    </div>`;
+  el.hidden = false;
+}
+
+function showPrevious() {
+  const st = storeGet();
+  if (!st.snapshot) return;
+  isReplay = true;
+  INTAKE_FIELDS.forEach(id => { document.getElementById(id).value = st.snapshot.intake[id] || ""; });
+  Object.keys(answers).forEach(k => delete answers[k]);
+  Object.assign(answers, st.snapshot.answers);
+  Object.keys(perceivedBelonging).forEach(k => delete perceivedBelonging[k]);
+  Object.assign(perceivedBelonging, st.snapshot.perceived);
+  finish(true);
 }
 
 function startQuestions() {
@@ -1074,7 +1116,7 @@ function buildFindings(r) {
 /* =====================================================
    RESULTS RENDERING
    ===================================================== */
-function finish() {
+function finish(replay) {
   results = computeScores();
   const { reception, action, quadKey } = results;
   const quad = QUADRANTS[quadKey];
@@ -1131,12 +1173,23 @@ function finish() {
   renderPath(results);
   renderConstructs(results);
   renderLevels(results);
-  renderLiveSession(results);
 
   drawMatrix(reception, action, quadKey, results.deep);
+  document.getElementById("formCard").hidden = !!replay;
   go("s-results");
 
-  logSubmission();
+  if (!replay) {
+    const st = storeGet();
+    st.completed = (st.completed || 0) + 1;
+    st.lastAt = new Date().toISOString();
+    st.snapshot = {
+      answers: Object.assign({}, answers),
+      perceived: Object.assign({}, perceivedBelonging),
+      intake: INTAKE_FIELDS.reduce((o, id) => (o[id] = document.getElementById(id).value, o), {})
+    };
+    storeSet(st);
+    logSubmission();
+  }
 }
 
 const ZONE_CHIP = {
@@ -1376,6 +1429,8 @@ function submissionPayload() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    browserId,
+    attemptNumber,
     generation: document.getElementById("generation").value,
     authorityLevel: intakeValue("authorityLevel"),
     beliefs: beliefsBlock(),
@@ -1423,6 +1478,8 @@ async function sendResults() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    browserId,
+    attemptNumber,
     generation: document.getElementById("generation").value,
     authorityLevel: intakeValue("authorityLevel"),
     beliefs: beliefsBlock(),
@@ -1450,73 +1507,11 @@ async function sendResults() {
   }
 }
 
-/* =====================================================
-   LIVE SESSION: portable result code
-   ===================================================== */
-const d1 = n => +n.toFixed(1);
-
-/* Per-level construct scores, already normalized by computeScores, packed into
-   a short shape and base64'd so it survives being read aloud or pasted. */
-function buildResultCode(r) {
-  const L = {};
-  for (const [key, lvl] of Object.entries(r.levels)) {
-    const c = lvl.constructs;
-    L[key] = { sa: d1(c.say), sh: d1(c.show), sr: d1(c.share),
-               ps: d1(c.psych), sc: d1(c.conn), cc: d1(c.cocre) };
-  }
-  const obj = {
-    v: 2,
-    o: d1(r.reception),
-    a: d1(r.action),
-    q: r.quadKey,
-    d: r.deep,
-    al: intakeValue("authorityLevel"),
-    e1: intakeValue("essentialSelf"),
-    e2: intakeValue("essentialClients"),
-    p1: perceivedBelonging.imm ?? null,
-    p2: perceivedBelonging.lead ?? null,
-    p3: perceivedBelonging.ext ?? null,
-    L
-  };
-  return btoa(JSON.stringify(obj));
-}
-
-function renderLiveSession(r) {
-  document.getElementById("resultCode").textContent = buildResultCode(r);
-}
-
-function copyResultCode() {
-  const code = document.getElementById("resultCode").textContent;
-  const btn = document.getElementById("copyCodeBtn");
-  const confirm = () => {
-    btn.textContent = "Copied";
-    setTimeout(() => { btn.textContent = "Copy"; }, 1800);
-  };
-  // navigator.clipboard needs a secure context; fall back for plain http
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(code).then(confirm, () => legacyCopy(code, confirm));
-  } else {
-    legacyCopy(code, confirm);
-  }
-}
-
-function legacyCopy(text, onDone) {
-  const ta = document.createElement("textarea");
-  ta.value = text;
-  ta.setAttribute("readonly", "");
-  ta.style.position = "fixed";
-  ta.style.opacity = "0";
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand("copy"); onDone(); }
-  catch (e) { /* leave the code visible for manual selection */ }
-  document.body.removeChild(ta);
-}
-
 /* init */
 buildQuestionScreens();
 REQUIRED_INTAKE.forEach(id => document.getElementById(id).addEventListener("change", checkIntakeComplete));
 checkIntakeComplete();
+renderReturnNote();
 </script>
 </body>
 </html>

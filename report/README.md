@@ -42,6 +42,18 @@ that counts as a real difference. The prompt is written to assert nothing the fi
 contain. Pattern detection in prose is where noise becomes confident nonsense, so it happens in
 arithmetic instead.
 
+## Repeat attempts
+
+Every payload carries `browserId`, a random id kept in the respondent's browser, and `attemptNumber`,
+which counts completions from it. Someone returning is shown a notice offering both doors, take it
+again or see their last result, rather than being blocked. A block would refuse the second person at a
+shared desk and would fight the honest reason to retake, which is that belonging moves.
+
+This counts repeats, it does not prevent them. A private window or a second device produces a fresh id,
+so treat `attemptNumber` as a floor rather than a true count. If an engagement needs enforcement, the
+answer is a per person token in the link, checked and marked used on submission, not anything the
+browser can be asked to do.
+
 ## How the browser posts
 
 The assessment posts with `mode: "no-cors"` and `Content-Type: text/plain;charset=UTF-8`, which

@@ -1,5 +1,5 @@
 # Belonging Report Writer Prompt
-**How to use (manual, this week):** Open a new Claude chat. Paste everything below the line. Then paste the person's Raw Payload (column O of the leads sheet). The payload already carries per-level scores, so a result code is not needed; paste one only if the payload is missing. Review the output, then send it as their results email.
+**How to use (manual, this week):** Open a new Claude chat. Paste everything below the line. Then paste the person's Raw Payload (column O of the leads sheet), which carries everything the report needs. Review the output, then send it as their results email.
 **Later (automated):** this same text becomes the system prompt in the Make.com Claude API module.
 
 ---
@@ -121,6 +121,9 @@ which is how the two rows join.
 Identity and context
 - `contact.name`, `contact.email`, `contact.organization`, `contact.role`
 - `tenure.organization`, `tenure.profession`, five bands from "Less than 1 year" to "More than 15 years"
+- `browserId` and `attemptNumber`. A random id kept in the respondent's browser, and which attempt
+  this is from it. Both are for counting repeats in the data. Never mention either to the reader, and
+  never treat a second attempt as evidence of anything about the person.
 - `generation`, one of Baby Boomer, Gen X, Older Millennial, Young Millennial, Gen Z, Gen Alpha.
   Demographic context only. Never use it to characterise the person or to explain their result by
   their age band; a generational label is not an explanation for anything in this report.
