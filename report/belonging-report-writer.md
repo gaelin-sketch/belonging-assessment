@@ -121,6 +121,8 @@ which is how the two rows join.
 Identity and context
 - `contact.name`, `contact.email`, `contact.organization`, `contact.role`
 - `tenure.organization`, `tenure.profession`, five bands from "Less than 1 year" to "More than 15 years"
+- `accessCode`, the cohort the respondent's access code belongs to, or null if the assessment was open.
+  Use it to know which engagement this is, never to characterise the person.
 - `browserId` and `attemptNumber`. A random id kept in the respondent's browser, and which attempt
   this is from it. Both are for counting repeats in the data. Never mention either to the reader, and
   never treat a second attempt as evidence of anything about the person.

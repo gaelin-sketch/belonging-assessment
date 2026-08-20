@@ -42,6 +42,26 @@ that counts as a real difference. The prompt is written to assert nothing the fi
 contain. Pattern detection in prose is where noise becomes confident nonsense, so it happens in
 arithmetic instead.
 
+## Access codes
+
+`ACCESS_CODES` at the top of the assessment holds one entry per engagement: the SHA-256 of the code and
+the cohort name recorded with every response from it. An empty array leaves the assessment open.
+
+    echo -n "YOURCODE" | shasum -a 256
+
+Codes are compared uppercased and trimmed, so case does not matter to the respondent. A code can also
+travel in the link, `/assessment/?code=YOURCODE`, which skips the screen, and an accepted code is
+remembered on that browser so nobody types it twice. Every payload carries `accessCode`, which is how a
+response is attributed to an engagement.
+
+This is a gate, not a lock, and the difference matters. The page is public and the check runs in the
+browser, so anyone willing to open developer tools can walk past it. Hashing keeps the codes out of the
+page source, which stops a recipient reading one off and passing it on, but a short code can be brute
+forced against a published hash by anyone who cares to. What the gate genuinely buys: a stray visitor
+cannot start, the link can be circulated without the assessment being open to the internet, and every
+response is attributed to the engagement it came from. If a client needs real enforcement, that requires
+a server checking one time tokens, which this architecture does not have.
+
 ## Repeat attempts
 
 Every payload carries `browserId`, a random id kept in the respondent's browser, and `attemptNumber`,

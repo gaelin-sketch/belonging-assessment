@@ -182,6 +182,10 @@
   .path-card p + p { margin-top: 10px; }
   .path-card strong { color: var(--ambig); font-weight: 600; }
 
+  .gate-head { font-family: "Archivo", sans-serif; font-weight: 800; text-transform: uppercase; font-size: clamp(26px, 5vw, 34px); line-height: 1.05; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 12px; }
+  .gate-sub { font-size: 16px; color: var(--ink-soft); max-width: 46ch; margin-bottom: 24px; }
+  .gate .err { text-align: left; color: var(--exclu-d); margin-top: 14px; }
+
   .return-note {
     background: var(--ambig-soft); border: 1px solid var(--ambig-fill); border-radius: var(--radius);
     padding: 18px 20px; margin-bottom: 24px;
@@ -335,7 +339,19 @@
   <div class="progress" id="progress" hidden><div class="progress-fill" id="progressFill"></div></div>
 
   <!-- ============ INTRO ============ -->
-  <section class="screen active intro" id="s-intro">
+  <section class="screen active gate" id="s-gate">
+    <div class="eyebrow">Access code</div>
+    <h2 class="gate-head">This assessment is by invitation</h2>
+    <p class="gate-sub">Enter the code you were given. If you do not have one and think you should, ask whoever shared this with you.</p>
+    <div class="field">
+      <label for="gateCode">Access code</label>
+      <input id="gateCode" type="text" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" placeholder="Your code">
+    </div>
+    <button class="btn" id="gateBtn" onclick="submitCode()">Continue</button>
+    <div class="err" id="gateErr" hidden></div>
+  </section>
+
+  <section class="screen intro" id="s-intro">
     <div class="return-note" id="returnNote" hidden></div>
     <svg class="confetti" viewBox="0 0 120 74" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="62" y="0"  width="34" height="20" rx="7" fill="#122A42"/>
@@ -526,6 +542,22 @@
 //   event: "report_request" fires only if the respondent opts in, carries name/email
 // Both carry the same `submissionId`, which is what links the two rows together.
 const WEBHOOK_URL = "https://hook.us2.make.com/3wq4uyqifzv1m4rgqlwql2rjdxcm9gcy";
+
+/* Access codes. An empty array leaves the assessment open to anyone.
+   Entries hold the SHA-256 of the code, uppercased and trimmed, so the codes
+   are not sitting in the page source, plus the cohort name recorded with every
+   response from that code.
+
+   This is a gate, not a lock. The page is public and the check runs in the
+   browser, so anyone willing to open the console can walk past it. What it buys
+   is that a stray visitor cannot start, that the link can be shared without the
+   assessment being open to the internet, and that every response is attributed
+   to the engagement it came from.
+
+   To add a code:  echo -n "YOURCODE" | shasum -a 256   */
+const ACCESS_CODES = [
+  { cohort: "general", hash: "9fb4992b71bf1479b0dae2e49568b6174179a8a217a9e18b28bd7cfc834d28b1" }
+];
 
 // Level weights: how much each level of belonging counts (must sum to 1)
 const LEVEL_WEIGHTS = { imm: 0.45, lead: 0.35, ext: 0.20 };
@@ -773,6 +805,60 @@ function buildQuestionScreens() {
     updateProgress();
     checkLevelComplete();
   });
+}
+
+/* ---------- access gate ---------- */
+let cohort = null;
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function matchCode(raw) {
+  const code = (raw || "").trim().toUpperCase();
+  if (!code) return null;
+  const h = await sha256(code);
+  return ACCESS_CODES.find(c => c.hash === h) || null;
+}
+
+async function submitCode() {
+  const err = document.getElementById("gateErr");
+  const btn = document.getElementById("gateBtn");
+  err.hidden = true;
+  btn.disabled = true;
+  const hit = await matchCode(document.getElementById("gateCode").value);
+  btn.disabled = false;
+  if (!hit) {
+    err.textContent = "That code was not recognised. Check it and try again.";
+    err.hidden = false;
+    return;
+  }
+  unlock(hit);
+}
+
+function unlock(hit) {
+  cohort = hit.cohort;
+  const st = storeGet();
+  st.cohort = hit.cohort;
+  st.cohortHash = hit.hash;
+  storeSet(st);
+  go("s-intro");
+}
+
+/* Runs before anything else. A code in the link or already accepted on this
+   browser skips the screen, so a direct link can be handed out whole. */
+async function initGate() {
+  if (!ACCESS_CODES.length) { cohort = null; go("s-intro"); return; }
+  const st = storeGet();
+  const known = st.cohortHash && ACCESS_CODES.find(c => c.hash === st.cohortHash);
+  if (known) { unlock(known); return; }
+  const fromUrl = new URLSearchParams(location.search).get("code");
+  if (fromUrl) {
+    const hit = await matchCode(fromUrl);
+    if (hit) { unlock(hit); return; }
+  }
+  document.getElementById("gateCode").addEventListener("keydown", e => { if (e.key === "Enter") submitCode(); });
 }
 
 const INTAKE_FIELDS = ["orgTenure", "profTenure", "generation", "authorityLevel", "essentialSelf", "essentialClients"];
@@ -1429,6 +1515,7 @@ function submissionPayload() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    accessCode: cohort,
     browserId,
     attemptNumber,
     generation: document.getElementById("generation").value,
@@ -1478,6 +1565,7 @@ async function sendResults() {
       organization: document.getElementById("orgTenure").value,
       profession: document.getElementById("profTenure").value
     },
+    accessCode: cohort,
     browserId,
     attemptNumber,
     generation: document.getElementById("generation").value,
@@ -1512,6 +1600,7 @@ buildQuestionScreens();
 REQUIRED_INTAKE.forEach(id => document.getElementById(id).addEventListener("change", checkIntakeComplete));
 checkIntakeComplete();
 renderReturnNote();
+initGate();
 </script>
 </body>
 </html>
