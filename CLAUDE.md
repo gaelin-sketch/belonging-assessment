@@ -29,6 +29,24 @@ green, reach for blue; the belonging/ambiguity/exclusion and
 critical/at-risk/building/strong colour scales are fixed and never reassigned; one
 dark band per page, at the bottom.
 
+## The React package
+
+`packages/design-system/` is a thin React wrapper over the same `eg-` classes —
+50 components, no styling of its own. It exists so Claude Design (claude.ai/design)
+has real components to build with; `/design-sync` reads it. It is the one part of
+this repo with a build step, and it is deliberately outside the published site:
+GitHub Pages serves the static HTML and CSS only, and nothing in `assessment/`,
+`report/` or `design-system/` imports it.
+
+The CSS is the source of truth. Change `design-system/*.css` first, then bring the
+React wrapper into line — a new class does **not** become a prop on its own. Adding
+a component means all four of: the CSS in `elmore.css`, a demo in
+`design-system/index.html`, a wrapper in `packages/design-system/src/components/`,
+and a preview in `.design-sync/previews/`.
+
+Sync state lives in `.design-sync/` (config, notes, conventions header, previews).
+See `.design-sync/NOTES.md` before re-running a sync.
+
 ## Conventions
 
 - Two-space indentation in HTML and CSS.

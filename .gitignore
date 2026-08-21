@@ -1,0 +1,13 @@
+# design-sync working state. The durable set under .design-sync/ (config.json,
+# NOTES.md, conventions.md, previews/) IS committed; everything below is
+# regenerated per machine.
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+.design-sync/*.log
+
+# built package output and deps
+packages/*/dist/
+node_modules/

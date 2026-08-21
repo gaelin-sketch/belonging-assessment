@@ -1,0 +1,17 @@
+{
+  "pkg": "@elmore/design-system",
+  "globalName": "ElmoreDS",
+  "shape": "package",
+  "buildCmd": "npm run build --prefix packages/design-system",
+  "cssEntry": "./dist/design-system.css",
+  "provider": {
+    "component": "Page"
+  },
+  "docsDir": "./docs",
+  "overrides": {
+    "Heading": {
+      "cardMode": "column"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}
