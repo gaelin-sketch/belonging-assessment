@@ -20,6 +20,24 @@
 - Fonts load from Google Fonts via `@import`, so `[FONT_REMOTE]` is expected
   and correct here. There are no self-hosted font files to ship.
 
+## Where the first run stopped
+
+Paused before upload. Everything except the upload is done and committed:
+
+- Package builds; converter run is clean (50 components, 9 groups, 50/50 docs).
+- Render check: 50/50 render cleanly, zero bad/thin/blank/floor cards.
+- Grading: 13 of 72 cells graded `good` (Bar, BarRow, Barbell, Legend, Meter,
+  RatedRow, Score). Verdicts are in `.design-sync/.cache/review/`, which is
+  gitignored — a fresh clone regrades from scratch, which is correct and cheap.
+- Not done: grade the remaining 37 components, then the post-conventions
+  rebuild (a fresh `resync.mjs` run, no `--remote` on a first sync) so the
+  README carries the header.
+
+The upload never ran. `/design-sync` in a web session cannot authorize —
+`/design-login` needs an interactive terminal — so there is no `projectId` in
+config.json yet and no project exists. Running `/design-sync` locally picks up
+from here and creates it.
+
 ## Known render warns
 
 These are expected on a clean run. A warn NOT in this list is new and worth reading.
