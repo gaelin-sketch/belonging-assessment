@@ -8,6 +8,8 @@ Tokens and components extracted from two source documents:
 Every colour, size and shape below was sampled from those files. Nothing here was
 invented to fill a gap in a palette.
 
+Blue is the branded colour. The system carries no green at all.
+
 ```
 design-system/
 ├── tokens.css     Design tokens as CSS custom properties. Load first.
@@ -39,7 +41,7 @@ styles `.eg-page`; everything else is opt-in via `eg-` classes.
 
 ---
 
-## The seven rules
+## The eight rules
 
 These are what actually make new work look like it came from the same studio.
 
@@ -54,20 +56,24 @@ It is the strongest single signal of the brand and it costs one line of markup.
 with exactly one word in gold, orange or blue. Colour a phrase and it stops
 working. The one exception is the word run (`.eg-wordrun`) — at most once per page.
 
-**4. The two data scales are fixed.** Belonging → blue, ambiguity → gold,
+**4. Blue is the branded colour.** It carries belonging, growth, and the
+aspirational half of every argument. There is no green anywhere in this system —
+where you would reach for green, reach for blue.
+
+**5. The two data scales are fixed.** Belonging → blue, ambiguity → gold,
 exclusion → orange. Critical → orange, at-risk → gold, building → blue, strong →
 deep blue. Never reassign them per chart. This is why forty pages of different
 charts read as one document.
 
-**5. Numbers are the argument.** The biggest thing on a page should be the number
+**6. Numbers are the argument.** The biggest thing on a page should be the number
 the page is about. Figures are always tabular (`font-variant-numeric: tabular-nums`)
 so columns line up.
 
-**6. Nothing has a square corner.** Rounded rectangles come straight out of the
+**7. Nothing has a square corner.** Rounded rectangles come straight out of the
 logo mark. Buttons and chips are full pills; cards are 12–16px; the decorative
 blobs are the mark broken apart.
 
-**7. One dark band per page, at the bottom.** `.eg-field` carries the sentence you
+**8. One dark band per page, at the bottom.** `.eg-field` carries the sentence you
 most want remembered. Two of them on a page and neither lands.
 
 ---
@@ -189,13 +195,13 @@ The values are the same ones; the names differ. The map, if you migrate it:
 | `--blue` / `--blue-d` / `--blue-soft` | `--eg-blue-dark` / `--eg-blue-deep` / `--eg-blue-wash` |
 | `--ambig` / `--ambig-text` / `--ambig-soft` | `--eg-gold` / `--eg-gold-dark` / `--eg-gold-wash` |
 | `--exclu` / `--exclu-d` / `--exclu-soft` | `--eg-orange` / `--eg-orange-deep` / `--eg-orange-wash` |
-| `--belong` / `--belong-d` / `--belong-soft` | `--eg-green-mid` / `--eg-green` / `--eg-green-wash` |
+| `--belong` / `--belong-d` / `--belong-soft` | `--eg-blue` / `--eg-blue-deep` / `--eg-blue-wash` |
 
-One real difference: the assessment page uses **green** for Belonging, while the
-report uses **blue**. The report is the client-facing artefact, so this system
-follows it — blue for belonging, green reserved for section marks and positive
-movement. Migrating the assessment page is a deliberate change, not a rename, and
-is not part of this commit.
+One real difference: the assessment page still uses green for Belonging. This
+system uses blue and carries no green at all, so migrating the page is a recolour
+rather than a rename — its `--belong*` values have no equivalent here and become
+blues. That is a deliberate change worth doing on its own, and is not part of this
+commit.
 
 ---
 

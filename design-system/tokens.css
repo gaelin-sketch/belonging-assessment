@@ -9,14 +9,13 @@
 :root {
   /* ------------------------------------------------------------------
      1. BRAND CORE
-     Five colours carry the whole identity. They are the logo mark's own
+     Four colours carry the whole identity. They are the logo mark's own
      colours, so nothing on a page ever needs to invent a hue.
      ------------------------------------------------------------------ */
   --eg-navy:        #122A42;  /* primary. Cover fields, headlines, dark bands */
   --eg-gold:        #F2A516;  /* the signature. Emphasis, ambiguity, at-risk  */
   --eg-orange:      #EB4824;  /* the alarm. Exclusion, critical, "what is"    */
-  --eg-blue:        #4F9CD6;  /* the aspiration. Belonging, "what could be"   */
-  --eg-green:       #15694A;  /* growth. Section marks, positive deltas       */
+  --eg-blue:        #4F9CD6;  /* the aspiration. Belonging, growth, "could be" */
 
   /* Tints and shades. Each core colour gets a darker text-safe variant,
      a light surface wash, and a mid fill for bars and blocks. */
@@ -40,16 +39,11 @@
   --eg-orange-wash: #FDE9E3;
   --eg-orange-fill: #F9D2C6;
 
-  --eg-blue-deep:   #2C6491;  /* "Strong" tier, deep chart blue             */
+  --eg-blue-deep:   #2C6491;  /* "Strong" tier, deep chart blue, section mark */
   --eg-blue-dark:   #1F5FAD;  /* logo blue, links                          */
   --eg-blue-light:  #6FA5D2;
   --eg-blue-wash:   #E7EFF9;
   --eg-blue-fill:   #C9DEF2;
-
-  --eg-green-deep:  #0F4E37;
-  --eg-green-mid:   #34B27E;
-  --eg-green-wash:  #E3F5EC;
-  --eg-green-fill:  #C7EBDA;
 
   /* ------------------------------------------------------------------
      2. SURFACES
@@ -99,12 +93,14 @@
   --eg-tone-negative:    var(--eg-orange);
   --eg-tone-interesting: var(--eg-gold);
 
-  /* 4d. Section accents. Divider pages rotate through these in order. */
+  /* 4d. Section accents. Divider pages rotate through these in order. The
+     rotation is navy, blue, gold, orange, blue again — it exists to tell one
+     section from the next, not to give a section a permanent colour. */
   --eg-section-1: var(--eg-navy);
-  --eg-section-2: var(--eg-green);
+  --eg-section-2: var(--eg-blue-deep);
   --eg-section-3: var(--eg-gold-dark);
-  --eg-section-4: var(--eg-blue-deep);
-  --eg-section-5: var(--eg-orange-dark);
+  --eg-section-4: var(--eg-orange-dark);
+  --eg-section-5: var(--eg-blue-dark);
 
   /* ------------------------------------------------------------------
      5. TYPE

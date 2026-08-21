@@ -103,7 +103,6 @@ img, svg { max-width: 100%; display: block; }
 .eg-em-gold   { color: var(--eg-gold-dark); }
 .eg-em-orange { color: var(--eg-orange); }
 .eg-em-blue   { color: var(--eg-blue-dark); }
-.eg-em-green  { color: var(--eg-green); }
 /* On navy the readable-on-cream variants are too dark, so they brighten. */
 .eg-field .eg-em-gold, .eg-slide--field .eg-em-gold { color: var(--eg-gold); }
 .eg-field .eg-em-orange, .eg-slide--field .eg-em-orange { color: var(--eg-orange-light); }
@@ -153,7 +152,6 @@ img, svg { max-width: 100%; display: block; }
 }
 .eg-eyebrow--blue  { color: var(--eg-blue-dark); }
 .eg-eyebrow--gold  { color: var(--eg-gold-dark); }
-.eg-eyebrow--green { color: var(--eg-green); }
 .eg-eyebrow--navy  { color: var(--eg-navy); }
 .eg-eyebrow--bare::before { display: none; }
 
@@ -200,7 +198,6 @@ img, svg { max-width: 100%; display: block; }
 .eg-card--rail-blue   { border-left-color: var(--eg-blue); }
 .eg-card--rail-gold   { border-left-color: var(--eg-gold); }
 .eg-card--rail-orange { border-left-color: var(--eg-orange); }
-.eg-card--rail-green  { border-left-color: var(--eg-green); }
 
 /* Tone card: a rule across the top plus a matching dot label. Used for
    the report's positive / negative / interesting three-up. */
@@ -269,7 +266,6 @@ img, svg { max-width: 100%; display: block; }
 .eg-stat--gold   .eg-stat__value { color: var(--eg-gold-dark); }
 .eg-stat--orange .eg-stat__value { color: var(--eg-orange); }
 .eg-stat--navy   .eg-stat__value { color: var(--eg-navy); }
-.eg-stat--green  .eg-stat__value { color: var(--eg-green); }
 .eg-stat__label {
   margin-top: var(--eg-s-2);
   font-size: var(--eg-t-small); color: var(--eg-ink-soft);
@@ -319,7 +315,8 @@ img, svg { max-width: 100%; display: block; }
 .eg-chip--critical { background: var(--eg-orange-wash); color: var(--eg-orange-dark); }
 .eg-chip--at-risk  { background: var(--eg-gold-wash);   color: var(--eg-gold-dark); }
 .eg-chip--building { background: var(--eg-blue-wash);   color: var(--eg-blue-dark); }
-.eg-chip--strong   { background: var(--eg-green-wash);  color: var(--eg-green-deep); }
+/* Strong sits one step denser than Building, so the two blues stay ordered. */
+.eg-chip--strong   { background: var(--eg-blue-fill);   color: var(--eg-navy); }
 .eg-chip--solid    { background: var(--eg-navy); color: #fff; }
 
 /* Tier card grid: the four stages of the index, one marked CURRENT. */
@@ -488,8 +485,6 @@ img, svg { max-width: 100%; display: block; }
 .eg-insight--gold   .eg-insight__n { color: var(--eg-gold); }
 .eg-insight--orange { background: var(--eg-orange-wash); border-left-color: var(--eg-orange); }
 .eg-insight--orange .eg-insight__n { color: var(--eg-orange); }
-.eg-insight--green  { background: var(--eg-green-wash);  border-left-color: var(--eg-green-mid); }
-.eg-insight--green  .eg-insight__n { color: var(--eg-green); }
 .eg-insight--navy   { background: var(--eg-navy-wash);   border-left-color: var(--eg-navy); }
 .eg-insight--navy   .eg-insight__n { color: var(--eg-navy); }
 @media (max-width: 520px) { .eg-insight { grid-template-columns: 38px 1fr; gap: var(--eg-s-3); } }
@@ -513,7 +508,6 @@ img, svg { max-width: 100%; display: block; }
 .eg-step__n--gold   { background: var(--eg-gold); color: var(--eg-navy); }
 .eg-step__n--orange { background: var(--eg-orange); }
 .eg-step__n--blue   { background: var(--eg-blue); }
-.eg-step__n--green  { background: var(--eg-green); }
 .eg-step__card {
   background: var(--eg-card); border: 1px solid var(--eg-line-soft);
   border-top: 3px solid var(--eg-navy);

@@ -23,9 +23,11 @@ needed, build it from tokens, add it to `elmore.css` in the numbered section it
 belongs to, and demo it in `index.html`.
 
 The rules that matter most, in short: the page is cream and white is for cards;
-every page opens with an eyebrow; colour exactly one word in a headline; the
-belonging/ambiguity/exclusion and critical/at-risk/building/strong colour scales
-are fixed and never reassigned; one dark band per page, at the bottom.
+every page opens with an eyebrow; colour exactly one word in a headline; blue is
+the branded colour and there is no green in the system — where you would reach for
+green, reach for blue; the belonging/ambiguity/exclusion and
+critical/at-risk/building/strong colour scales are fixed and never reassigned; one
+dark band per page, at the bottom.
 
 ## Conventions
 
