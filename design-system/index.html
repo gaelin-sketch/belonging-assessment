@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Elmore Group — Design System</title>
+<meta name="description" content="Tokens and components extracted from the Be The Difference deck and the Belonging Assessment Leadership Report.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="elmore.css">
+<style>
+  /* Style-guide chrome only. Not part of the system. */
+  .sg-nav { position: sticky; top: 0; z-index: 20; background: rgba(251,250,246,.92);
+            backdrop-filter: blur(8px); border-bottom: 1px solid var(--eg-line); }
+  .sg-nav__in { display: flex; align-items: center; gap: var(--eg-s-5);
+                max-width: var(--eg-page-max); margin-inline: auto;
+                padding: 12px var(--eg-gutter); overflow-x: auto; }
+  .sg-nav a { font-size: var(--eg-t-micro); font-weight: 700; letter-spacing: .08em;
+              text-transform: uppercase; color: var(--eg-ink-faint); text-decoration: none; white-space: nowrap; }
+  .sg-nav a:hover { color: var(--eg-navy); }
+  .sg-sec { padding: var(--eg-s-16) 0 var(--eg-s-8); border-top: 1px solid var(--eg-line); }
+  .sg-sec:first-of-type { border-top: 0; }
+  .sg-demo { margin-top: var(--eg-s-5); }
+  .sg-caption { font-size: var(--eg-t-micro); color: var(--eg-ink-faint); margin-top: var(--eg-s-2); max-width: 62ch; }
+  .sg-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: var(--eg-s-3); }
+  .sg-sw { border: 1px solid var(--eg-line-soft); border-radius: var(--eg-r-md); overflow: hidden; background: var(--eg-card); }
+  .sg-sw__chip { height: 62px; }
+  .sg-sw__meta { padding: 9px 11px; }
+  .sg-sw__name { font-size: var(--eg-t-micro); font-weight: 700; color: var(--eg-ink-strong); }
+  .sg-sw__hex { font-family: var(--eg-font-mono); font-size: 11px; color: var(--eg-ink-faint); text-transform: uppercase; }
+  .sg-code { display: block; font-family: var(--eg-font-mono); font-size: 12px; line-height: 1.6;
+             background: var(--eg-navy-900); color: #CFDAE8; border-radius: var(--eg-r-md);
+             padding: var(--eg-s-4); overflow-x: auto; margin-top: var(--eg-s-3); white-space: pre; }
+  .sg-scale-row { display: flex; align-items: baseline; gap: var(--eg-s-4); padding: 10px 0; border-bottom: 1px solid var(--eg-line-soft); }
+  .sg-scale-row > .eg-label { flex: 0 0 128px; }
+  @media (max-width: 640px) {
+    .sg-scale-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .sg-scale-row > .eg-label { flex: none; }
+  }
+</style>
+</head>
+<body class="eg-page">
+
+<nav class="sg-nav" aria-label="Sections">
+  <div class="sg-nav__in">
+    <a href="#colour">Colour</a>
+    <a href="#type">Type</a>
+    <a href="#heads">Heads</a>
+    <a href="#surfaces">Surfaces</a>
+    <a href="#figures">Figures</a>
+    <a href="#tiers">Tiers</a>
+    <a href="#bars">Bars</a>
+    <a href="#tables">Tables</a>
+    <a href="#lists">Lists</a>
+    <a href="#quotes">Quotes</a>
+    <a href="#controls">Controls</a>
+    <a href="#pages">Pages</a>
+    <a href="#slides">Slides</a>
+  </div>
+</nav>
+
+<header class="eg-sheet">
+  <div class="eg-blobs" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="eg-shell">
+    <p class="eg-eyebrow">The Elmore Group</p>
+    <div class="eg-titleblock">
+      <span class="eg-ghost" aria-hidden="true">Design System</span>
+      <h1 class="eg-title">Design System</h1>
+    </div>
+    <p class="eg-lead" style="margin-top:var(--eg-s-4)">
+      Every value here was sampled from the <em>Be The Difference</em> deck and the
+      Belonging Assessment Leadership Report. Load <code>tokens.css</code>, then
+      <code>elmore.css</code>, and the two documents' visual language is available
+      as classes.
+    </p>
+    <div class="eg-row" style="margin-top:var(--eg-s-6)">
+      <a class="eg-btn" href="#colour">Start with colour</a>
+      <a class="eg-btn eg-btn--ghost" href="README.md">Read the rules</a>
+    </div>
+  </div>
+</header>
+
+<main class="eg-shell">
+
+<!-- ============================ COLOUR ============================ -->
+<section class="sg-sec" id="colour">
+  <p class="eg-eyebrow eg-eyebrow--blue">01 — Foundations</p>
+  <h2 class="eg-title">Colour</h2>
+  <p class="eg-lead">Five brand colours, three surfaces, and two ordered scales. The
+  scales are what make forty pages of charts read as one document — never recolour
+  them per chart.</p>
+
+  <div class="sg-demo">
+    <p class="eg-label">Brand core</p>
+    <div class="sg-swatches" style="margin-top:var(--eg-s-3)">
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-navy)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Navy</div><div class="sg-sw__hex">#122A42</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-gold)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Gold</div><div class="sg-sw__hex">#F2A516</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-orange)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Orange</div><div class="sg-sw__hex">#EB4824</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-blue)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Blue</div><div class="sg-sw__hex">#4F9CD6</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-green)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Green</div><div class="sg-sw__hex">#15694A</div></div></div>
+    </div>
+  </div>
+
+  <div class="sg-demo">
+    <p class="eg-label">Surfaces &amp; ink</p>
+    <div class="sg-swatches" style="margin-top:var(--eg-s-3)">
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-paper)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Paper</div><div class="sg-sw__hex">#FBFAF6</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-paper-sunk)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Paper sunk</div><div class="sg-sw__hex">#F1ECE1</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-card);border-bottom:1px solid var(--eg-line)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Card</div><div class="sg-sw__hex">#FFFFFF</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-ink)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Ink</div><div class="sg-sw__hex">#16242F</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-ink-soft)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Ink soft</div><div class="sg-sw__hex">#5E6E79</div></div></div>
+      <div class="sg-sw"><div class="sg-sw__chip" style="background:var(--eg-ink-faint)"></div><div class="sg-sw__meta"><div class="sg-sw__name">Ink faint</div><div class="sg-sw__hex">#8A97A0</div></div></div>
+    </div>
+    <p class="sg-caption">The page is cream and white is reserved for cards. That one
+    rule is why a card reads as lifted without needing a heavy shadow.</p>
+  </div>
+
+  <div class="sg-demo">
+    <p class="eg-label">Scale — the three relational states</p>
+    <div class="eg-bar eg-bar--tall" style="margin-top:var(--eg-s-3)" role="img" aria-label="Belonging 56 percent, ambiguity 34 percent, exclusion 10 percent">
+      <div class="eg-bar__seg eg-bar__seg--belonging" style="flex-basis:56%">56%</div>
+      <div class="eg-bar__seg eg-bar__seg--ambiguity" style="flex-basis:34%">34%</div>
+      <div class="eg-bar__seg eg-bar__seg--exclusion" style="flex-basis:10%">10%</div>
+    </div>
+    <div class="eg-legend" style="margin-top:var(--eg-s-3)">
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--belonging eg-legend__swatch--round"></i>Belonging</span>
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--ambiguity eg-legend__swatch--round"></i>Ambiguity</span>
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--exclusion eg-legend__swatch--round"></i>Exclusion</span>
+    </div>
+  </div>
+
+  <div class="sg-demo">
+    <p class="eg-label">Scale — the four index tiers</p>
+    <div class="eg-row" style="margin-top:var(--eg-s-3)">
+      <span class="eg-chip eg-chip--critical">Critical · 0–34</span>
+      <span class="eg-chip eg-chip--at-risk">At-risk · 35–49</span>
+      <span class="eg-chip eg-chip--building">Building · 50–64</span>
+      <span class="eg-chip eg-chip--strong">Strong · 65+</span>
+    </div>
+    <p class="sg-caption">Tier colour is ordered and absolute. A number's colour tells
+    the reader where it sits before they read the number.</p>
+  </div>
+</section>
+
+<!-- ============================ TYPE ============================ -->
+<section class="sg-sec" id="type">
+  <p class="eg-eyebrow eg-eyebrow--blue">02 — Foundations</p>
+  <h2 class="eg-title">Type</h2>
+  <p class="eg-lead">A tight geometric grotesque for display, IBM Plex Sans for
+  everything you actually read. Display never drops below 600 weight; body never
+  goes above 700.</p>
+
+  <div class="sg-demo">
+    <div class="sg-scale-row"><span class="eg-label">Hero</span><span class="eg-hero" style="font-size:44px">Be the difference</span></div>
+    <div class="sg-scale-row"><span class="eg-label">Display</span><span class="eg-display" style="font-size:34px">What could be</span></div>
+    <div class="sg-scale-row"><span class="eg-label">Title</span><span class="eg-title" style="font-size:28px">County Belonging Index</span></div>
+    <div class="sg-scale-row"><span class="eg-label">Section</span><span class="eg-section-title">Social Connection</span></div>
+    <div class="sg-scale-row"><span class="eg-label">Sub</span><span class="eg-sub">How important is belonging?</span></div>
+    <div class="sg-scale-row"><span class="eg-label">Lead</span><span class="eg-lead">The emotional and aspirational side of the equation.</span></div>
+    <div class="sg-scale-row"><span class="eg-label">Body</span><span class="eg-body">Belonging is a fundamental human need that drives creativity and satisfaction.</span></div>
+    <div class="sg-scale-row"><span class="eg-label">Small</span><span class="eg-small">Source: BetterUp research, Harvard Business Review (2019)</span></div>
+    <div class="sg-scale-row"><span class="eg-label">Micro / label</span><span class="eg-label">When people belong, the research is clear</span></div>
+  </div>
+
+  <div class="sg-demo">
+    <p class="eg-label">Emphasis</p>
+    <p class="eg-sub" style="margin-top:var(--eg-s-3)">Belonging is not a work
+      <span class="eg-underscore">perk</span>, but a precondition for
+      <span class="eg-em-orange">BETTER</span>.</p>
+    <p class="eg-wordrun" style="margin-top:var(--eg-s-3)">
+      <span class="eg-em-orange">Better.</span> <span class="eg-em-blue">Teams.</span>
+      <span class="eg-em-gold">Culture.</span> <span style="color:var(--eg-navy)">Work.</span>
+      <span class="eg-em-blue">Engagement.</span> <span class="eg-em-gold">Retention.</span>
+      <span class="eg-em-orange">Outcomes.</span>
+    </p>
+    <p class="sg-caption">Colour one word, not a phrase, and only once per line.
+    The word run is the exception and belongs at most once per page.</p>
+  </div>
+</section>
+
+<!-- ============================ HEADS ============================ -->
+<section class="sg-sec" id="heads">
+  <p class="eg-eyebrow eg-eyebrow--blue">03 — Components</p>
+  <h2 class="eg-title">Eyebrow &amp; page head</h2>
+  <p class="eg-lead">The dash-plus-caps eyebrow opens nearly every page in the report.
+  It is the fastest way to make a new layout read as part of the set.</p>
+
+  <div class="sg-demo eg-grid eg-grid--2">
+    <div class="eg-card">
+      <p class="eg-eyebrow">County-wide results</p>
+      <div class="eg-titleblock">
+        <span class="eg-ghost" aria-hidden="true">Key Themes</span>
+        <h3 class="eg-title">Key Themes</h3>
+      </div>
+      <p class="eg-lead" style="margin-top:var(--eg-s-3)">Ghost title behind, live title in front.</p>
+    </div>
+    <div class="eg-card">
+      <div class="eg-pagehead eg-pagehead--split" style="margin:0">
+        <div>
+          <p class="eg-eyebrow eg-eyebrow--blue">Indicator deep-dive · 02 of 03</p>
+          <h3 class="eg-title">Social Connection</h3>
+        </div>
+        <div class="eg-pagehead__aside">
+          <span class="eg-figure eg-figure--m">6.63<span class="eg-figure__unit"> / 10</span></span>
+          <p class="eg-label" style="margin-top:4px">Building</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <code class="sg-code">&lt;p class="eg-eyebrow"&gt;County-wide results&lt;/p&gt;
+&lt;div class="eg-titleblock"&gt;
+  &lt;span class="eg-ghost" aria-hidden="true"&gt;Key Themes&lt;/span&gt;
+  &lt;h2 class="eg-title"&gt;Key Themes&lt;/h2&gt;
+&lt;/div&gt;</code>
+</section>
+
+<!-- ============================ SURFACES ============================ -->
+<section class="sg-sec" id="surfaces">
+  <p class="eg-eyebrow eg-eyebrow--blue">04 — Components</p>
+  <h2 class="eg-title">Surfaces</h2>
+
+  <div class="sg-demo eg-grid eg-grid--3">
+    <div class="eg-card"><p class="eg-label">eg-card</p><p class="eg-small" style="margin-top:8px">White, hairline border, soft shadow. The default container.</p></div>
+    <div class="eg-card eg-card--rail eg-card--rail-gold"><p class="eg-label">eg-card--rail</p><p class="eg-small" style="margin-top:8px">A colour rail carries the meaning so the card stays white.</p></div>
+    <div class="eg-panel"><p class="eg-label">eg-panel</p><p class="eg-small" style="margin-top:8px">Recessed cream, for detail that shouldn't compete.</p></div>
+  </div>
+
+  <div class="sg-demo eg-grid eg-grid--3">
+    <div class="eg-tonecard">
+      <p class="eg-tonecard__kicker">Positive</p>
+      <p class="eg-small">Connection is the strongest of the three indicators. <strong>4 in 5 staff (79%)</strong> feel connected to their immediate team.</p>
+    </div>
+    <div class="eg-tonecard eg-tonecard--negative">
+      <p class="eg-tonecard__kicker">Negative</p>
+      <p class="eg-small">That connection is local, not organisational. The 79% falls to 50% on the extended team.</p>
+    </div>
+    <div class="eg-tonecard eg-tonecard--interesting">
+      <p class="eg-tonecard__kicker">Interesting</p>
+      <p class="eg-small">Connection has the <strong>widest racial gap</strong> of any indicator.</p>
+    </div>
+  </div>
+
+  <div class="sg-demo">
+    <div class="eg-field">
+      <p class="eg-label">eg-field</p>
+      <p class="eg-sub" style="margin-top:8px">The dark band. One per page, at the bottom, carrying the sentence you most want remembered.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FIGURES ============================ -->
+<section class="sg-sec" id="figures">
+  <p class="eg-eyebrow eg-eyebrow--blue">05 — Components</p>
+  <h2 class="eg-title">Figures</h2>
+  <p class="eg-lead">Numbers do the arguing in this system. They get their own type
+  scale, they are always tabular, and the biggest one on a page should be the one
+  the page is about.</p>
+
+  <div class="sg-demo eg-grid eg-grid--3">
+    <div class="eg-stat"><div class="eg-stat__value">56%</div><p class="eg-stat__label">increase in <strong>job performance</strong></p></div>
+    <div class="eg-stat eg-stat--gold"><div class="eg-stat__value">50%</div><p class="eg-stat__label">reduction in <strong>turnover risk</strong></p></div>
+    <div class="eg-stat eg-stat--orange"><div class="eg-stat__value">75%</div><p class="eg-stat__label">reduction in <strong>sick days</strong></p></div>
+  </div>
+
+  <div class="sg-demo">
+    <div class="eg-statband">
+      <div>
+        <div class="eg-statband__figure">8.16</div>
+        <p class="eg-statband__caption">Out of 10</p>
+      </div>
+      <p class="eg-statband__body">Belonging is intrinsic to thriving. On average, respondents rate belonging <strong>8.2 / 10</strong> in how necessary it is to their own thriving. The challenge will be creating a culture that offers it.</p>
+    </div>
+  </div>
+
+  <div class="sg-demo">
+    <div class="eg-card">
+      <div class="eg-score">
+        <div class="eg-score__left">
+          <span class="eg-chip eg-chip--at-risk">At-risk</span>
+          <div class="eg-figure eg-figure--xl eg-score__value" style="margin-top:10px">49<span class="eg-figure__unit"> / 100</span></div>
+        </div>
+        <div>
+          <div class="eg-meter"><div class="eg-meter__fill eg-meter__fill--at-risk" style="width:49%"></div></div>
+          <div class="eg-scalekey">
+            <div class="eg-scalekey__step"><div class="eg-scalekey__name">Critical</div><div class="eg-scalekey__range">0–34</div></div>
+            <div class="eg-scalekey__step" aria-current="true"><div class="eg-scalekey__name">At-risk</div><div class="eg-scalekey__range">35–49</div></div>
+            <div class="eg-scalekey__step"><div class="eg-scalekey__name">Building</div><div class="eg-scalekey__range">50–64</div></div>
+            <div class="eg-scalekey__step"><div class="eg-scalekey__name">Strong</div><div class="eg-scalekey__range">65+</div></div>
+          </div>
+          <p class="eg-small" style="margin-top:var(--eg-s-4)">At 49, the county sits at the very top of the At-risk tier, one point short of Building. Whether it climbs or slips back depends on whether this work is prioritised now.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TIERS ============================ -->
+<section class="sg-sec" id="tiers">
+  <p class="eg-eyebrow eg-eyebrow--blue">06 — Components</p>
+  <h2 class="eg-title">Tier cards</h2>
+  <p class="eg-lead">The four stages of the index, with the current one outlined and
+  badged. Mark the current tier with <code>aria-current="true"</code> — the outline
+  is styled off that attribute, so the visual state and the accessible state cannot
+  drift apart.</p>
+
+  <div class="sg-demo eg-tiers">
+    <div class="eg-tier">
+      <p class="eg-tier__name">Critical</p>
+      <p class="eg-tier__range">Index 0–34</p>
+      <p class="eg-tier__body">Belonging is the exception. Exclusion and disconnection recur across levels. Foundational, urgent repair is needed.</p>
+    </div>
+    <div class="eg-tier eg-tier--at-risk" aria-current="true">
+      <span class="eg-tier__badge">Current</span>
+      <p class="eg-tier__name">At-risk</p>
+      <p class="eg-tier__range">Index 35–49</p>
+      <p class="eg-tier__body">Early signs of belonging exist but don't sustain. Most feel trapped in ambiguity and unsure of where they stand.</p>
+    </div>
+    <div class="eg-tier eg-tier--building">
+      <p class="eg-tier__name">Building</p>
+      <p class="eg-tier__range">Index 50–64</p>
+      <p class="eg-tier__body">A real, functioning foundation with clear, reachable room to grow. A tipping point.</p>
+    </div>
+    <div class="eg-tier eg-tier--strong">
+      <p class="eg-tier__name">Strong</p>
+      <p class="eg-tier__range">Index 65+</p>
+      <p class="eg-tier__body">Belonging is the consistent, lived experience. The work shifts from building to sustaining.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ BARS ============================ -->
+<section class="sg-sec" id="bars">
+  <p class="eg-eyebrow eg-eyebrow--blue">07 — Components</p>
+  <h2 class="eg-title">Bars</h2>
+  <p class="eg-lead">One bar type, used everywhere. Segments are flex-basis
+  percentages, so the markup carries the data and the CSS carries the meaning.</p>
+
+  <div class="sg-demo eg-card">
+    <p class="eg-label">Belonging by level</p>
+    <div style="margin-top:var(--eg-s-4)">
+      <div class="eg-barrow">
+        <span class="eg-barrow__label">Immediate</span>
+        <div class="eg-bar" role="img" aria-label="Immediate team: belonging 65.7 percent, ambiguity 27.6 percent, exclusion 6.7 percent">
+          <div class="eg-bar__seg eg-bar__seg--belonging" style="flex-basis:65.7%">65.7%</div>
+          <div class="eg-bar__seg eg-bar__seg--ambiguity" style="flex-basis:27.6%">27.6%</div>
+          <div class="eg-bar__seg eg-bar__seg--exclusion" style="flex-basis:6.7%"></div>
+        </div>
+      </div>
+      <div class="eg-barrow">
+        <span class="eg-barrow__label">Extended</span>
+        <div class="eg-bar" role="img" aria-label="Extended team: belonging 29.8 percent, ambiguity 62.4 percent, exclusion 7.8 percent">
+          <div class="eg-bar__seg eg-bar__seg--belonging" style="flex-basis:29.8%">29.8%</div>
+          <div class="eg-bar__seg eg-bar__seg--ambiguity" style="flex-basis:62.4%">62.4%</div>
+          <div class="eg-bar__seg eg-bar__seg--exclusion" style="flex-basis:7.8%"></div>
+        </div>
+      </div>
+      <div class="eg-barrow">
+        <span class="eg-barrow__label">Leadership</span>
+        <div class="eg-bar" role="img" aria-label="Leadership: belonging 56.7 percent, ambiguity 38.8 percent, exclusion 4.5 percent">
+          <div class="eg-bar__seg eg-bar__seg--belonging" style="flex-basis:56.7%">56.7%</div>
+          <div class="eg-bar__seg eg-bar__seg--ambiguity" style="flex-basis:38.8%">38.8%</div>
+          <div class="eg-bar__seg eg-bar__seg--exclusion" style="flex-basis:4.5%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="eg-legend" style="margin-top:var(--eg-s-4)">
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--belonging eg-legend__swatch--round"></i>Belonging</span>
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--ambiguity eg-legend__swatch--round"></i>Ambiguity</span>
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--exclusion eg-legend__swatch--round"></i>Exclusion</span>
+    </div>
+    <p class="sg-caption">Segments below roughly 8% drop their label rather than
+    clipping it. Every bar carries <code>role="img"</code> and a full
+    <code>aria-label</code>, because the percentages inside are decorative text.</p>
+  </div>
+
+  <div class="sg-demo eg-card">
+    <p class="eg-label">The spread behind the average</p>
+    <div class="eg-bar eg-bar--tall" style="margin-top:var(--eg-s-3)" role="img" aria-label="Strong 33 percent, building 47 percent, at-risk 15 percent, critical 5 percent">
+      <div class="eg-bar__seg eg-bar__seg--strong"   style="flex-basis:33%">33%</div>
+      <div class="eg-bar__seg eg-bar__seg--building" style="flex-basis:47%">47%</div>
+      <div class="eg-bar__seg eg-bar__seg--at-risk"  style="flex-basis:15%">15%</div>
+      <div class="eg-bar__seg eg-bar__seg--critical" style="flex-basis:5%">5%</div>
+    </div>
+    <div class="eg-legend" style="margin-top:var(--eg-s-3)">
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--strong"></i>Strong 7.5–10</span>
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--building"></i>Building 5.5–7.4</span>
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--at-risk"></i>At-risk 3.5–5.4</span>
+      <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--critical"></i>Critical 0–3.4</span>
+    </div>
+  </div>
+
+  <div class="sg-demo eg-grid eg-grid--2">
+    <div class="eg-card">
+      <p class="eg-label">By role</p>
+      <div style="margin-top:var(--eg-s-4)">
+        <div class="eg-rated">
+          <span class="eg-rated__name">Supervisors · n=30</span>
+          <div class="eg-meter"><div class="eg-meter__fill eg-meter__fill--building" style="width:70.6%"></div></div>
+          <span class="eg-rated__value">7.06</span>
+        </div>
+        <div class="eg-rated">
+          <span class="eg-rated__name">Support staff · n=46</span>
+          <div class="eg-meter"><div class="eg-meter__fill eg-meter__fill--building" style="width:67%"></div></div>
+          <span class="eg-rated__value">6.70</span>
+        </div>
+        <div class="eg-rated">
+          <span class="eg-rated__name">Frontline practitioners · n=134</span>
+          <div class="eg-meter"><div class="eg-meter__fill eg-meter__fill--building" style="width:65.6%"></div></div>
+          <span class="eg-rated__value">6.56</span>
+        </div>
+        <div class="eg-rated">
+          <span class="eg-rated__name">Other roles · n=21</span>
+          <div class="eg-meter"><div class="eg-meter__fill eg-meter__fill--at-risk" style="width:62.7%"></div></div>
+          <span class="eg-rated__value">6.27</span>
+        </div>
+      </div>
+    </div>
+    <div class="eg-card">
+      <p class="eg-label">Leaders vs. those they lead</p>
+      <div style="margin-top:var(--eg-s-6)">
+        <p class="eg-small" style="margin-bottom:4px">Feel valued by leadership</p>
+        <div class="eg-barbell">
+          <div class="eg-barbell__track"></div>
+          <div class="eg-barbell__link eg-barbell__link--wide" style="left:53%;width:33%"></div>
+          <div class="eg-barbell__tag" style="left:53%">53%</div>
+          <div class="eg-barbell__tag" style="left:86%">86%</div>
+          <div class="eg-barbell__dot eg-barbell__dot--a" style="left:53%"></div>
+          <div class="eg-barbell__dot eg-barbell__dot--b" style="left:86%"></div>
+        </div>
+        <p class="eg-small" style="margin:var(--eg-s-5) 0 4px">Have voice to leadership</p>
+        <div class="eg-barbell">
+          <div class="eg-barbell__track"></div>
+          <div class="eg-barbell__link" style="left:65%;width:16%"></div>
+          <div class="eg-barbell__tag" style="left:65%">65%</div>
+          <div class="eg-barbell__tag" style="left:81%">81%</div>
+          <div class="eg-barbell__dot eg-barbell__dot--a" style="left:65%"></div>
+          <div class="eg-barbell__dot eg-barbell__dot--b" style="left:81%"></div>
+        </div>
+        <div class="eg-legend" style="margin-top:var(--eg-s-5)">
+          <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--round" style="background:var(--eg-gold)"></i>Being led</span>
+          <span class="eg-legend__item"><i class="eg-legend__swatch eg-legend__swatch--round" style="background:var(--eg-navy)"></i>Leaders</span>
+        </div>
+        <p class="sg-caption">The link goes orange when the gap is the widest on the
+        chart. One highlighted row per chart, no more.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ TABLES ============================ -->
+<section class="sg-sec" id="tables">
+  <p class="eg-eyebrow eg-eyebrow--blue">08 — Components</p>
+  <h2 class="eg-title">Tables</h2>
+  <div class="sg-demo eg-tablewrap">
+    <table class="eg-table">
+      <thead>
+        <tr><th scope="col">Metric</th><th scope="col" class="eg-num">Leaders n=42</th><th scope="col" class="eg-num">Being led n=201</th><th scope="col" class="eg-num">Gap</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Belonging importance, self</th><td class="eg-num">8.24</td><td class="eg-num">8.14</td><td class="eg-num">+0.10</td></tr>
+        <tr><th scope="row">Rate belonging's importance 8+</th><td class="eg-num">76%</td><td class="eg-num">73%</td><td class="eg-num">+3 pts</td></tr>
+        <tr class="is-highlighted"><th scope="row">Belonging Index <span class="eg-faint">group composite</span></th><td class="eg-num">62 <span class="eg-chip eg-chip--building">Building</span></td><td class="eg-num">46 <span class="eg-chip eg-chip--at-risk">At-risk</span></td><td class="eg-num">+16 pts</td></tr>
+        <tr><th scope="row">Leadership-level average score</th><td class="eg-num">3.96</td><td class="eg-num">3.67</td><td class="eg-num">+0.29</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sg-caption">Navy header, white body, hairline rules, and one highlighted
+  row in gold wash. Numeric cells get <code>.eg-num</code> so columns line up.</p>
+</section>
+
+<!-- ============================ LISTS ============================ -->
+<section class="sg-sec" id="lists">
+  <p class="eg-eyebrow eg-eyebrow--blue">09 — Components</p>
+  <h2 class="eg-title">Numbered lists</h2>
+  <p class="eg-lead">Two shapes. Insights are findings, stacked and colour-rotated.
+  Steps are actions, on a timeline, each split into what you own and where help comes in.</p>
+
+  <div class="sg-demo">
+    <div class="eg-insight">
+      <div class="eg-insight__n">1</div>
+      <div>
+        <p class="eg-insight__title">Staff value belonging highly; the organisation delivers it unevenly.</p>
+        <p class="eg-insight__body">Staff rate belonging 8.16 of 10 as essential to their own thriving. But the overall Belonging Index of 49 sits in the At-risk band, just below the threshold.</p>
+      </div>
+    </div>
+    <div class="eg-insight eg-insight--gold">
+      <div class="eg-insight__n">2</div>
+      <div>
+        <p class="eg-insight__title">Immediate teams are a real strength; the connections between teams are not.</p>
+        <p class="eg-insight__body">Within immediate teams, belonging reaches 62.5%. On the extended team it falls to 28.8%.</p>
+      </div>
+    </div>
+    <div class="eg-insight eg-insight--navy">
+      <div class="eg-insight__n">3</div>
+      <div>
+        <p class="eg-insight__title">Exclusion is rare, but ambiguity is widespread — and ambiguity is not neutral.</p>
+        <p class="eg-insight__body">Outright exclusion stays well under 8% at every level. The challenge is diffuse: uncertainty about where one stands.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-demo eg-steps">
+    <div class="eg-step">
+      <div class="eg-step__n">1</div>
+      <div class="eg-step__card">
+        <p class="eg-step__title">Build in capacity that cultivates connection</p>
+        <p class="eg-step__target">Targets the structural belonging gap (62.5% immediate → 28.8% extended)</p>
+        <div class="eg-step__split">
+          <div>
+            <p class="eg-eyebrow eg-eyebrow--navy" style="font-size:10px">The county owns</p>
+            <p class="eg-small">Belonging never crossed team boundaries because nothing in how the county works was built to carry it there. Treat connection as <strong>infrastructure</strong>.</p>
+          </div>
+          <div>
+            <p class="eg-eyebrow eg-eyebrow--blue" style="font-size:10px">Where support helps</p>
+            <p class="eg-small">A partner maps where connective capacity is actually missing across divisions, then designs structures that fit each unit's real workflow.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="eg-step">
+      <div class="eg-step__n eg-step__n--gold">2</div>
+      <div class="eg-step__card" style="border-top-color:var(--eg-gold)">
+        <p class="eg-step__title">Equip managers to prioritise the three indicators</p>
+        <p class="eg-step__target">Targets ambiguity, the dominant state, through the people best positioned to convert it</p>
+        <div class="eg-step__split">
+          <div>
+            <p class="eg-eyebrow eg-eyebrow--navy" style="font-size:10px">The county owns</p>
+            <p class="eg-small">Ambiguity is resolved in the daily experience of being managed, not by programmes. Make managers fluent in all three indicators.</p>
+          </div>
+          <div>
+            <p class="eg-eyebrow eg-eyebrow--blue" style="font-size:10px">Where support helps</p>
+            <p class="eg-small">A partner gives managers a working understanding of each indicator and a shared language to read where their team sits.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-demo eg-card">
+    <p class="eg-label">Contents</p>
+    <div class="eg-toc" style="margin-top:var(--eg-s-3)">
+      <div class="eg-toc__row"><span>Executive Summary</span><span class="eg-toc__lead"></span><span class="eg-toc__page">05</span></div>
+      <div class="eg-toc__row"><span>Key Themes</span><span class="eg-toc__lead"></span><span class="eg-toc__page">06</span></div>
+      <div class="eg-toc__row"><span>County Belonging Index</span><span class="eg-toc__lead"></span><span class="eg-toc__page">08</span></div>
+      <div class="eg-toc__row"><span>Importance × Experience</span><span class="eg-toc__lead"></span><span class="eg-toc__page">09</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ QUOTES ============================ -->
+<section class="sg-sec" id="quotes">
+  <p class="eg-eyebrow eg-eyebrow--blue">10 — Components</p>
+  <h2 class="eg-title">Quote</h2>
+  <div class="sg-demo">
+    <blockquote class="eg-quote">
+      Belonging is not a work <span class="eg-underscore">perk</span>,<br>
+      but a precondition for <span class="eg-em-orange">BETTER</span>.
+      <cite class="eg-quote__cite">The Belonging Barometer</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ============================ CONTROLS ============================ -->
+<section class="sg-sec" id="controls">
+  <p class="eg-eyebrow eg-eyebrow--blue">11 — Components</p>
+  <h2 class="eg-title">Controls</h2>
+  <p class="eg-lead">Pills, not rectangles. One focus treatment — gold, offset,
+  never removed.</p>
+
+  <div class="sg-demo eg-row">
+    <button class="eg-btn">Begin the assessment</button>
+    <button class="eg-btn eg-btn--gold">Download the report</button>
+    <button class="eg-btn eg-btn--ghost">Back</button>
+    <button class="eg-btn eg-btn--sm">Small</button>
+    <button class="eg-btn" disabled>Disabled</button>
+  </div>
+
+  <div class="sg-demo eg-grid eg-grid--2">
+    <div class="eg-card">
+      <div class="eg-field-group">
+        <label for="sg-role">What is your role?</label>
+        <select class="eg-select" id="sg-role">
+          <option>Frontline practitioner</option>
+          <option>Supervisor</option>
+          <option>Manager</option>
+        </select>
+      </div>
+      <div class="eg-field-group" style="margin-bottom:0">
+        <label for="sg-team">Which team?</label>
+        <input class="eg-input" id="sg-team" type="text" placeholder="Aging &amp; Disability Services">
+      </div>
+    </div>
+    <div class="eg-card">
+      <p class="eg-body" style="font-weight:500;margin-bottom:var(--eg-s-4)">I feel genuinely welcomed on my immediate team.</p>
+      <div class="eg-likert">
+        <button type="button">Strongly disagree</button>
+        <button type="button">Disagree</button>
+        <button type="button" aria-pressed="true">Neutral</button>
+        <button type="button">Agree</button>
+        <button type="button">Strongly agree</button>
+      </div>
+      <div class="eg-progress" style="margin-top:var(--eg-s-5)"><div class="eg-progress__fill" style="width:38%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PAGES ============================ -->
+<section class="sg-sec" id="pages">
+  <p class="eg-eyebrow eg-eyebrow--blue">12 — Patterns</p>
+  <h2 class="eg-title">Page patterns</h2>
+  <p class="eg-lead">The two layouts the report repeats: a section divider and a
+  content page with a footer.</p>
+
+  <div class="sg-demo eg-divider eg-divider--2">
+    <div class="eg-divider__rail">
+      <span class="eg-divider__part">Part 02 / 08</span>
+      <div class="eg-divider__n">02</div>
+      <p class="eg-divider__pages">Pages 05–09</p>
+    </div>
+    <div class="eg-divider__body">
+      <p class="eg-eyebrow eg-eyebrow--green">Section 02</p>
+      <h3 class="eg-title">County<br><span style="color:var(--eg-green)">Snapshot</span></h3>
+      <p class="eg-lead" style="margin-top:var(--eg-s-3)">Where the county stands today, read across the three relational levels.</p>
+      <div class="eg-toc" style="margin-top:var(--eg-s-6)">
+        <div class="eg-toc__row"><span>Executive Summary</span><span class="eg-toc__lead"></span><span class="eg-toc__page">05</span></div>
+        <div class="eg-toc__row"><span>Key Themes</span><span class="eg-toc__lead"></span><span class="eg-toc__page">06</span></div>
+        <div class="eg-toc__row"><span>County Belonging Index</span><span class="eg-toc__lead"></span><span class="eg-toc__page">08</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-demo">
+    <footer class="eg-footer">
+      <img class="eg-footer__mark" src="../assets/logo-mark.svg" alt="" aria-hidden="true">
+      <span>Leadership distribution · Confidential · Not for general circulation</span>
+      <span class="eg-footer__folio">08</span>
+    </footer>
+  </div>
+</section>
+
+<!-- ============================ SLIDES ============================ -->
+<section class="sg-sec" id="slides">
+  <p class="eg-eyebrow eg-eyebrow--blue">13 — Patterns</p>
+  <h2 class="eg-title">Deck slides</h2>
+  <p class="eg-lead">Slide type scales with the slide itself, using container query
+  units, so a slide reads correctly full-screen or as a thumbnail in a grid.</p>
+
+  <div class="sg-demo" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:var(--eg-s-5)">
+    <div class="eg-slide eg-slide--framed">
+      <p class="eg-eyebrow eg-eyebrow--blue">Potential</p>
+      <h3 class="eg-display" style="margin-top:.4cqi">The<br><span style="color:var(--eg-blue-light)">“What could be”</span></h3>
+      <p class="eg-lead" style="margin-top:1.6cqi">The emotional and aspirational side of the equation.</p>
+    </div>
+
+    <div class="eg-slide eg-slide--framed eg-slide--field">
+      <p class="eg-eyebrow">The honest question</p>
+      <h3 class="eg-display" style="margin-top:.4cqi">Do you <span class="eg-em-gold">Empower</span> others to be a part of the solution?</h3>
+    </div>
+
+    <div class="eg-slide eg-slide--framed">
+      <p class="eg-acronym" style="position:absolute;top:5%;left:5.5%">C.A.R.E.</p>
+      <div class="eg-statement">
+        <p class="eg-statement__kicker"><span style="color:var(--eg-blue)">C</span>ompassion.</p>
+        <p class="eg-statement__line">To suffer <span style="color:var(--eg-blue-deep)">WITH</span>, not <span style="color:var(--eg-ink-faint)">for</span></p>
+      </div>
+    </div>
+
+    <div class="eg-slide eg-slide--framed">
+      <p class="eg-acronym" style="position:absolute;top:5%;left:5.5%">C.A.R.E.</p>
+      <div class="eg-statement eg-statement--orange">
+        <p class="eg-statement__kicker"><span style="color:var(--eg-orange)">R</span>esilience.</p>
+        <p class="eg-statement__line">The outcome of support that <span style="color:var(--eg-orange)">adapts</span>, <span style="color:var(--eg-orange)">adjusts</span>, and <span style="color:var(--eg-orange)">sustains</span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sg-demo">
+    <p class="eg-label">Brand rule</p>
+    <div class="eg-rule-brand" style="margin-top:var(--eg-s-3)"><i></i><i></i><i></i><i></i></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="eg-field eg-field--bleed" style="margin-top:var(--eg-s-16);padding-block:var(--eg-s-12)">
+  <div class="eg-shell">
+    <div class="eg-rule-brand" style="margin-bottom:var(--eg-s-5)"><i></i><i></i><i></i><i></i></div>
+    <h2 class="eg-title" style="color:#fff">Be the <span class="eg-em-gold">difference</span>.</h2>
+    <p class="eg-body" style="margin-top:var(--eg-s-3);max-width:52ch">
+      Version 1.0.0 · Tokens and components extracted from the Be The Difference deck
+      and the Belonging Assessment Leadership Report.
+    </p>
+    <p class="eg-label" style="margin-top:var(--eg-s-6)">gaelinelmore.com</p>
+  </div>
+</footer>
+
+</body>
+</html>

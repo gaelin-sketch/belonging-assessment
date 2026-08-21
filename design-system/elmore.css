@@ -1,0 +1,738 @@
+/* ==========================================================================
+   The Elmore Group — Component Layer
+   Requires tokens.css. Class prefix: eg-
+
+   Contents
+     1  Reset & page
+     2  Typography primitives
+     3  Eyebrow, ghost title, page head
+     4  Surfaces: card, accent card, field band, sunk panel
+     5  Figures: stat card, stat band, score block
+     6  Tiers & chips
+     7  Bars: segmented, spread, meter, barbell
+     8  Legend & scale key
+     9  Tables
+    10  Lists: numbered insight, timeline, TOC
+    11  Quote & word run
+    12  Buttons, links, form controls
+    13  Decoration: blob cluster, section divider, footer
+    14  Deck: full-bleed slides
+    15  Utilities
+   ========================================================================== */
+
+/* ---------- 1. Reset & page ---------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+body, h1, h2, h3, h4, p, figure, blockquote, dl, dd, ol, ul { margin: 0; padding: 0; }
+ul[class], ol[class] { list-style: none; }
+img, svg { max-width: 100%; display: block; }
+
+.eg-page {
+  font-family: var(--eg-font-body);
+  font-size: var(--eg-t-body);
+  line-height: var(--eg-lh-loose);
+  color: var(--eg-ink);
+  background: var(--eg-paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.eg-shell {
+  max-width: var(--eg-page-max);
+  margin-inline: auto;
+  padding-inline: var(--eg-gutter);
+}
+.eg-shell--narrow { max-width: 780px; }
+.eg-shell--wide   { max-width: 1320px; }
+
+.eg-sheet {                     /* one report page, on screen */
+  position: relative;
+  background: var(--eg-paper);
+  padding-block: clamp(32px, 5vw, 56px) clamp(28px, 4vw, 44px);
+  overflow: clip;
+}
+
+/* ---------- 2. Typography primitives -------------------------------------- */
+
+.eg-hero, .eg-display, .eg-title, .eg-section-title, .eg-sub {
+  font-family: var(--eg-font-display);
+  color: var(--eg-ink-strong);
+  text-wrap: balance;
+}
+.eg-hero {
+  font-size: var(--eg-t-hero); font-weight: var(--eg-w-black);
+  line-height: var(--eg-lh-tight); letter-spacing: var(--eg-ls-hero);
+}
+.eg-display {
+  font-size: var(--eg-t-display); font-weight: var(--eg-w-black);
+  line-height: var(--eg-lh-tight); letter-spacing: var(--eg-ls-hero);
+}
+.eg-title {
+  font-size: var(--eg-t-title); font-weight: var(--eg-w-black);
+  line-height: var(--eg-lh-snug); letter-spacing: var(--eg-ls-title);
+}
+.eg-section-title {
+  font-size: var(--eg-t-section); font-weight: var(--eg-w-bold);
+  line-height: var(--eg-lh-snug); letter-spacing: var(--eg-ls-title);
+}
+.eg-sub {
+  font-size: var(--eg-t-sub); font-weight: var(--eg-w-bold);
+  line-height: 1.35;
+}
+.eg-lead {
+  font-size: var(--eg-t-lead); color: var(--eg-ink-soft);
+  max-width: var(--eg-prose-max);
+}
+.eg-body   { font-size: var(--eg-t-body);  max-width: var(--eg-prose-max); }
+.eg-small  { font-size: var(--eg-t-small); color: var(--eg-ink-soft); }
+.eg-micro  { font-size: var(--eg-t-micro); color: var(--eg-ink-faint); line-height: 1.45; }
+.eg-note   { font-size: var(--eg-t-micro); color: var(--eg-ink-faint); font-style: italic; }
+
+/* A label: the workhorse for chart axes, column heads and card kickers. */
+.eg-label {
+  font-family: var(--eg-font-body);
+  font-size: var(--eg-t-micro); font-weight: var(--eg-w-bold);
+  letter-spacing: var(--eg-ls-label); text-transform: uppercase;
+  color: var(--eg-ink-faint);
+}
+
+/* Emphasis inside running copy. Bold goes navy; never leave it grey. */
+.eg-body strong, .eg-lead strong, .eg-small strong { color: var(--eg-ink-strong); font-weight: var(--eg-w-bold); }
+
+/* Colour emphasis on a single word — the deck's core headline move. */
+.eg-em-gold   { color: var(--eg-gold-dark); }
+.eg-em-orange { color: var(--eg-orange); }
+.eg-em-blue   { color: var(--eg-blue-dark); }
+.eg-em-green  { color: var(--eg-green); }
+/* On navy the readable-on-cream variants are too dark, so they brighten. */
+.eg-field .eg-em-gold, .eg-slide--field .eg-em-gold { color: var(--eg-gold); }
+.eg-field .eg-em-orange, .eg-slide--field .eg-em-orange { color: var(--eg-orange-light); }
+.eg-field .eg-em-blue, .eg-slide--field .eg-em-blue { color: var(--eg-blue-light); }
+
+/* Gold underscore beneath a word, as on the report's pull quotes. */
+.eg-underscore {
+  background-image: linear-gradient(var(--eg-gold), var(--eg-gold));
+  background-size: 100% 3px; background-repeat: no-repeat;
+  background-position: 0 100%;
+  padding-bottom: 2px;
+}
+
+/* Numerals. Always tabular so columns of figures line up. */
+.eg-figure {
+  display: inline-block;
+  font-family: var(--eg-font-display); font-weight: var(--eg-w-black);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.03em;
+  line-height: 0.95; color: var(--eg-ink-strong);
+  white-space: nowrap;  /* the value and its unit never break apart */
+}
+.eg-figure--xl { font-size: var(--eg-t-figure-xl); }
+.eg-figure--l  { font-size: var(--eg-t-figure-l); }
+.eg-figure--m  { font-size: var(--eg-t-figure-m); }
+.eg-figure--s  { font-size: var(--eg-t-figure-s); }
+.eg-figure__unit {
+  font-size: 0.36em; font-weight: var(--eg-w-semi);
+  color: var(--eg-ink-faint); letter-spacing: 0;
+}
+
+/* ---------- 3. Eyebrow, ghost title, page head ---------------------------- */
+
+/* The eyebrow: a short dash, a gap, then wide-tracked caps. It opens
+   almost every page in the report and is the fastest way to make a new
+   layout read as part of the set. */
+.eg-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--eg-font-body);
+  font-size: var(--eg-t-eyebrow); font-weight: var(--eg-w-bold);
+  letter-spacing: var(--eg-ls-eyebrow); text-transform: uppercase;
+  color: var(--eg-orange);
+  margin-bottom: var(--eg-s-2);
+}
+.eg-eyebrow::before {
+  content: ""; width: 22px; height: 3px; border-radius: 2px;
+  background: currentColor; flex: none;
+}
+.eg-eyebrow--blue  { color: var(--eg-blue-dark); }
+.eg-eyebrow--gold  { color: var(--eg-gold-dark); }
+.eg-eyebrow--green { color: var(--eg-green); }
+.eg-eyebrow--navy  { color: var(--eg-navy); }
+.eg-eyebrow--bare::before { display: none; }
+
+/* The ghost title: a translucent echo of the headline, offset down and
+   right, sitting behind it. Decorative only — it is aria-hidden and it
+   repeats text that is already in the h1. */
+.eg-titleblock { position: relative; }
+.eg-titleblock .eg-title { position: relative; z-index: 1; }
+.eg-ghost {
+  position: absolute; left: 4px; top: 10px; z-index: 0;
+  font-family: var(--eg-font-display); font-weight: var(--eg-w-black);
+  font-size: var(--eg-t-title); line-height: var(--eg-lh-snug);
+  letter-spacing: var(--eg-ls-title);
+  color: var(--eg-ink-ghost);
+  white-space: nowrap; pointer-events: none; user-select: none;
+}
+
+.eg-pagehead { margin-bottom: var(--eg-s-8); }
+.eg-pagehead .eg-lead { margin-top: var(--eg-s-3); }
+
+/* A right-aligned score that rides alongside the page title. */
+.eg-pagehead--split {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--eg-s-6); flex-wrap: wrap;
+}
+.eg-pagehead__aside { text-align: right; flex: none; }
+
+/* ---------- 4. Surfaces ---------------------------------------------------- */
+
+.eg-card {
+  background: var(--eg-card);
+  border: 1px solid var(--eg-line-soft);
+  border-radius: var(--eg-r-lg);
+  box-shadow: var(--eg-shadow-card);
+  padding: var(--eg-s-6);
+}
+.eg-card--flush { padding: 0; overflow: hidden; }
+.eg-card--tight { padding: var(--eg-s-4); }
+.eg-card--roomy { padding: var(--eg-s-8); }
+
+/* Accent card: a colour rail down the left edge. The rail carries the
+   meaning, so the card itself stays white. */
+.eg-card--rail { border-left: var(--eg-rail) solid var(--eg-navy); border-radius: var(--eg-r-md); }
+.eg-card--rail-blue   { border-left-color: var(--eg-blue); }
+.eg-card--rail-gold   { border-left-color: var(--eg-gold); }
+.eg-card--rail-orange { border-left-color: var(--eg-orange); }
+.eg-card--rail-green  { border-left-color: var(--eg-green); }
+
+/* Tone card: a rule across the top plus a matching dot label. Used for
+   the report's positive / negative / interesting three-up. */
+.eg-tonecard {
+  background: var(--eg-card);
+  border: 1px solid var(--eg-line-soft);
+  border-top: 3px solid var(--eg-tone-positive);
+  border-radius: var(--eg-r-md);
+  padding: var(--eg-s-4) var(--eg-s-5) var(--eg-s-5);
+  box-shadow: var(--eg-shadow-card);
+}
+.eg-tonecard--negative    { border-top-color: var(--eg-tone-negative); }
+.eg-tonecard--interesting { border-top-color: var(--eg-tone-interesting); }
+.eg-tonecard__kicker {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: var(--eg-t-eyebrow); font-weight: var(--eg-w-bold);
+  letter-spacing: var(--eg-ls-label); text-transform: uppercase;
+  color: var(--eg-tone-positive); margin-bottom: var(--eg-s-3);
+}
+.eg-tonecard__kicker::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%;
+  background: currentColor; flex: none;
+}
+.eg-tonecard--negative    .eg-tonecard__kicker { color: var(--eg-tone-negative); }
+.eg-tonecard--interesting .eg-tonecard__kicker { color: var(--eg-gold-dark); }
+
+/* Sunk panel: recessed cream, for supporting detail that should not
+   compete with a card. */
+.eg-panel {
+  background: var(--eg-paper-sunk);
+  border-radius: var(--eg-r-md);
+  padding: var(--eg-s-5);
+}
+
+/* Field band: full-width navy. The report closes most pages with one. */
+.eg-field {
+  background: var(--eg-field);
+  color: var(--eg-on-field);
+  border-radius: var(--eg-r-lg);
+  padding: var(--eg-s-6);
+  box-shadow: var(--eg-shadow-field);
+}
+.eg-field .eg-title, .eg-field .eg-section-title,
+.eg-field .eg-sub, .eg-field .eg-figure { color: var(--eg-on-field); }
+.eg-field .eg-body, .eg-field .eg-small { color: rgba(255,255,255,0.86); }
+.eg-field .eg-label, .eg-field .eg-micro { color: var(--eg-on-field-soft); }
+.eg-field .eg-figure { color: var(--eg-gold); }
+.eg-field--bleed { border-radius: 0; }
+
+/* ---------- 5. Figures ----------------------------------------------------- */
+
+/* Stat card: one coloured number over a one-line reading of it. */
+.eg-stat {
+  background: var(--eg-card);
+  border: 1px solid var(--eg-line-soft);
+  border-radius: var(--eg-r-md);
+  padding: var(--eg-s-4) var(--eg-s-5);
+  box-shadow: var(--eg-shadow-card);
+}
+.eg-stat__value {
+  font-family: var(--eg-font-display); font-weight: var(--eg-w-black);
+  font-size: var(--eg-t-figure-l); line-height: 1;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.03em;
+  color: var(--eg-blue-dark);
+}
+.eg-stat--gold   .eg-stat__value { color: var(--eg-gold-dark); }
+.eg-stat--orange .eg-stat__value { color: var(--eg-orange); }
+.eg-stat--navy   .eg-stat__value { color: var(--eg-navy); }
+.eg-stat--green  .eg-stat__value { color: var(--eg-green); }
+.eg-stat__label {
+  margin-top: var(--eg-s-2);
+  font-size: var(--eg-t-small); color: var(--eg-ink-soft);
+}
+
+/* Stat band: the dark closing note. A figure on the left, the plain-English
+   reading of it on the right. */
+.eg-statband {
+  display: grid; grid-template-columns: minmax(112px, 150px) 1fr;
+  gap: var(--eg-s-6); align-items: center;
+  background: var(--eg-field); color: var(--eg-on-field);
+  border-radius: var(--eg-r-lg); padding: var(--eg-s-6);
+}
+.eg-statband__figure {
+  font-family: var(--eg-font-display); font-weight: var(--eg-w-black);
+  font-size: var(--eg-t-figure-l); line-height: 1; color: var(--eg-gold);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.03em;
+}
+.eg-statband__caption {
+  margin-top: var(--eg-s-2);
+  font-size: var(--eg-t-eyebrow); font-weight: var(--eg-w-bold);
+  letter-spacing: var(--eg-ls-label); text-transform: uppercase;
+  color: var(--eg-on-field-soft);
+}
+.eg-statband__body { font-size: var(--eg-t-small); color: rgba(255,255,255,0.88); }
+.eg-statband__body strong { color: #fff; }
+@media (max-width: 620px) { .eg-statband { grid-template-columns: 1fr; gap: var(--eg-s-4); } }
+
+/* Score block: the index number, its denominator, its tier, and the
+   track showing where that tier sits on the scale. */
+.eg-score { display: grid; grid-template-columns: minmax(150px, 200px) 1fr; gap: var(--eg-s-6); align-items: center; }
+.eg-score__left { text-align: center; }
+.eg-score__value { font-size: var(--eg-t-figure-xl); }
+@media (max-width: 640px) { .eg-score { grid-template-columns: 1fr; } .eg-score__left { text-align: left; } }
+
+/* ---------- 6. Tiers & chips ----------------------------------------------- */
+
+.eg-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--eg-font-body);
+  font-size: var(--eg-t-eyebrow); font-weight: var(--eg-w-bold);
+  letter-spacing: var(--eg-ls-label); text-transform: uppercase;
+  padding: 5px 12px; border-radius: var(--eg-r-pill);
+  background: var(--eg-paper-sunk); color: var(--eg-ink-soft);
+  white-space: nowrap;
+}
+.eg-chip--critical { background: var(--eg-orange-wash); color: var(--eg-orange-dark); }
+.eg-chip--at-risk  { background: var(--eg-gold-wash);   color: var(--eg-gold-dark); }
+.eg-chip--building { background: var(--eg-blue-wash);   color: var(--eg-blue-dark); }
+.eg-chip--strong   { background: var(--eg-green-wash);  color: var(--eg-green-deep); }
+.eg-chip--solid    { background: var(--eg-navy); color: #fff; }
+
+/* Tier card grid: the four stages of the index, one marked CURRENT. */
+.eg-tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--eg-s-3); }
+.eg-tier {
+  position: relative;
+  background: var(--eg-card);
+  border: 1px solid var(--eg-line-soft);
+  border-radius: var(--eg-r-md);
+  padding: var(--eg-s-4);
+  box-shadow: var(--eg-shadow-card);
+}
+.eg-tier::before {
+  content: ""; display: block; width: 26px; height: 4px; border-radius: 2px;
+  background: var(--eg-tier-critical); margin-bottom: var(--eg-s-3);
+}
+.eg-tier--at-risk::before  { background: var(--eg-tier-at-risk); }
+.eg-tier--building::before { background: var(--eg-tier-building); }
+.eg-tier--strong::before   { background: var(--eg-tier-strong); }
+.eg-tier[aria-current="true"] { border: 2px solid var(--eg-navy); box-shadow: var(--eg-shadow-lift); }
+.eg-tier__badge {
+  position: absolute; top: var(--eg-s-3); right: var(--eg-s-3);
+  font-size: 10px; font-weight: var(--eg-w-bold); letter-spacing: var(--eg-ls-label);
+  text-transform: uppercase; background: var(--eg-navy); color: #fff;
+  padding: 4px 9px; border-radius: var(--eg-r-pill);
+}
+.eg-tier__name  { font-family: var(--eg-font-display); font-size: var(--eg-t-sub); font-weight: var(--eg-w-bold); color: var(--eg-ink-strong); }
+.eg-tier__range { margin: 3px 0 var(--eg-s-3); font-size: var(--eg-t-micro); font-weight: var(--eg-w-bold); letter-spacing: var(--eg-ls-label); text-transform: uppercase; color: var(--eg-ink-faint); }
+.eg-tier__body  { font-size: var(--eg-t-small); color: var(--eg-ink-soft); line-height: 1.5; }
+
+/* ---------- 7. Bars -------------------------------------------------------- */
+
+/* Segmented bar: the three relational states in one 100% bar. Percentages
+   sit inside their own segment and drop out when the segment is too narrow. */
+.eg-bar {
+  display: flex; width: 100%; height: 26px;
+  border-radius: var(--eg-r-sm); overflow: hidden;
+  background: var(--eg-paper-sunk);
+}
+.eg-bar__seg {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: var(--eg-w-bold);
+  font-variant-numeric: tabular-nums; color: #fff;
+  min-width: 0; overflow: hidden; white-space: nowrap;
+  transition: flex-basis var(--eg-dur-slow) var(--eg-ease);
+}
+.eg-bar__seg--belonging { background: var(--eg-state-belonging); }
+.eg-bar__seg--ambiguity { background: var(--eg-state-ambiguity); }
+.eg-bar__seg--exclusion { background: var(--eg-state-exclusion); }
+.eg-bar__seg--critical  { background: var(--eg-tier-critical); }
+.eg-bar__seg--at-risk   { background: var(--eg-tier-at-risk); }
+.eg-bar__seg--building  { background: var(--eg-tier-building); }
+.eg-bar__seg--strong    { background: var(--eg-tier-strong); }
+.eg-bar--tall { height: 34px; }
+.eg-bar--slim { height: 16px; }
+.eg-bar--slim .eg-bar__seg { font-size: 0; }
+
+/* A labelled row of bars: level name on the left, bar filling the rest. */
+.eg-barrow { display: grid; grid-template-columns: 92px 1fr; gap: var(--eg-s-3); align-items: center; margin-bottom: 7px; }
+.eg-barrow__label {
+  font-size: var(--eg-t-micro); font-weight: var(--eg-w-bold);
+  letter-spacing: var(--eg-ls-label); text-transform: uppercase;
+  color: var(--eg-ink-faint); text-align: right;
+}
+@media (max-width: 520px) { .eg-barrow { grid-template-columns: 68px 1fr; gap: var(--eg-s-2); } }
+
+/* Meter: a single value on a track, for a 0-10 or 0-100 score. */
+.eg-meter { height: 8px; border-radius: var(--eg-r-pill); background: var(--eg-paper-sunk); overflow: hidden; }
+.eg-meter__fill { height: 100%; border-radius: var(--eg-r-pill); background: var(--eg-gold); transition: width var(--eg-dur-slow) var(--eg-ease); }
+.eg-meter__fill--critical { background: var(--eg-tier-critical); }
+.eg-meter__fill--at-risk  { background: var(--eg-tier-at-risk); }
+.eg-meter__fill--building { background: var(--eg-tier-building); }
+.eg-meter__fill--strong   { background: var(--eg-tier-strong); }
+
+/* Scale key: the four tier bands sitting under a meter, current one bold. */
+.eg-scalekey { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: var(--eg-s-3); }
+.eg-scalekey__step { text-align: center; padding: 0 var(--eg-s-2); border-left: 1px solid var(--eg-line); }
+.eg-scalekey__step:first-child { border-left: 0; }
+.eg-scalekey__name { font-size: 10px; font-weight: var(--eg-w-bold); letter-spacing: var(--eg-ls-label); text-transform: uppercase; color: var(--eg-ink-faint); }
+.eg-scalekey__range { font-size: var(--eg-t-micro); color: var(--eg-ink-faint); font-variant-numeric: tabular-nums; }
+.eg-scalekey__step[aria-current="true"] .eg-scalekey__name,
+.eg-scalekey__step[aria-current="true"] .eg-scalekey__range { color: var(--eg-ink-strong); }
+
+/* Rated row: label, mini bar, value. Used down the "by identifiers" columns. */
+.eg-rated { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--eg-s-3); align-items: center; margin-bottom: var(--eg-s-3); }
+.eg-rated__name { grid-column: 1 / -1; font-size: var(--eg-t-micro); color: var(--eg-ink-soft); }
+.eg-rated__value { font-family: var(--eg-font-display); font-weight: var(--eg-w-bold); font-size: var(--eg-t-small); font-variant-numeric: tabular-nums; color: var(--eg-ink-strong); }
+
+/* Barbell: two points and the gap between them, the report's comparison mark. */
+.eg-barbell { position: relative; height: 22px; }
+.eg-barbell__track { position: absolute; inset-inline: 0; top: 50%; height: 1px; background: var(--eg-line); }
+.eg-barbell__link { position: absolute; top: 50%; height: 3px; transform: translateY(-50%); border-radius: 2px; background: var(--eg-navy-500); }
+.eg-barbell__link--wide { background: var(--eg-orange); }
+.eg-barbell__dot { position: absolute; top: 50%; width: 11px; height: 11px; margin-left: -5.5px; transform: translateY(-50%); border-radius: 50%; }
+.eg-barbell__dot--a { background: var(--eg-gold); }
+.eg-barbell__dot--b { background: var(--eg-navy); }
+.eg-barbell__tag { position: absolute; bottom: 100%; transform: translateX(-50%); font-size: 10px; font-weight: var(--eg-w-bold); font-variant-numeric: tabular-nums; color: var(--eg-ink-soft); }
+
+/* ---------- 8. Legend ------------------------------------------------------ */
+
+.eg-legend { display: flex; flex-wrap: wrap; gap: var(--eg-s-2) var(--eg-s-5); align-items: center; }
+.eg-legend__item {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 10.5px; font-weight: var(--eg-w-bold);
+  letter-spacing: var(--eg-ls-label); text-transform: uppercase;
+  color: var(--eg-ink-faint);
+}
+.eg-legend__swatch { width: 10px; height: 10px; border-radius: 3px; background: var(--eg-navy); flex: none; }
+.eg-legend__swatch--belonging { background: var(--eg-state-belonging); }
+.eg-legend__swatch--ambiguity { background: var(--eg-state-ambiguity); }
+.eg-legend__swatch--exclusion { background: var(--eg-state-exclusion); }
+.eg-legend__swatch--critical  { background: var(--eg-tier-critical); }
+.eg-legend__swatch--at-risk   { background: var(--eg-tier-at-risk); }
+.eg-legend__swatch--building  { background: var(--eg-tier-building); }
+.eg-legend__swatch--strong    { background: var(--eg-tier-strong); }
+.eg-legend__swatch--round     { border-radius: 50%; }
+
+/* ---------- 9. Tables ------------------------------------------------------ */
+
+.eg-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--eg-t-small); }
+.eg-table thead th {
+  background: var(--eg-navy); color: #fff;
+  font-family: var(--eg-font-body);
+  font-size: 10.5px; font-weight: var(--eg-w-bold);
+  letter-spacing: var(--eg-ls-label); text-transform: uppercase;
+  text-align: left; padding: 11px var(--eg-s-4); white-space: nowrap;
+}
+.eg-table thead th:first-child { border-top-left-radius: var(--eg-r-md); }
+.eg-table thead th:last-child  { border-top-right-radius: var(--eg-r-md); }
+.eg-table tbody td, .eg-table tbody th {
+  background: var(--eg-card);
+  padding: 12px var(--eg-s-4);
+  border-bottom: 1px solid var(--eg-line-soft);
+  text-align: left; font-weight: var(--eg-w-regular);
+}
+.eg-table tbody th { font-weight: var(--eg-w-semi); color: var(--eg-ink-strong); }
+.eg-table td.eg-num, .eg-table th.eg-num {
+  text-align: center; font-variant-numeric: tabular-nums; font-weight: var(--eg-w-semi);
+}
+.eg-table tbody tr:last-child td, .eg-table tbody tr:last-child th { border-bottom: 0; }
+.eg-table tbody tr.is-highlighted td, .eg-table tbody tr.is-highlighted th { background: var(--eg-gold-wash); }
+/* Wide tables scroll inside their own box rather than the page. */
+.eg-tablewrap { overflow-x: auto; border-radius: var(--eg-r-md); box-shadow: var(--eg-shadow-card); }
+
+/* ---------- 10. Lists ------------------------------------------------------ */
+
+/* Numbered insight: an oversized numeral in a tinted panel. The accent
+   rotates so a stack of six reads as a set rather than a list. */
+.eg-insight {
+  display: grid; grid-template-columns: 58px 1fr; gap: var(--eg-s-4);
+  align-items: start;
+  background: var(--eg-blue-wash);
+  border-left: var(--eg-rail) solid var(--eg-blue);
+  border-radius: var(--eg-r-md);
+  padding: var(--eg-s-4) var(--eg-s-5);
+  margin-bottom: var(--eg-s-3);
+}
+.eg-insight__n {
+  font-family: var(--eg-font-display); font-weight: var(--eg-w-black);
+  font-size: var(--eg-t-figure-m); line-height: 1; color: var(--eg-blue);
+  text-align: center;
+}
+.eg-insight__title { font-family: var(--eg-font-display); font-size: var(--eg-t-body); font-weight: var(--eg-w-bold); color: var(--eg-ink-strong); margin-bottom: 5px; }
+.eg-insight__body  { font-size: var(--eg-t-small); color: var(--eg-ink-soft); }
+.eg-insight--gold   { background: var(--eg-gold-wash);   border-left-color: var(--eg-gold); }
+.eg-insight--gold   .eg-insight__n { color: var(--eg-gold); }
+.eg-insight--orange { background: var(--eg-orange-wash); border-left-color: var(--eg-orange); }
+.eg-insight--orange .eg-insight__n { color: var(--eg-orange); }
+.eg-insight--green  { background: var(--eg-green-wash);  border-left-color: var(--eg-green-mid); }
+.eg-insight--green  .eg-insight__n { color: var(--eg-green); }
+.eg-insight--navy   { background: var(--eg-navy-wash);   border-left-color: var(--eg-navy); }
+.eg-insight--navy   .eg-insight__n { color: var(--eg-navy); }
+@media (max-width: 520px) { .eg-insight { grid-template-columns: 38px 1fr; gap: var(--eg-s-3); } }
+
+/* Timeline: numbered steps joined by a rule, each step splitting into
+   "what you own" and "where help comes in". */
+.eg-steps { position: relative; padding-left: 44px; }
+.eg-steps::before {
+  content: ""; position: absolute; left: 15px; top: 14px; bottom: 14px;
+  width: 2px; background: var(--eg-line);
+}
+.eg-step { position: relative; margin-bottom: var(--eg-s-4); }
+.eg-step__n {
+  position: absolute; left: -44px; top: 0;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--eg-font-display); font-weight: var(--eg-w-bold); font-size: var(--eg-t-small);
+  background: var(--eg-navy); color: #fff;
+  box-shadow: 0 0 0 4px var(--eg-paper);
+}
+.eg-step__n--gold   { background: var(--eg-gold); color: var(--eg-navy); }
+.eg-step__n--orange { background: var(--eg-orange); }
+.eg-step__n--blue   { background: var(--eg-blue); }
+.eg-step__n--green  { background: var(--eg-green); }
+.eg-step__card {
+  background: var(--eg-card); border: 1px solid var(--eg-line-soft);
+  border-top: 3px solid var(--eg-navy);
+  border-radius: var(--eg-r-md); box-shadow: var(--eg-shadow-card);
+  padding: var(--eg-s-4) var(--eg-s-5);
+}
+.eg-step__title { font-family: var(--eg-font-display); font-size: var(--eg-t-body); font-weight: var(--eg-w-bold); color: var(--eg-ink-strong); }
+.eg-step__target { font-size: var(--eg-t-micro); font-style: italic; color: var(--eg-ink-faint); margin-bottom: var(--eg-s-3); }
+.eg-step__split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--eg-s-5); }
+.eg-step__split > * + * { padding-left: var(--eg-s-5); border-left: 1px solid var(--eg-line-soft); }
+@media (max-width: 640px) {
+  .eg-step__split { grid-template-columns: 1fr; gap: var(--eg-s-3); }
+  .eg-step__split > * + * { padding-left: 0; border-left: 0; padding-top: var(--eg-s-3); border-top: 1px solid var(--eg-line-soft); }
+}
+
+/* Contents rows with dotted leaders. */
+.eg-toc { border-top: 1px solid var(--eg-navy); padding-top: var(--eg-s-3); }
+.eg-toc__row { display: flex; align-items: baseline; gap: var(--eg-s-2); padding: 6px 0; font-size: var(--eg-t-small); color: var(--eg-ink); }
+.eg-toc__lead { flex: 1; border-bottom: 1px dotted var(--eg-line); transform: translateY(-3px); }
+.eg-toc__page { font-size: var(--eg-t-micro); font-weight: var(--eg-w-bold); font-variant-numeric: tabular-nums; color: var(--eg-ink-faint); }
+
+/* ---------- 11. Quote & word run ------------------------------------------- */
+
+.eg-quote {
+  border-left: var(--eg-rail) solid var(--eg-orange);
+  padding-left: var(--eg-s-5);
+  font-family: var(--eg-font-display);
+  font-size: clamp(19px, 2.6vw, 27px); font-weight: var(--eg-w-black);
+  font-style: italic; line-height: 1.28; letter-spacing: -0.01em;
+  color: var(--eg-ink-strong); text-wrap: balance;
+}
+.eg-quote--blue { border-left-color: var(--eg-blue); }
+.eg-quote--gold { border-left-color: var(--eg-gold); }
+.eg-quote__cite { display: block; margin-top: var(--eg-s-3); font-family: var(--eg-font-body); font-size: var(--eg-t-small); font-style: normal; font-weight: var(--eg-w-semi); color: var(--eg-ink-faint); }
+
+/* Word run: a line of single words, each a different brand colour. Used
+   once per page at most — it is loud on purpose. */
+.eg-wordrun { font-family: var(--eg-font-display); font-size: var(--eg-t-body); font-weight: var(--eg-w-bold); font-style: italic; }
+.eg-wordrun > * { margin-right: 4px; }
+
+/* Acronym lockup, as in C.A.R.E. — first letter coloured, rest navy. */
+.eg-acronym { font-family: var(--eg-font-display); font-weight: var(--eg-w-black); font-size: var(--eg-t-eyebrow); letter-spacing: var(--eg-ls-label); color: var(--eg-ink-faint); }
+
+/* ---------- 12. Buttons, links, controls ------------------------------------ */
+
+.eg-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  font-family: var(--eg-font-body); font-size: var(--eg-t-body); font-weight: var(--eg-w-semi);
+  line-height: 1; text-decoration: none; cursor: pointer;
+  padding: 14px 30px; border-radius: var(--eg-r-pill);
+  border: 1.5px solid transparent;
+  background: var(--eg-navy); color: #fff;
+  transition: background var(--eg-dur-fast) var(--eg-ease), transform var(--eg-dur-fast) var(--eg-ease);
+}
+.eg-btn:hover  { background: var(--eg-navy-600); }
+.eg-btn:active { transform: scale(0.985); }
+.eg-btn[disabled], .eg-btn[aria-disabled="true"] { opacity: 0.35; cursor: not-allowed; transform: none; }
+.eg-btn--gold  { background: var(--eg-gold); color: var(--eg-navy); }
+.eg-btn--gold:hover { background: var(--eg-gold-light); }
+.eg-btn--ghost { background: transparent; color: var(--eg-ink-soft); border-color: var(--eg-line); }
+.eg-btn--ghost:hover { background: var(--eg-card); color: var(--eg-ink-strong); }
+.eg-btn--on-field { background: #fff; color: var(--eg-navy); }
+.eg-btn--on-field:hover { background: var(--eg-paper); }
+.eg-btn--sm { padding: 9px 18px; font-size: var(--eg-t-small); }
+
+.eg-link { color: var(--eg-blue-dark); text-underline-offset: 2px; text-decoration-thickness: 1.5px; }
+.eg-link:hover { color: var(--eg-navy); }
+
+/* One focus treatment everywhere: gold, offset, never removed. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--eg-ring) solid var(--eg-gold);
+  outline-offset: 2px;
+  border-radius: var(--eg-r-sm);
+}
+
+.eg-field-group { margin-bottom: var(--eg-s-5); }
+.eg-field-group > label { display: block; font-size: var(--eg-t-small); font-weight: var(--eg-w-semi); color: var(--eg-ink-strong); margin-bottom: 7px; }
+.eg-input, .eg-select, .eg-textarea {
+  width: 100%; font-family: inherit; font-size: var(--eg-t-body); color: var(--eg-ink);
+  background: var(--eg-card);
+  border: 1.5px solid var(--eg-line); border-radius: var(--eg-r-sm);
+  padding: 12px 14px;
+  transition: border-color var(--eg-dur-fast) var(--eg-ease);
+}
+.eg-input:hover, .eg-select:hover, .eg-textarea:hover { border-color: var(--eg-ink-faint); }
+
+/* Likert: five equal choices, selected one goes navy. */
+.eg-likert { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.eg-likert button {
+  font-family: inherit; font-size: var(--eg-t-micro); font-weight: var(--eg-w-semi);
+  line-height: 1.25; color: var(--eg-ink-soft);
+  background: var(--eg-paper); border: 1.5px solid var(--eg-line);
+  border-radius: var(--eg-r-sm); padding: 10px 4px; min-height: 54px; cursor: pointer;
+  transition: all var(--eg-dur-fast) var(--eg-ease);
+}
+.eg-likert button:hover { border-color: var(--eg-blue); color: var(--eg-blue-dark); }
+.eg-likert button[aria-pressed="true"] { background: var(--eg-navy); border-color: var(--eg-navy); color: #fff; }
+@media (max-width: 460px) { .eg-likert button { font-size: 10.5px; padding: 8px 2px; } }
+
+.eg-progress { height: 5px; background: var(--eg-line); border-radius: var(--eg-r-pill); overflow: hidden; }
+.eg-progress__fill { height: 100%; width: 0; background: var(--eg-gold); border-radius: var(--eg-r-pill); transition: width var(--eg-dur-slow) var(--eg-ease); }
+
+/* ---------- 13. Decoration -------------------------------------------------- */
+
+/* Blob cluster: three or four rounded rectangles in the top-right corner,
+   the logo mark broken apart. Purely decorative — always aria-hidden. */
+.eg-blobs { position: absolute; top: -18px; right: -10px; width: 190px; height: 96px; pointer-events: none; z-index: 0; }
+.eg-blobs > i { position: absolute; display: block; border-radius: var(--eg-r-md); }
+.eg-blobs > i:nth-child(1) { width: 62px; height: 26px; border-radius: var(--eg-r-pill); background: var(--eg-gold);   top: 0;    right: 96px; }
+.eg-blobs > i:nth-child(2) { width: 34px; height: 34px; background: var(--eg-navy);   top: 14px; right: 56px; }
+.eg-blobs > i:nth-child(3) { width: 40px; height: 40px; background: var(--eg-blue);   top: 6px;  right: 4px; }
+.eg-blobs > i:nth-child(4) { width: 30px; height: 30px; border-radius: var(--eg-r-pill); background: var(--eg-orange); top: 56px; right: 22px; }
+.eg-sheet > .eg-shell { position: relative; z-index: 1; }
+
+/* Section divider: a colour rail with the section numeral, contents at right. */
+.eg-divider { display: grid; grid-template-columns: minmax(180px, 27%) 1fr; min-height: 460px; border-radius: var(--eg-r-lg); overflow: hidden; }
+.eg-divider__rail { position: relative; background: var(--eg-section-1); color: #fff; padding: var(--eg-s-6); display: flex; flex-direction: column; justify-content: center; }
+.eg-divider--2 .eg-divider__rail { background: var(--eg-section-2); }
+.eg-divider--3 .eg-divider__rail { background: var(--eg-section-3); }
+.eg-divider--4 .eg-divider__rail { background: var(--eg-section-4); }
+.eg-divider--5 .eg-divider__rail { background: var(--eg-section-5); }
+.eg-divider__part { position: absolute; top: var(--eg-s-6); left: var(--eg-s-6); font-size: var(--eg-t-eyebrow); font-weight: var(--eg-w-bold); letter-spacing: var(--eg-ls-eyebrow); text-transform: uppercase; color: rgba(255,255,255,0.62); }
+.eg-divider__n { font-family: var(--eg-font-display); font-weight: var(--eg-w-black); font-size: clamp(56px, 8vw, 84px); line-height: 1; letter-spacing: -0.04em; }
+.eg-divider__pages { margin-top: 6px; font-family: var(--eg-font-display); font-size: var(--eg-t-body); font-weight: var(--eg-w-bold); color: rgba(255,255,255,0.72); }
+.eg-divider__body { background: var(--eg-paper); padding: clamp(28px, 5vw, 56px); display: flex; flex-direction: column; justify-content: center; }
+@media (max-width: 640px) { .eg-divider { grid-template-columns: 1fr; min-height: 0; } }
+
+/* Page footer: mark, confidentiality line, folio. */
+.eg-footer {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--eg-s-4);
+  border-top: 1px solid var(--eg-line);
+  margin-top: var(--eg-s-10); padding-top: var(--eg-s-3);
+  font-size: 9.5px; font-weight: var(--eg-w-semi);
+  letter-spacing: var(--eg-ls-label); text-transform: uppercase; color: var(--eg-ink-faint);
+}
+.eg-footer__mark { width: 20px; flex: none; }
+.eg-footer__folio { font-variant-numeric: tabular-nums; }
+
+/* Confidentiality badge. */
+.eg-badge-lock {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--eg-navy); color: #fff;
+  font-size: var(--eg-t-micro); font-weight: var(--eg-w-semi);
+  padding: 5px 11px; border-radius: var(--eg-r-sm);
+}
+
+/* ---------- 14. Deck slides -------------------------------------------------- */
+
+.eg-slide {
+  position: relative; aspect-ratio: 16 / 9; width: 100%;
+  background: var(--eg-paper); color: var(--eg-ink);
+  border-radius: var(--eg-r-lg); overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(24px, 5.5%, 72px);
+  container-type: inline-size;
+}
+.eg-slide--field { background: var(--eg-field); color: var(--eg-on-field); }
+.eg-slide--field .eg-hero, .eg-slide--field .eg-display { color: var(--eg-on-field); }
+.eg-slide--field .eg-eyebrow { color: var(--eg-gold); }
+.eg-slide--center { align-items: center; text-align: center; }
+/* A slide is normally full-bleed and needs no edge. Frame it only when you are
+   previewing a deck inside a page that is already cream. */
+.eg-slide--framed { border: 1px solid var(--eg-line); box-shadow: var(--eg-shadow-card); }
+.eg-slide--framed.eg-slide--field { border-color: transparent; }
+/* Slide type scales with the slide, not the viewport, so a slide looks
+   right whether it is full-screen or a thumbnail in a grid. */
+.eg-slide .eg-hero    { font-size: 8.4cqi; }
+.eg-slide .eg-display { font-size: 6.2cqi; }
+.eg-slide .eg-lead    { font-size: 2.2cqi; }
+.eg-slide .eg-eyebrow { font-size: 1.35cqi; }
+
+/* Statement card, as on the C.A.R.E. slides. */
+.eg-statement {
+  background: var(--eg-card); border-left: 6px solid var(--eg-blue);
+  border-radius: var(--eg-r-lg); box-shadow: var(--eg-shadow-lift);
+  padding: clamp(20px, 4%, 48px);
+}
+.eg-statement--gold   { border-left-color: var(--eg-gold); }
+.eg-statement--orange { border-left-color: var(--eg-orange); }
+.eg-statement--navy   { border-left-color: var(--eg-navy); }
+.eg-statement__kicker { font-family: var(--eg-font-display); font-weight: var(--eg-w-bold); font-size: 2.6cqi; color: var(--eg-ink-strong); margin-bottom: 0.6cqi; }
+.eg-statement__line   { font-family: var(--eg-font-display); font-weight: var(--eg-w-black); font-size: 4.6cqi; line-height: 1.15; color: var(--eg-ink-strong); }
+
+/* The four-colour rule that tops the contact slide. */
+.eg-rule-brand { display: flex; height: 8px; border-radius: 2px; overflow: hidden; width: 220px; }
+.eg-rule-brand > i { flex: 1; }
+.eg-rule-brand > i:nth-child(1) { background: var(--eg-orange); flex: 1.1; }
+.eg-rule-brand > i:nth-child(2) { background: var(--eg-gold); flex: 1.4; }
+.eg-rule-brand > i:nth-child(3) { background: var(--eg-blue-dark); flex: 1.2; }
+.eg-rule-brand > i:nth-child(4) { background: #ECEFF1; flex: 1; }
+
+/* ---------- 15. Utilities ---------------------------------------------------- */
+
+.eg-grid { display: grid; gap: var(--eg-s-4); }
+.eg-grid--2 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.eg-grid--3 { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.eg-grid--4 { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.eg-row { display: flex; align-items: center; gap: var(--eg-s-3); flex-wrap: wrap; }
+.eg-row--between { justify-content: space-between; }
+.eg-stack > * + * { margin-top: var(--eg-s-4); }
+.eg-stack--tight > * + * { margin-top: var(--eg-s-2); }
+.eg-stack--loose > * + * { margin-top: var(--eg-s-8); }
+.eg-rule { border: 0; border-top: 1px solid var(--eg-line); margin: var(--eg-s-6) 0; }
+.eg-rule--strong { border-top-color: var(--eg-navy); }
+.eg-center { text-align: center; }
+.eg-right  { text-align: right; }
+.eg-nowrap { white-space: nowrap; }
+.eg-muted  { color: var(--eg-ink-soft); }
+.eg-on-field { color: var(--eg-on-field); }
+.eg-faint  { color: var(--eg-ink-faint); }
+.eg-tnum   { font-variant-numeric: tabular-nums; }
+.eg-visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+@media print {
+  .eg-page { background: #fff; }
+  .eg-blobs, .eg-btn { display: none; }
+  .eg-sheet { break-after: page; }
+  .eg-card, .eg-stat, .eg-tier, .eg-step__card { box-shadow: none; }
+}

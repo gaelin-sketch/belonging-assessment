@@ -1,0 +1,203 @@
+/* ==========================================================================
+   The Elmore Group — Design Tokens
+   Extracted from: "Be The Difference" keynote deck + the Belonging Assessment
+   Leadership Report. Every value below was sampled from those two documents.
+
+   Load this first, then elmore.css. Everything is namespaced --eg-*.
+   ========================================================================== */
+
+:root {
+  /* ------------------------------------------------------------------
+     1. BRAND CORE
+     Five colours carry the whole identity. They are the logo mark's own
+     colours, so nothing on a page ever needs to invent a hue.
+     ------------------------------------------------------------------ */
+  --eg-navy:        #122A42;  /* primary. Cover fields, headlines, dark bands */
+  --eg-gold:        #F2A516;  /* the signature. Emphasis, ambiguity, at-risk  */
+  --eg-orange:      #EB4824;  /* the alarm. Exclusion, critical, "what is"    */
+  --eg-blue:        #4F9CD6;  /* the aspiration. Belonging, "what could be"   */
+  --eg-green:       #15694A;  /* growth. Section marks, positive deltas       */
+
+  /* Tints and shades. Each core colour gets a darker text-safe variant,
+     a light surface wash, and a mid fill for bars and blocks. */
+  --eg-navy-900:    #0C1E30;
+  --eg-navy-800:    #112941;
+  --eg-navy-700:    #16314A;
+  --eg-navy-600:    #1C3A57;
+  --eg-navy-500:    #2A4A69;
+  --eg-navy-wash:   #E6ECF3;
+  --eg-navy-fill:   #CFDAE8;
+
+  --eg-gold-dark:   #9A6608;  /* readable gold for text on cream            */
+  --eg-gold-deep:   #C9820A;
+  --eg-gold-light:  #FFB92E;
+  --eg-gold-wash:   #FDF1DC;
+  --eg-gold-fill:   #FAE4B4;
+
+  --eg-orange-dark: #A82E13;  /* readable orange for text on cream          */
+  --eg-orange-deep: #C2371A;
+  --eg-orange-light:#FF9B7A;
+  --eg-orange-wash: #FDE9E3;
+  --eg-orange-fill: #F9D2C6;
+
+  --eg-blue-deep:   #2C6491;  /* "Strong" tier, deep chart blue             */
+  --eg-blue-dark:   #1F5FAD;  /* logo blue, links                          */
+  --eg-blue-light:  #6FA5D2;
+  --eg-blue-wash:   #E7EFF9;
+  --eg-blue-fill:   #C9DEF2;
+
+  --eg-green-deep:  #0F4E37;
+  --eg-green-mid:   #34B27E;
+  --eg-green-wash:  #E3F5EC;
+  --eg-green-fill:  #C7EBDA;
+
+  /* ------------------------------------------------------------------
+     2. SURFACES
+     The system is cream-first, never white-first. White is reserved for
+     cards so that a card always reads as lifted off the page.
+     ------------------------------------------------------------------ */
+  --eg-paper:       #FBFAF6;  /* page background. The single most-used value */
+  --eg-paper-sunk:  #F1ECE1;  /* recessed panels, table zebra                */
+  --eg-paper-edge:  #F6F5F1;
+  --eg-card:        #FFFFFF;
+  --eg-field:       #122A42;  /* full-bleed dark band, cover, closing slide   */
+
+  /* ------------------------------------------------------------------
+     3. INK
+     ------------------------------------------------------------------ */
+  --eg-ink:         #16242F;  /* body copy on cream                          */
+  --eg-ink-strong:  #122A42;  /* headings                                    */
+  --eg-ink-soft:    #5E6E79;  /* secondary copy, deck subheads               */
+  --eg-ink-faint:   #8A97A0;  /* captions, footnotes, axis labels            */
+  --eg-ink-ghost:   rgba(18, 42, 66, 0.10); /* the echo behind a page title  */
+  --eg-on-field:    #FFFFFF;  /* text on navy                                */
+  --eg-on-field-soft: #8FA3B8;
+
+  --eg-line:        #E4DED1;  /* hairline on cream                           */
+  --eg-line-soft:   #EFEBE2;
+  --eg-line-field:  rgba(255, 255, 255, 0.14); /* hairline on navy           */
+
+  /* ------------------------------------------------------------------
+     4. SEMANTIC SCALES
+     Two ordered scales do nearly all the data work in the report. Never
+     recolour them per chart — that is what makes 40 pages read as one.
+     ------------------------------------------------------------------ */
+
+  /* 4a. The three relational states. Order is fixed: belonging first. */
+  --eg-state-belonging: var(--eg-blue);
+  --eg-state-ambiguity: var(--eg-gold);
+  --eg-state-exclusion: var(--eg-orange);
+
+  /* 4b. The four index tiers, 0-100 (or 0-10 on an indicator). */
+  --eg-tier-critical: var(--eg-orange);   /* 0-34   / 0.0-3.4 */
+  --eg-tier-at-risk:  var(--eg-gold);     /* 35-49  / 3.5-5.4 */
+  --eg-tier-building: var(--eg-blue);     /* 50-64  / 5.5-7.4 */
+  --eg-tier-strong:   var(--eg-blue-deep);/* 65+    / 7.5-10  */
+
+  /* 4c. Finding tone, for the three-up "what stands out" cards. */
+  --eg-tone-positive:    var(--eg-blue-dark);
+  --eg-tone-negative:    var(--eg-orange);
+  --eg-tone-interesting: var(--eg-gold);
+
+  /* 4d. Section accents. Divider pages rotate through these in order. */
+  --eg-section-1: var(--eg-navy);
+  --eg-section-2: var(--eg-green);
+  --eg-section-3: var(--eg-gold-dark);
+  --eg-section-4: var(--eg-blue-deep);
+  --eg-section-5: var(--eg-orange-dark);
+
+  /* ------------------------------------------------------------------
+     5. TYPE
+     Display: a tight geometric grotesque (single-storey g, double-storey a).
+     The source files use a licensed Gilroy-class face; Figtree is the
+     closest freely-loadable stand-in and is what this system ships.
+     Body: IBM Plex Sans, matching the report's running text.
+     ------------------------------------------------------------------ */
+  --eg-font-display: "Figtree", "Archivo", system-ui, -apple-system, sans-serif;
+  --eg-font-body:    "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --eg-font-mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Weights actually used. Display never goes below 600. */
+  --eg-w-regular: 400;
+  --eg-w-medium:  500;
+  --eg-w-semi:    600;
+  --eg-w-bold:    700;
+  --eg-w-black:   800;
+
+  /* Fluid scale. Steps are named for their job, not their size, so a
+     component keeps its meaning when the scale is retuned. */
+  --eg-t-hero:    clamp(44px, 7.5vw, 76px);  /* cover / statement slide     */
+  --eg-t-display: clamp(34px, 5.2vw, 52px);  /* deck headline               */
+  --eg-t-title:   clamp(27px, 3.4vw, 36px);  /* report page title           */
+  --eg-t-section: 24px;                      /* card / section heading      */
+  --eg-t-sub:     19px;                      /* sub-head, quote             */
+  --eg-t-lead:    17px;                      /* intro paragraph             */
+  --eg-t-body:    15.5px;
+  --eg-t-small:   13.5px;
+  --eg-t-micro:   12px;                      /* labels, legends, footnotes  */
+  --eg-t-eyebrow: 11.5px;
+
+  /* Numerals get their own scale — the report leans on them hard. */
+  --eg-t-figure-xl: clamp(56px, 9vw, 88px);  /* the one number on the page  */
+  --eg-t-figure-l:  44px;
+  --eg-t-figure-m:  28px;
+  --eg-t-figure-s:  20px;
+
+  --eg-lh-tight:  1.06;   /* hero and display                              */
+  --eg-lh-snug:   1.18;   /* titles                                        */
+  --eg-lh-normal: 1.55;   /* body                                          */
+  --eg-lh-loose:  1.65;   /* long-form body on cream                       */
+
+  --eg-ls-hero:    -0.02em;
+  --eg-ls-title:   -0.015em;
+  --eg-ls-normal:  0;
+  --eg-ls-eyebrow: 0.16em;  /* the eyebrow's wide track is a signature     */
+  --eg-ls-label:   0.10em;
+
+  /* ------------------------------------------------------------------
+     6. SPACE — 4px base
+     ------------------------------------------------------------------ */
+  --eg-s-1:  4px;   --eg-s-2:  8px;   --eg-s-3: 12px;  --eg-s-4: 16px;
+  --eg-s-5: 20px;   --eg-s-6: 24px;   --eg-s-8: 32px;  --eg-s-10: 40px;
+  --eg-s-12: 48px;  --eg-s-16: 64px;  --eg-s-20: 80px;
+
+  --eg-page-max:   1100px;  /* report / app page                            */
+  --eg-prose-max:  68ch;    /* never run body copy wider than this          */
+  --eg-gutter:     clamp(20px, 4vw, 44px);
+
+  /* ------------------------------------------------------------------
+     7. SHAPE & DEPTH
+     Rounded rectangles are the brand's only geometry — they come straight
+     out of the logo mark. Nothing in this system has a square corner.
+     ------------------------------------------------------------------ */
+  --eg-r-sm:   8px;
+  --eg-r-md:  12px;
+  --eg-r-lg:  16px;
+  --eg-r-xl:  22px;
+  --eg-r-pill: 999px;
+
+  --eg-rail: 5px;   /* the left accent rail on quotes and accent cards      */
+
+  --eg-shadow-card:
+    0 1px 2px rgba(18, 42, 66, 0.04),
+    0 10px 28px -16px rgba(18, 42, 66, 0.22);
+  --eg-shadow-lift:
+    0 2px 4px rgba(18, 42, 66, 0.05),
+    0 22px 48px -22px rgba(18, 42, 66, 0.30);
+  --eg-shadow-field:
+    0 20px 44px -24px rgba(0, 0, 0, 0.55);
+
+  --eg-ring: 3px;   /* focus ring width — always gold, always visible       */
+
+  /* ------------------------------------------------------------------
+     8. MOTION — restrained. Nothing in the brand bounces.
+     ------------------------------------------------------------------ */
+  --eg-ease:      cubic-bezier(0.2, 0, 0.2, 1);
+  --eg-dur-fast:  120ms;
+  --eg-dur-base:  200ms;
+  --eg-dur-slow:  360ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --eg-dur-fast: 1ms; --eg-dur-base: 1ms; --eg-dur-slow: 1ms; }
+}
