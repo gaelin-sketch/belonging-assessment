@@ -16,9 +16,15 @@
     --on-navy: #FFFFFF;   --on-navy-mute: #8FA3B8;
     --paper: #FBFAF6;     --paper-2: #F1ECE1;   --card: #FFFFFF;
     --ink: #16242F;       --ink-soft: #5E6E79;  --ink-faint: #8A97A0;   --line: #E4DED1;
+    /* The logo's blue. The mark below hard-codes it, because an inline SVG
+       cannot resolve a custom property; nothing else on the page uses it now
+       that Belonging owns the rest of the blue family. */
     --blue: #1F5FAD;    --blue-d: #17488A;    --blue-soft: #E7EFF9;
-    /* Belonging */
-    --belong: #34B27E;  --belong-d: #1E8A5E;  --belong-soft: #E3F5EC;  --belong-fill: #C7EBDA;
+    /* Belonging. Blue is the branded colour: the design system carries no
+       green, so belonging takes the blue family rather than a hue of its own.
+       --belong is a fill; --belong-d is the text-safe variant and clears 4.5:1
+       on cream, on white, and on both of the washes below. */
+    --belong: #4F9CD6;  --belong-d: #2C6491;  --belong-soft: #E7EFF9;  --belong-fill: #C9DEF2;
     /* Ambiguity */
     --ambig: #F2A516;   --ambig-d: #C9820A;   --ambig-dd: #A56A08;
     --ambig-l: #FFB92E; --ambig-soft: #FDF1DC; --ambig-fill: #FAE4B4;
@@ -49,7 +55,7 @@
   /* ---------- shared ---------- */
   .eyebrow {
     font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--belong); margin-bottom: 10px;
+    text-transform: uppercase; color: var(--belong-d); margin-bottom: 10px;
   }
   .btn {
     font-family: inherit; font-size: 16px; font-weight: 600;
@@ -73,7 +79,7 @@
 
   /* ---------- intro ---------- */
   .intro h1 { font-size: clamp(34px, 6vw, 46px); font-weight: 600; line-height: 1.12; margin-bottom: 16px; }
-  .intro h1 em { font-style: italic; color: var(--belong); }
+  .intro h1 em { font-style: italic; color: var(--belong-d); }
   .intro p { font-size: 17px; color: var(--ink-soft); max-width: 54ch; margin-bottom: 14px; }
   .intro .btn { margin-top: 18px; }
   .meta-line { font-size: 14px; color: var(--ink-soft); margin-top: 14px; }
@@ -91,10 +97,12 @@
     display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .12em;
     text-transform: uppercase; padding: 6px 12px; border-radius: 999px; margin-bottom: 8px;
   }
-  /* The three levels take the logo's own colours, which also frees green to
-     mean Belonging and nothing else. */
+  /* The three levels take the logo's own colours. Leadership sits on navy
+     rather than blue so the whole blue family is free to mean Belonging and
+     nothing else — otherwise a Leadership tag and a Belong chip would be the
+     same wash. */
   .level-imm  { background: var(--exclu-soft); color: var(--exclu-d); }
-  .level-lead { background: var(--blue-soft);  color: var(--blue-d); }
+  .level-lead { background: var(--navy-tint);  color: var(--navy-soft); }
   .level-ext  { background: var(--ambig-soft); color: var(--ambig-text); }
   .level-head { font-size: 26px; font-weight: 600; margin-bottom: 4px; }
   .level-sub { color: var(--ink-soft); font-size: 15px; margin-bottom: 26px; }
@@ -118,7 +126,7 @@
     flex: 0 0 92px; text-align: center; font-size: 11px; font-weight: 700;
     letter-spacing: .08em; text-transform: uppercase; padding: 5px 0; border-radius: 999px;
   }
-  .likert button:hover { border-color: var(--belong); color: var(--belong); }
+  .likert button:hover { border-color: var(--belong); color: var(--belong-d); }
   .likert button.sel { background: var(--navy); border-color: var(--navy); color: #fff; }
   .likert-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-soft); margin-top: 6px; }
   .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 26px; }
@@ -207,8 +215,10 @@
     font-family: "Archivo", sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .16em;
     text-transform: uppercase; color: var(--ink-faint); margin: 18px 0 8px;
   }
-  /* Each act carries the colour of the condition that receives it. */
-  .pair-say   { --pair: var(--blue); }
+  /* Each act carries the colour of the condition that receives it. Say moves
+     to navy now that blue belongs to Belonging; it also matches the navy the
+     psychological-safety card already carried. */
+  .pair-say   { --pair: var(--navy); }
   .pair-show  { --pair: var(--belong); }
   .pair-share { --pair: var(--ambig); }
   .ind-card::before { background: var(--pair, var(--belong)); }
@@ -491,7 +501,7 @@
       <div class="ind-grid" id="actGrid"></div>
       <div class="axis-label">Their reception</div>
       <div class="ind-grid" id="recGrid"></div>
-      <div class="scale-note">Green from 7.5. Amber from 5.5. Burnt orange below the crosshairs.</div>
+      <div class="scale-note">Blue from 7.5. Amber from 5.5. Burnt orange below the crosshairs.</div>
     </div>
 
     <div class="section-gap">
@@ -709,7 +719,7 @@ const C = {
   navy: "#122A42", navySoft: "#1C3A57", navyTint: "#E6ECF3", navyFill: "#CFDAE8",
   ink: "#16242F", inkSoft: "#5E6E79", inkFaint: "#8A97A0",
   mutedBase: "#F1ECE1", mutedFill: "#E7E1D3",
-  belong: "#34B27E", belongD: "#1E8A5E", belongSoft: "#E3F5EC", belongFill: "#C7EBDA",
+  belong: "#4F9CD6", belongD: "#2C6491", belongSoft: "#E7EFF9", belongFill: "#C9DEF2",
   ambig:  "#F2A516", ambigD:  "#C9820A", ambigDD: "#A56A08", ambigSoft: "#FDF1DC", ambigFill: "#FAE4B4",
   exclu:  "#EB4824", excluD:  "#C2371A", excluSoft: "#FDE9E3", excluFill: "#F9D2C6"
 };
@@ -942,10 +952,11 @@ function tierFor(score) {
   return TIERS.find(t => score >= t.min).label;
 }
 
-/* Value colour, so a number reads before it is read. Green at Strong, amber
-   through Building, burnt orange once a score drops below the crosshairs. */
+/* Value colour, so a number reads before it is read. Blue at Strong, amber
+   through Building, burnt orange once a score drops below the crosshairs.
+   Strong uses the dark belonging blue because this paints 38px numerals. */
 const TIER_COLOR = {
-  Strong:     "var(--belong)",
+  Strong:     "var(--belong-d)",
   Building:   "var(--ambig)",
   Emerging:   "var(--exclu)",
   Developing: "var(--exclu-d)"
@@ -1370,7 +1381,7 @@ function drawMatrix(x, y, quadKey, deep) {
 
   const q = (key) => key === quadKey;
   const lblColor = (key, base) => q(key) ? base : C.inkFaint;
-  const dotColor = { belong: C.belong, fitin: C.ambig, survival: C.exclu, guarded: C.navy }[quadKey];
+  const dotColor = { belong: C.belongD, fitin: C.ambig, survival: C.exclu, guarded: C.navy }[quadKey];
 
   const hg = 3, top = pad, bottom = H - pad, right = W - pad;
   const mx = xPix(MID), my = yPix(MID);
@@ -1405,8 +1416,8 @@ function drawMatrix(x, y, quadKey, deep) {
     <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="21" font-weight="600" fill="${lblColor('survival', C.exclu)}">Survival</text>
     <text x="${pad + (mx - pad) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('survival', C.exclu)}">EXCLUSION</text>
     <text x="${pad + (xPix(dLo) - pad) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="16" font-weight="600" fill="${lblColor('survival', C.excluD)}">Casualty</text>
-    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="21" font-weight="600" fill="${lblColor('belong', C.belong)}">Building</text>
-    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('belong', C.belong)}">AMBIGUITY</text>
+    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="21" font-weight="600" fill="${lblColor('belong', C.belongD)}">Building</text>
+    <text x="${mx + (right - mx) / 2}" y="${yPix(dHi) + (my - yPix(dHi)) / 2 + 14}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" letter-spacing="1.5" fill="${lblColor('belong', C.belongD)}">AMBIGUITY</text>
     <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 - 4}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="17" font-weight="600" fill="${lblColor('belong', C.belongD)}">Belong</text>
     <text x="${xPix(dHi) + (right - xPix(dHi)) / 2}" y="${top + (yPix(dHi) - top) / 2 + 13}" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="10" letter-spacing="1.5" fill="${lblColor('belong', C.belongD)}">BELONGING</text>
     <text x="${pad + (mx - pad) / 2}" y="${my + 34}" text-anchor="middle" font-family="Archivo, system-ui, sans-serif" font-size="21" font-weight="600" fill="${lblColor('guarded', C.navySoft)}">Guarded</text>

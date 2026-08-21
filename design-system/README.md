@@ -195,13 +195,19 @@ The values are the same ones; the names differ. The map, if you migrate it:
 | `--blue` / `--blue-d` / `--blue-soft` | `--eg-blue-dark` / `--eg-blue-deep` / `--eg-blue-wash` |
 | `--ambig` / `--ambig-text` / `--ambig-soft` | `--eg-gold` / `--eg-gold-dark` / `--eg-gold-wash` |
 | `--exclu` / `--exclu-d` / `--exclu-soft` | `--eg-orange` / `--eg-orange-deep` / `--eg-orange-wash` |
-| `--belong` / `--belong-d` / `--belong-soft` | `--eg-blue` / `--eg-blue-deep` / `--eg-blue-wash` |
+| `--belong` / `--belong-d` / `--belong-soft` / `--belong-fill` | `--eg-blue` / `--eg-blue-deep` / `--eg-blue-wash` / `--eg-blue-fill` |
 
-One real difference: the assessment page still uses green for Belonging. This
-system uses blue and carries no green at all, so migrating the page is a recolour
-rather than a rename — its `--belong*` values have no equivalent here and become
-blues. That is a deliberate change worth doing on its own, and is not part of this
-commit.
+The page's `--belong*` values were green until they were recoloured to match this
+system; the values in the table above are now identical on both sides, so the
+remaining migration is a rename rather than a recolour. Two things the page does
+that the system should be read alongside:
+
+- **`--belong` is a fill, `--belong-d` is for text.** The mid blue clears only
+  2.85:1 on cream, so every text use on the page takes the dark variant. The same
+  split applies to `--eg-blue` and `--eg-blue-deep` here.
+- **The Leadership level tag sits on navy, not blue.** Once belonging owns the
+  blue family, a Leadership tag and a Belong chip would otherwise be the same
+  wash.
 
 ---
 

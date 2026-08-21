@@ -42,6 +42,11 @@ dark band per page, at the bottom.
 ## Existing pages
 
 `assessment/index.html` predates the design system and carries its own inline
-palette of the same values under different names. The mapping is at the end of
-`design-system/README.md`. Do not silently rewrite it to use the system — that is
-a deliberate migration, worth doing on its own.
+palette under different names, but the values now match the tokens — belonging is
+blue in both. The mapping is at the end of `design-system/README.md`. Switching
+the page over to the `--eg-*` tokens is a rename rather than a recolour at this
+point, and is still worth doing on its own rather than as a side effect of other
+work.
+
+`report/email-template.html` shares that palette by hand, because email clients
+cannot use custom properties. Any palette change has to be applied there too.

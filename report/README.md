@@ -128,8 +128,9 @@ takes three rules:
   template comment
 - `*text*` becomes `<em>text</em>`, which is how the closing question of each section is marked
 
-`{{ZONE_COLOR}}` is the chip behind the zone name: `#34B27E` for Belong, `#F2A516` for Building and
-Fit In, `#EB4824` for Survival and Guarded.
+`{{ZONE_COLOR}}` is the chip behind the zone name: `#4F9CD6` for Belong, `#F2A516` for Building and
+Fit In, `#EB4824` for Survival and Guarded. It is a fill sitting behind near-black
+text, so it takes the mid-tone of its family, not the dark one.
 
 Email clients do not load web fonts reliably, so every font declaration falls back to Helvetica or
 Arial, and the layout is tables with inline styles rather than flex or grid. The logo mark in the header
