@@ -20,6 +20,21 @@
 - Fonts load from Google Fonts via `@import`, so `[FONT_REMOTE]` is expected
   and correct here. There are no self-hosted font files to ship.
 
+## Known render warns
+
+These are expected on a clean run. A warn NOT in this list is new and worth reading.
+
+- `[FONT_REMOTE]` for "IBM Plex Sans", "Figtree", "Archivo", "IBM Plex Mono" —
+  the fonts load from Google Fonts via an `@import` in the built stylesheet, by
+  design. There are no self-hosted font files to ship, so `[FONT_MISSING]` is
+  correctly absent.
+
+Fixed rather than triaged, recorded so the overrides aren't mistaken for
+arbitrary: `Heading`, `Likert`, `Score` and `TitleBlock` each flagged
+`[GRID_OVERFLOW] wide` and carry `cardMode: "column"` in `cfg.overrides`. Their
+stories are genuinely full-width compositions; one per row is the correct
+presentation, not a workaround.
+
 ## Re-sync risks
 
 - The component API is hand-written, so a new `eg-` class in `elmore.css` does

@@ -11,6 +11,15 @@
   "overrides": {
     "Heading": {
       "cardMode": "column"
+    },
+    "Likert": {
+      "cardMode": "column"
+    },
+    "Score": {
+      "cardMode": "column"
+    },
+    "TitleBlock": {
+      "cardMode": "column"
     }
   },
   "readmeHeader": ".design-sync/conventions.md"
