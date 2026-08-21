@@ -296,7 +296,11 @@ img, svg { max-width: 100%; display: block; }
 
 /* Score block: the index number, its denominator, its tier, and the
    track showing where that tier sits on the scale. */
-.eg-score { display: grid; grid-template-columns: minmax(150px, 200px) 1fr; gap: var(--eg-s-6); align-items: center; }
+/* The figure column sizes to its content: a four-character value like 6.63
+   plus its unit is wider than a fixed 200px, and the figure cannot wrap, so a
+   fixed column let it spill over the reading beside it. min-width:0 lets the
+   text column shrink instead of being pushed out. */
+.eg-score { display: grid; grid-template-columns: minmax(150px, max-content) minmax(0, 1fr); gap: var(--eg-s-6); align-items: center; }
 .eg-score__left { text-align: center; }
 .eg-score__value { font-size: var(--eg-t-figure-xl); }
 @media (max-width: 640px) { .eg-score { grid-template-columns: 1fr; } .eg-score__left { text-align: left; } }
