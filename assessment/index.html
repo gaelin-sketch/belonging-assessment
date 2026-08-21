@@ -948,6 +948,31 @@ function normalize(mean1to5) {
   return 0.1 + ((mean1to5 - 1) / 4) * 9.9;
 }
 
+const round1 = x => Math.round(x * 10) / 10;
+
+/* Belonging at a level is capped by whichever variable lags. A warm
+   environment cannot stand in for authenticity withheld, so a level's value is
+   the MINIMUM of its pair, never their average — averaging is exactly what let
+   a warm environment mask a withheld offer. The three levels then roll up on
+   the same proximity weights the two axes already use.
+
+   Split out of computeScores so the published fixtures can exercise it
+   directly, without driving all 18 items. */
+function rollUpBelonging(levels) {
+  const value = {};
+  for (const k of Object.keys(LEVEL_WEIGHTS)) {
+    value[k] = Math.min(levels[k].action, levels[k].reception);
+  }
+  const score = round1(
+    Object.keys(LEVEL_WEIGHTS).reduce((t, k) => t + LEVEL_WEIGHTS[k] * value[k], 0)
+  );
+  /* LEVELS runs closest-first and Array#sort is stable, so a tie breaks toward
+     the nearer relationship: it ranks as the stronger one. */
+  const ranked = LEVELS.map(l => l.key).sort((a, b) => value[b] - value[a]);
+  const top = ranked[0], bottom = ranked[ranked.length - 1];
+  return { value, score, strongestKey: top, weakestKey: bottom, spread: round1(value[top] - value[bottom]) };
+}
+
 function tierFor(score) {
   return TIERS.find(t => score >= t.min).label;
 }
@@ -1012,9 +1037,12 @@ function computeScores() {
     };
   });
 
-  const ranked = Object.values(levels).slice().sort((x, y) => y.reception - x.reception);
-  const strongestLevel = ranked[0], weakestLevel = ranked[ranked.length - 1];
-  const levelSpread = strongestLevel.reception - weakestLevel.reception;
+  const roll = rollUpBelonging(levels);
+  LEVELS.forEach(l => { levels[l.key].value = roll.value[l.key]; });
+  const belonging = roll.score;
+  const strongestLevel = levels[roll.strongestKey];
+  const weakestLevel = levels[roll.weakestKey];
+  const levelSpread = roll.spread;
 
   const zone = zoneFor(reception, action);
   const { key: quadKey, deep, displayName, bucket, xHigh, yHigh } = zone;
@@ -1022,10 +1050,14 @@ function computeScores() {
   const zoneAt = (xh, yh) => xh ? (yh ? "belong" : "fitin") : (yh ? "survival" : "guarded");
   const nearAxis = dx <= dy ? "x" : "y";
   const adjacentKey = nearAxis === "x" ? zoneAt(!xHigh, yHigh) : zoneAt(xHigh, !yHigh);
-  const established = quadKey === "belong" && deep;
+  /* Defined on the two axes, not on the rolled-up score: a weighted average
+     can cross 7.5 without both axes doing so, and the score and this flag must
+     never contradict each other. Equivalent to the previous
+     quadKey === "belong" && deep, but no longer routed through zone logic. */
+  const established = action >= MID + DEEP && reception >= MID + DEEP;
 
   const r = {
-    v, constructs, action, reception, overall: reception,
+    v, constructs, action, reception, belonging, overall: belonging,
     zone, quadKey, deep, nearAxis, adjacentKey, established, displayName, bucket,
     levels, strongestLevel, weakestLevel, levelSpread
   };
@@ -1123,7 +1155,7 @@ function buildFindings(r) {
           : `Reception ${one(r.reception)} runs ${one(Math.abs(axisGap))} ahead of action ${one(r.action)}: more is on offer from the environment than is being taken up.`)
   });
 
-  const L = r.levels, imm = L.imm.reception, lead = L.lead.reception, ext = L.ext.reception;
+  const L = r.levels, imm = L.imm.value, lead = L.lead.value, ext = L.ext.value;
   let shape;
   if (r.levelSpread < g) shape = "flat";
   else if (imm > lead && lead > ext) shape = "descending";
@@ -1138,7 +1170,7 @@ function buildFindings(r) {
     confidence: r.levelSpread >= g ? "high" : "low",
     statement: shape === "flat"
       ? `All three levels sit within ${one(r.levelSpread)} of each other: the pattern is the culture, not one relationship.`
-      : `${r.strongestLevel.head} reads ${one(r.strongestLevel.reception)} and ${r.weakestLevel.head} reads ${one(r.weakestLevel.reception)}, a gap of ${one(r.levelSpread)}.`
+      : `${r.strongestLevel.head} reads ${one(r.strongestLevel.value)} and ${r.weakestLevel.head} reads ${one(r.weakestLevel.value)}, a gap of ${one(r.levelSpread)}.`
   });
 
   const all = ACTS.concat(INDICATORS).map(c => ({ c, score: r.constructs[c], label: CONSTRUCT_META[c].label }));
@@ -1216,14 +1248,14 @@ function buildFindings(r) {
    ===================================================== */
 function finish(replay) {
   results = computeScores();
-  const { reception, action, quadKey } = results;
+  const { reception, action, belonging, quadKey } = results;
   const quad = QUADRANTS[quadKey];
 
   const scoreEl = document.getElementById("scoreVal");
-  scoreEl.textContent = reception.toFixed(1);
-  scoreEl.style.color = tierColor(reception);
+  scoreEl.textContent = belonging.toFixed(1);
+  scoreEl.style.color = tierColor(belonging);
   const chip = document.getElementById("tierChip");
-  chip.textContent = tierFor(reception);
+  chip.textContent = tierFor(belonging);
   const chipTheme = chipThemeFor(results.zone);
   chip.style.background = chipTheme.bg;
   chip.style.color = chipTheme.fg;
@@ -1497,10 +1529,10 @@ function resultsBlock() {
     };
   }
   return {
-    belongingScore: +results.reception.toFixed(1),
+    belongingScore: results.belonging,
     actionScore: +results.action.toFixed(1),
     receptionScore: +results.reception.toFixed(1),
-    tier: tierFor(results.reception),
+    tier: tierFor(results.belonging),
     quadrant: results.displayName,
     zoneDepth: results.deep ? "deep" : "edge",
     deepZone: results.deep ? ({ belong: "Belong", survival: "Casualty", guarded: "Absent", fitin: "Unknown" })[results.quadKey] : null,

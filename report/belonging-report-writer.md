@@ -139,8 +139,15 @@ Self-reported context, none of which touches scoring
   answering "Overall, I feel like I belong on this team / with my direct leader / in this organization"
 
 The two axes
-- Reception, the horizontal axis: `results.receptionScore` (also `results.belongingScore`)
+- Reception, the horizontal axis: `results.receptionScore`
 - Action, the vertical axis: `results.actionScore`
+
+The overall score
+- `results.belongingScore` is its own value, NOT a copy of either axis. Each level's
+  belonging is the lower of its action and reception — belonging is capped by whichever
+  variable lags — and the three roll up on the proximity weights. So it can sit well below
+  reception when action is withheld. Never describe it as the reception score, and never
+  cite reception when you mean it.
 
 Overall placement
 - `results.tier`, `results.quadrant` (the zone name, already resolved to Building or Belong as
@@ -153,7 +160,10 @@ Overall placement
 
 Per level, under `results.levels.imm`, `.lead`, `.ext`
 - `name`, `action`, `reception`, `zone`, `bucket`, and `constructs` holding all six
-- plus `results.strongestLevel`, `results.weakestLevel`, `results.levelSpread`
+- plus `results.strongestLevel`, `results.weakestLevel`, `results.levelSpread`. These rank
+  by each level's belonging value (the lower of its pair), not by reception, so the
+  strongest level is not always the warmest one. `levelSpread` is the gap between those
+  values.
 - the per level `action` and `reception` rest on three items each and may be cited; the
   six values inside `constructs` are one item each and may not
 
