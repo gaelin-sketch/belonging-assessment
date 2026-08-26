@@ -1488,13 +1488,24 @@ async function postToWebhook(payload) {
     console.warn("WEBHOOK_URL is still the placeholder. Payload below was not sent:", payload);
     return;
   }
-  // Posted as a simple request in no-cors mode, deliberately.
+  // Posted as a simple request in no-cors mode, deliberately, with the JSON
+  // riding inside a single form field.
   //
   // An application/json body makes this a preflighted request, and Make's webhook
   // answers the OPTIONS preflight with 400, so the browser never sends the POST at
   // all. Sending text/plain in normal cors mode does deliver the POST, but Make
   // returns no Access-Control-Allow-Origin header, so the promise rejects after the
   // data has already landed; retrying on that failure would duplicate the row.
+  //
+  // That left text/plain in no-cors mode, which delivers — but Make does not parse
+  // a text/plain body into anything, so the webhook handed its Parse JSON module an
+  // empty value and every run died there without a row ever reaching the sheet.
+  // Form encoding is the way out: it is a CORS-safelisted content type, so it stays
+  // a simple request and is never preflighted, and Make parses it natively into a
+  // named field. The scenario maps Parse JSON's "json" to that field.
+  //
+  // URLSearchParams sets the content type itself; setting it by hand here would
+  // override the encoding the body is actually in.
   //
   // no-cors delivers exactly once and resolves. The response is opaque, so an HTTP
   // level failure cannot be seen from here. A genuine connection failure still
@@ -1503,8 +1514,7 @@ async function postToWebhook(payload) {
   await fetch(WEBHOOK_URL, {
     method: "POST",
     mode: "no-cors",
-    headers: { "Content-Type": "text/plain;charset=UTF-8" },
-    body: JSON.stringify(payload)
+    body: new URLSearchParams({ payload: JSON.stringify(payload) })
   });
 }
 
