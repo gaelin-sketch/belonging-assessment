@@ -76,25 +76,27 @@ browser can be asked to do.
 
 ## How the browser posts
 
-The assessment posts with `mode: "no-cors"` and `Content-Type: text/plain;charset=UTF-8`, which
-looks wrong and is deliberate. An `application/json` body makes the request preflighted, and Make
-answers the OPTIONS preflight with 400, so the browser never sends the POST at all. Sending
-`text/plain` in ordinary cors mode does deliver, but Make returns no `Access-Control-Allow-Origin`
-header, so the promise rejects after the row has already landed, and retrying on that failure would
-duplicate it.
+The assessment posts with `mode: "no-cors"` and a form encoded body carrying one field, `json`, whose
+value is the full payload as a JSON string. That shape is forced by three constraints meeting: an
+`application/json` body triggers a CORS preflight the browser must win before the POST is sent at all;
+`no-cors` mode, which delivers exactly once and never rejects after the data has landed, only permits
+the CORS safelisted content types; and Make's webhook natively parses JSON and form bodies but silently
+discards `text/plain`, completing the run with an empty bundle. Form encoding is the one option that
+satisfies all three.
 
-Two consequences for the scenario:
+Consequences for the scenario:
 
-- The body arrives as JSON text under a `text/plain` content type. If Make does not parse it
-  automatically, turn on JSON pass-through for the webhook and put a Parse JSON module first.
+- The webhook outputs a bundle with a single `json` field holding the payload string. Map that field
+  into a Parse JSON module, whose data structure should be generated from `sample-payload.json`, and
+  map everything downstream from Parse JSON's output.
 - The page cannot see the response, so an HTTP level failure is invisible to the respondent. They see
   the success message whenever the request leaves the browser. Watch the Make execution history rather
   than trusting the on-screen confirmation.
 
 A webhook URL alone is not enough. The webhook has to be attached to a Custom webhook trigger in a
-scenario, and that scenario has to be saved and switched on, or Make reports the URL as not linked to
-any scenario and nothing is stored. Run one real assessment while the webhook is in "Determine data
-structure" mode so Make learns the full shape, including the nested `results.levels` object.
+scenario, and that scenario has to be saved and switched on. After changing the page's body format,
+use "Redetermine data structure" on the webhook and run one real assessment so Make learns the new
+shape.
 
 ## Scenario shape
 

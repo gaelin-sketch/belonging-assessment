@@ -1445,23 +1445,27 @@ async function postToWebhook(payload) {
     console.warn("WEBHOOK_URL is still the placeholder. Payload below was not sent:", payload);
     return;
   }
-  // Posted as a simple request in no-cors mode, deliberately.
+  // Posted as a simple no-cors request, form encoded, with the JSON in a field
+  // named "json". Three constraints meet here:
   //
-  // An application/json body makes this a preflighted request, and Make's webhook
-  // answers the OPTIONS preflight with 400, so the browser never sends the POST at
-  // all. Sending text/plain in normal cors mode does deliver the POST, but Make
-  // returns no Access-Control-Allow-Origin header, so the promise rejects after the
-  // data has already landed; retrying on that failure would duplicate the row.
+  // 1. An application/json body triggers a CORS preflight the browser must win
+  //    before the POST is sent at all, so it cannot be relied on.
+  // 2. no-cors mode only permits the CORS safelisted content types, and delivers
+  //    exactly once without a readable response, which avoids both silent loss
+  //    and duplicate-on-retry.
+  // 3. Make's webhook natively parses JSON and form bodies but silently discards
+  //    text/plain: the run completes with an empty bundle (observed in the wild).
   //
-  // no-cors delivers exactly once and resolves. The response is opaque, so an HTTP
-  // level failure cannot be seen from here. A genuine connection failure still
-  // throws, which is what the caller reports to the respondent. Every payload
-  // carries submissionId, so Make can dedupe if a request is ever repeated.
+  // Form encoding is the one option that satisfies all three. Make receives a
+  // bundle with a single "json" field holding the payload string, which its
+  // Parse JSON module then expands. The response is opaque, so an HTTP failure
+  // cannot be seen from here; a genuine connection failure still throws. Every
+  // payload carries submissionId, so the scenario can dedupe repeats.
   await fetch(WEBHOOK_URL, {
     method: "POST",
     mode: "no-cors",
-    headers: { "Content-Type": "text/plain;charset=UTF-8" },
-    body: JSON.stringify(payload)
+    headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+    body: "json=" + encodeURIComponent(JSON.stringify(payload))
   });
 }
 
