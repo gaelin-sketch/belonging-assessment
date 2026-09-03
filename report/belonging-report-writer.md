@@ -1,5 +1,5 @@
 # Belonging Report Writer Prompt
-**How to use (manual, this week):** Open a new Claude chat. Paste everything below the line. Then paste the person's Raw Payload (column O of the leads sheet), which carries everything the report needs. Review the output, then send it as their results email.
+**How to use (manual, this week):** Open a new Claude chat. Paste everything below the line. Then paste the person's Raw Payload (column Q of the leads sheet), which carries everything the report needs. Review the output, then send it as their results email.
 **Later (automated):** this same text becomes the system prompt in the Make.com Claude API module.
 
 ---
