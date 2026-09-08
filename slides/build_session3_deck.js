@@ -6,7 +6,7 @@ const fs = require("fs");
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.33 x 7.5
 pres.author = "Gaelin Elmore";
-pres.title = "Session 3: Anchored — Belonging That Survives Change";
+pres.title = "Session 3: Anchored. Belonging That Survives Change";
 
 const C = {
   navy: "1A2C42",
@@ -102,7 +102,7 @@ function newSlide(bg) {
     x: 9.4, y: 6.62, w: 3.0, h: 0.4, fontFace: BODY, fontSize: 12, bold: true,
     charSpacing: 3, color: C.white, align: "right", isTextBox: true, margin: 0,
   });
-  s.addNotes("On screen as people arrive. NOTE: 'Anchored — Belonging That Survives Change' is the working title from the brief — Gaelin to confirm final session title before delivery.");
+  s.addNotes("On screen as people arrive. NOTE: 'Anchored. Belonging That Survives Change' is the working title from the brief. Gaelin to confirm final session title before delivery.");
 }
 
 // =========================================================
@@ -128,7 +128,7 @@ function newSlide(bg) {
     x: 1.35, y: 2.35, w: 0.9, h: 1.75, fontFace: HEAD, fontSize: 48, color: C.blue,
     valign: "middle", isTextBox: true, margin: 0,
   });
-  s.addText("We talk about us — not about people who aren’t in the room.", {
+  s.addText("We talk about us, not about people who aren’t in the room.", {
     x: 2.55, y: 2.35, w: 9.4, h: 1.75, fontFace: BODY, fontSize: 20, bold: true,
     color: C.navy, valign: "middle", isTextBox: true, margin: 0,
   });
@@ -155,7 +155,7 @@ function newSlide(bg) {
     x: 10.95, y: 5.72, w: 1.45, h: 0.3, fontFace: BODY, fontSize: 9, bold: true,
     charSpacing: 2, color: C.gray, align: "center", isTextBox: true, margin: 0,
   });
-  s.addNotes("Stated in minute one. Carry It Up is the physical flip chart in the room — the small gold arrow mark reappears on the Resolved activity and the closing slide.");
+  s.addNotes("Stated in minute one. Carry It Up is the physical flip chart in the room. The small gold arrow mark reappears on the Resolved activity and the closing slide.");
 }
 
 // =========================================================
@@ -278,7 +278,7 @@ function activitySlide() {
     x: 0.9, y: 4.2, w: 11.5, h: 0.7, fontFace: HEAD, fontSize: 26, color: C.white,
     isTextBox: true, margin: 0,
   });
-  s.addText("A card can sit under more than one — pick where it pulls strongest.", {
+  s.addText("A card can sit under more than one. Pick where it pulls strongest.", {
     x: 0.9, y: 5.05, w: 11.0, h: 0.6, fontFace: BODY, fontSize: 18, bold: true,
     color: C.navy, isTextBox: true, margin: 0,
   });
@@ -299,7 +299,7 @@ function activitySlide() {
   s.addText([
     { text: "Not your ", options: { color: C.white } },
     { text: "belonging", options: { color: C.gold } },
-    { text: " — your ", options: { color: C.white } },
+    { text: ": your ", options: { color: C.white } },
     { text: "certainty", options: { color: C.blue } },
     { text: ", your ", options: { color: C.white } },
     { text: "control", options: { color: C.blue } },
@@ -317,7 +317,7 @@ function activitySlide() {
     x: 0.9, y: 4.7, w: 11.6, h: 1.3, fontFace: HEAD, fontSize: 34, lineSpacing: 40,
     isTextBox: true, margin: 0,
   });
-  s.addNotes("The pivot line after the sort debrief — the hinge of the first hour. Hold it in silence for a beat.");
+  s.addNotes("The pivot line after the sort debrief, the hinge of the first hour. Hold it in silence for a beat.");
 }
 
 // =========================================================
@@ -422,7 +422,7 @@ function activitySlide() {
 
   const cards = [
     {
-      accent: C.blueDk, head: "Threat bonds groups fast — and leaves them fragile.",
+      accent: C.blueDk, head: "Threat bonds groups fast and leaves them fragile.",
       body: "Only shared goals produced belonging that lasted.",
       cite: "Sherif, Robbers Cave, 1954",
     },
@@ -438,7 +438,7 @@ function activitySlide() {
     },
     {
       accent: C.navy, head: "Fear produces the performance of belonging.",
-      body: "Silence, matching, looking unified — while trust goes underground.",
+      body: "Silence, matching, looking unified, while trust goes underground.",
       cite: "Edmondson, psychological safety",
     },
   ];
@@ -462,7 +462,7 @@ function activitySlide() {
       color: "8B98A6", isTextBox: true, margin: 0,
     });
   });
-  s.addNotes("Evidence slide #1. Gaelin narrates the detail — the slide holds the skeleton. One headline finding per anchor.");
+  s.addNotes("Evidence slide #1. Gaelin narrates the detail; the slide holds the skeleton. One headline finding per anchor.");
 }
 
 // =========================================================
@@ -475,7 +475,7 @@ function activitySlide() {
     x: 0.8, y: 1.9, w: 4.3, h: 1.8, fontFace: HEAD, fontSize: 92, color: C.gold,
     isTextBox: true, margin: 0,
   });
-  s.addText("approval — the highest\never recorded", {
+  s.addText("approval, the highest\never recorded", {
     x: 0.9, y: 3.75, w: 3.9, h: 0.8, fontFace: BODY, fontSize: 15, bold: true, color: C.blue,
     lineSpacing: 19, isTextBox: true, margin: 0,
   });
@@ -484,7 +484,7 @@ function activitySlide() {
     x: 5.5, y: 1.75, w: 7.0, h: 0.6, fontFace: BODY, fontSize: 21, bold: true, color: C.white,
     isTextBox: true, margin: 0,
   });
-  s.addText("Within two years, the country returned to — and then exceeded — its prior divisions.", {
+  s.addText("Within two years, the country returned to, and then exceeded, its prior divisions.", {
     x: 5.5, y: 2.5, w: 6.9, h: 0.95, fontFace: BODY, fontSize: 19, bold: true, color: C.blue,
     lineSpacing: 25, isTextBox: true, margin: 0,
   });
@@ -497,7 +497,7 @@ function activitySlide() {
     x: 5.5, y: 3.8, w: 6.9, h: 2.2, fontFace: HEAD, fontSize: 26, lineSpacing: 34,
     isTextBox: true, margin: 0,
   });
-  s.addNotes("Evidence slide #2. Deliberately typographic — no imagery of the event itself. Treat with restraint.");
+  s.addNotes("Evidence slide #2. Deliberately typographic. No imagery of the event itself. Treat with restraint.");
 }
 
 // =========================================================
@@ -551,7 +551,7 @@ function activitySlide() {
     x: 0.9, y: 3.6, w: 11.8, h: 1.9, fontFace: HEAD, fontSize: 48, lineSpacing: 56,
     isTextBox: true, margin: 0,
   });
-  s.addNotes("Bridge into the second half. Sets up the evidence wall WITHOUT revealing it — no preview of what comes next.");
+  s.addNotes("Bridge into the second half. Sets up the evidence wall WITHOUT revealing it. No preview of what comes next.");
 }
 
 // =========================================================
@@ -570,12 +570,12 @@ function activitySlide() {
     x: 0.9, y: 2.95, w: 11.5, h: 1.3, fontFace: HEAD, fontSize: 64, color: C.white,
     isTextBox: true, margin: 0,
   });
-  s.addText("Observable things only — things you could point to, not feelings. One per sticky.", {
+  s.addText("Observable things only: things you could point to, not feelings. One per sticky.", {
     x: 0.9, y: 4.65, w: 11.0, h: 0.9, fontFace: BODY, fontSize: 20, bold: true, color: C.navy,
     isTextBox: true, margin: 0,
   });
   chip(s, "10 MINUTES", 0.9, 6.15, 2.4);
-  s.addNotes("BLIND activity — this slide must look complete and standalone. No column structure, no '1 of 3,' no hint of the re-examination that comes two slides later. Preserve strictly.");
+  s.addNotes("BLIND activity. This slide must look complete and standalone. No column structure, no '1 of 3,' no hint of the re-examination that comes two slides later. Preserve strictly.");
 }
 
 // =========================================================
@@ -583,7 +583,7 @@ function activitySlide() {
 // =========================================================
 {
   const s = newSlide(C.cream);
-  kicker(s, "BEFORE WE DECIDE WHAT THIS EVIDENCE MEANS —", C.blueDk, { y: 0.5 });
+  kicker(s, "BEFORE WE DECIDE WHAT THIS EVIDENCE MEANS", C.blueDk, { y: 0.5 });
   s.addText("What is this evidence of?", {
     x: 0.9, y: 0.9, w: 11.5, h: 0.85, fontFace: HEAD, fontSize: 36, color: C.navy,
     isTextBox: true, margin: 0,
@@ -634,7 +634,7 @@ function activitySlide() {
   s.addText([
     { text: "Is this evidence of ", options: { color: C.navy } },
     { text: "ABSENCE", options: { color: C.white } },
-    { text: " —\nbelonging can’t exist here?", options: { color: C.navy } },
+    { text: ":\nbelonging can’t exist here?", options: { color: C.navy } },
   ], {
     x: 0.9, y: 1.85, w: 11.5, h: 1.05, fontFace: HEAD, fontSize: 25, lineSpacing: 30,
     isTextBox: true, margin: 0,
@@ -642,7 +642,7 @@ function activitySlide() {
   s.addText([
     { text: "Or evidence of a ", options: { color: C.navy } },
     { text: "STATE", options: { color: C.white } },
-    { text: " —\na team under threat, in transition?", options: { color: C.navy } },
+    { text: ":\na team under threat, in transition?", options: { color: C.navy } },
   ], {
     x: 0.9, y: 3.1, w: 11.5, h: 1.05, fontFace: HEAD, fontSize: 25, lineSpacing: 30,
     isTextBox: true, margin: 0,
@@ -660,7 +660,7 @@ function activitySlide() {
     isTextBox: true, margin: 0,
   });
   chip(s, "15 MINUTES", 0.9, 6.25, 2.4);
-  s.addNotes("Tables re-sort every sticky. Columns two and three get drawn on their paper NOW, live — they were never on screen before this moment.");
+  s.addNotes("Tables re-sort every sticky. Columns two and three get drawn on their paper NOW, live. They were never on screen before this moment.");
 }
 
 // =========================================================
@@ -676,7 +676,7 @@ function activitySlide() {
     x: 0.9, y: 1.25, w: 11.5, h: 1.5, fontFace: HEAD, fontSize: 34, lineSpacing: 41,
     isTextBox: true, margin: 0,
   });
-  s.addText("Not aspirations — observable pictures.", {
+  s.addText("Not aspirations. Observable pictures.", {
     x: 0.9, y: 2.95, w: 11.0, h: 0.6, fontFace: BODY, fontSize: 20, bold: true, color: C.navy,
     isTextBox: true, margin: 0,
   });
@@ -695,7 +695,7 @@ function activitySlide() {
   });
 
   carryUp(s, 0.9, 5.4, 0.9);
-  s.addText("Genuinely broken trust doesn’t belong in this column — it goes to the Carry It Up board.", {
+  s.addText("Genuinely broken trust doesn’t belong in this column. It goes to the Carry It Up board.", {
     x: 1.55, y: 5.4, w: 10.8, h: 0.5, fontFace: BODY, fontSize: 15, bold: true, color: C.navy,
     valign: "middle", isTextBox: true, margin: 0,
   });
@@ -727,7 +727,7 @@ function oweSlide(activeRound) {
     {
       n: "2", accent: C.gold,
       head: "What do I need from the people at this table to keep showing up that way?",
-      sub: "If it’s really a leadership ask — walk it to the Carry It Up board.",
+      sub: "If it’s really a leadership ask, walk it to the Carry It Up board.",
     },
     {
       n: "3", accent: C.orange,
@@ -772,9 +772,9 @@ function oweSlide(activeRound) {
   });
   return s;
 }
-oweSlide(1).addNotes("Round 1 of the commitment block (~40 min total, three rounds at tables). Advance the deck as each round begins — the round in play is the navy card.");
+oweSlide(1).addNotes("Round 1 of the commitment block (~40 min total, three rounds at tables). Advance the deck as each round begins; the round in play is the navy card.");
 oweSlide(2).addNotes("Round 2. Needs, not grievances. Leadership asks walk to the Carry It Up board.");
-oweSlide(3).addNotes("Round 3. Each table writes its one-page compact and keeps it. Collect nothing — the compact belongs to the table.");
+oweSlide(3).addNotes("Round 3. Each table writes its one-page compact and keeps it. Collect nothing; the compact belongs to the table.");
 
 // =========================================================
 // SLIDE 20 — Close: One line. One behavior. One week. (navy)
@@ -790,7 +790,7 @@ oweSlide(3).addNotes("Round 3. Each table writes its one-page compact and keeps 
     x: 0.9, y: 1.95, w: 11.6, h: 3.9, fontFace: HEAD, fontSize: 60, lineSpacing: 76,
     isTextBox: true, margin: 0,
   });
-  s.addNotes("Individual commitment: each person writes one line — one behavior, starting this week. Written before the send-off.");
+  s.addNotes("Individual commitment: each person writes one line: one behavior, starting this week. Written before the send-off.");
 }
 
 // =========================================================
